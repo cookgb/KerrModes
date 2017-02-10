@@ -533,7 +533,18 @@ Protect[QNMDebug];
 (*Sequencers*)
 
 
-KerrQNMSequenceB::usage=""
+KerrQNMSequenceB::usage=
+"KerrQNMSequence[l,m,n,\[Epsilon]] computes a sequence of Quasi-Normal Mode solutions "<>
+	"for overtone n of mode (l,m).  The solutions are computed to an absolute "<>
+	"accuracty of \!\(\*SuperscriptBox[\(10\), \(\[Epsilon]\)]\).  The sequence is "<>
+	"parameterized by increasing values of the dimensionless angular momentum "<>
+	"'a' starting at a=0 (or the largest value of 'a' already computed) up to "<>
+	"(but not including) a=1.\n\n"<>
+	"Overtone Multiplets: There are cases where more than one sequence is associated with "<>
+	"the same overtone n of mode (l,m).  Such sets are called overtone multiplets.  'n' "<>
+	"can be either an Integer or an overtone multiplet index.  An overtone multilplet index "<>
+	"is a 2 element list {n,mult}, where 'n' is the Integer overtone number, and 'mult' is "<>
+	"in the range 0,1,...,(Nmult-1), with 'Nmult' the number of sequences with the same overtone "<>"
 
 
 KerrQNMRefineSequenceB::usage=""KerrQNMSequence[l,m,n,\[Epsilon]] computes a sequence of Quasi-Normal Mode solutions "<>
