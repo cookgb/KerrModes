@@ -525,18 +525,23 @@ If[QNMDebug,Unprotect["KerrQNM`*"];Unprotect["KerrQNM`Private`*"]];
 Protect[QNMDebug];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Sequencers*)
 
 
 KerrQNMSequenceB::usage=""
 
 
-KerrQNMRefineSequenceB::usage=""
+KerrQNMRefineSequenceB::usage=""KerrQNMSequence[l,m,n,\[Epsilon]] computes a sequence of Quasi-Normal Mode solutions "<>
+	"for overtone n of mode (l,m).  The solutions are computed to an absolute "<>
+	"accuracty of \!\(\*SuperscriptBox[\(10\), \(\[Epsilon]\)]\).  The sequence is "<>
+	"parameterized by increasing values of the dimensionless angular momentum "<>
+	"'a' starting at a=0 (or the largest value of 'a' already computed) up to "<>
+	"(but not including) a=1.\n \n "<>
 
 
 KerrQNMSequence::usage=
