@@ -1,0 +1,54 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 10.4' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      1180,         44]
+NotebookOptionsPosition[       911,         30]
+NotebookOutlinePosition[      1249,         45]
+CellTagsIndexPosition[      1206,         42]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"PrependTo", "[", 
+  RowBox[{"$Path", ",", "\"\</home/cookgb/Private/KerrQNM/KerrModes\>\""}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.702917478927906*^9, 3.7029174818080893`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Needs", "[", "\"\<KerrQNM`\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.7029174938079042`*^9, 3.702917495135646*^9}}]
+},
+WindowSize->{865, 1055},
+WindowMargins->{{Automatic, 140}, {-11, Automatic}},
+FrontEndVersion->"10.4 for Linux x86 (64-bit) (April 11, 2016)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 205, 4, 32, "Input"],
+Cell[766, 26, 141, 2, 32, "Input"]
+}
+]
+*)
+
+(* End of internal cache information *)
+
