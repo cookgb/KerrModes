@@ -52,7 +52,7 @@ AngularSpectralRootIndex::usage=
 Begin["`Private`"]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Spin-Weighted Spheroidal Functions : Spectral Method*)
 
 
@@ -60,7 +60,7 @@ Begin["`Private`"]
 (*Evaluate the Spin-weighted Oblate Spheroidal Functions using a spectral method.*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Matrix Coefficients :*)
 
 
@@ -99,7 +99,7 @@ Clms[l_Integer,m_Integer,s_Integer]:=Clms[l,m,s]=
 									Glms[l,m,s]Glms[l-1,m,s];
 
 
-If[!SWSphDebug,Protect[Alms,Blms,Clms,Dlms,Elms,Flms,Glms,Hlms]];
+(*If[!SWSphDebug,Protect[Alms,Blms,Clms,Dlms,Elms,Flms,Glms,Hlms]]; Don't Protect! *)
 
 
 (* ::Subsection::Closed:: *)

@@ -10,26 +10,515 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[      1180,         44]
-NotebookOptionsPosition[       911,         30]
-NotebookOutlinePosition[      1249,         45]
-CellTagsIndexPosition[      1206,         42]
+NotebookDataLength[     22204,        616]
+NotebookOptionsPosition[     19659,        519]
+NotebookOutlinePosition[     20313,        544]
+CellTagsIndexPosition[     20183,        538]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
-Cell[BoxData[
- RowBox[{"PrependTo", "[", 
-  RowBox[{"$Path", ",", "\"\</home/cookgb/Private/KerrQNM/KerrModes\>\""}], 
-  "]"}]], "Input",
- CellChangeTimes->{{3.702917478927906*^9, 3.7029174818080893`*^9}}],
+
+Cell[CellGroupData[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"PrependTo", "[", 
+   RowBox[{"$Path", ",", "\"\</home/cookgb/Private/KerrQNM/KerrModes\>\""}], 
+   "]"}], ";"}], "\n", 
+ RowBox[{"Needs", "[", "\"\<KerrQNM`\>\"", "]"}], "\n", 
+ RowBox[{"SetSpinWeight", "[", 
+  RowBox[{"-", "2"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.702917478927906*^9, 3.7029174818080893`*^9}, {
+   3.7029175278263283`*^9, 3.702917529616518*^9}, 3.702998307690464*^9}],
 
 Cell[BoxData[
- RowBox[{"Needs", "[", "\"\<KerrQNM`\>\"", "]"}]], "Input",
- CellChangeTimes->{{3.7029174938079042`*^9, 3.702917495135646*^9}}]
+ InterpretationBox[
+  RowBox[{"\<\"All KerrMode routines (QNM) set for Spin-Weight s = \"\>", 
+   "\[InvisibleSpace]", 
+   RowBox[{"-", "2"}]}],
+  SequenceForm["All KerrMode routines (QNM) set for Spin-Weight s = ", -2],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.702998200413361*^9, 3.702998310463087*^9, 3.702998503038225*^9, 
+   3.702998752378808*^9, 3.702999151477086*^9, 3.702999493659313*^9, 
+   3.702999717946392*^9, 3.702999849390354*^9, 3.703000103405615*^9, 
+   3.7030003795519743`*^9, 3.70300065738906*^9, 3.703000778731312*^9, 
+   3.7030008580968018`*^9, 3.7030011504726543`*^9, {3.7030012597535467`*^9, 
+   3.703001283295474*^9}, 3.703001702503093*^9, 3.7030029369193687`*^9, 
+   3.703003132880582*^9, 3.703003621083584*^9, 3.7030037700664787`*^9, 
+   3.7030039597729177`*^9, 3.7030040041018343`*^9}]
+}, Open  ]],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"SchQNMTable", "[", "2", "]"}], "=", "2"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SchQNMTable", "[", 
+    RowBox[{"2", ",", "0"}], "]"}], "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"0.37", "-", 
+      RowBox[{"0.09", "*", "I"}]}], ",", "0", ",", "0", ",", "0", ",", "0"}], 
+    "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SchQNMTable", "[", 
+    RowBox[{"2", ",", "1"}], "]"}], "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"0.35", "-", 
+      RowBox[{"0.27", "*", "I"}]}], ",", "0", ",", "0", ",", "0", ",", "0"}], 
+    "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SchQNMTable", "[", "3", "]"}], "=", "2"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SchQNMTable", "[", 
+    RowBox[{"3", ",", "0"}], "]"}], "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"0.6", "-", 
+      RowBox[{"0.09", "*", "I"}]}], ",", "0", ",", "0", ",", "0", ",", "0"}], 
+    "}"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"SchQNMTable", "[", 
+    RowBox[{"3", ",", "1"}], "]"}], "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"0.6", "-", 
+      RowBox[{"0.28", "*", "I"}]}], ",", "0", ",", "0", ",", "0", ",", "0"}], 
+    "}"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.702998928949284*^9, 3.702998932799922*^9}, {
+  3.702999157250214*^9, 3.7029991739381943`*^9}, {3.702999268793558*^9, 
+  3.7029992742750473`*^9}, {3.702999310288925*^9, 3.7029993348516693`*^9}, {
+  3.7029996447816467`*^9, 3.702999700774094*^9}, {3.703000087068224*^9, 
+  3.7030000894661627`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "SetSpinWeight"}]], "Input",
+ CellChangeTimes->{{3.703003775589837*^9, 3.7030037786481037`*^9}}],
+
+Cell[BoxData[
+ StyleBox["\<\"SetSpinWeight[s] sets the value of the spin-weight used in all \
+subsequent QNM computations:\\n\t s=-2 : Gravitational perturbations\\n\t \
+s=-1 : Electro-Magnetic perturbations\\n\t s= 0 : Scalar perturbations.\"\>", 
+  "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.703004007822927*^9},
+ CellTags->"Info103702989607-6234237"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"?", "SchwarzschildQNM"}]], "Input",
+ CellChangeTimes->{3.7030018646961517`*^9}],
+
+Cell[BoxData[
+ StyleBox["\<\"SchwarzschildQNM[l,n] computes the Quasi-Normal Mode solutions \
+for overtone n of mode l.  The mode is computed to an accuracy of \
+\!\(\*SuperscriptBox[\(10\), \(-14\)]\).  For given 'l', if solutions with \
+overtones (n-1) and (n-2) have not been computed, then the routine is \
+recersively called for overtone '(n-1).  If no solutions exist for mode l, \
+then the first two overtones of (l-1) and (l-2) are used to extrapolate \
+initial guesses for these modes.\\n\\nOptions:\\n\t SpinWeight\[Rule]Null : \
+-2,-1,0\\n\t\t The spin weight must be set via a call to SetSpinWeight before \
+any KerrQNM\\n\t\t function call.\\n\t ModePrecision\[Rule]24\\n\t \
+JacobianStep\[Rule]-10\\n\t\t The radial solver make use of numerical \
+derivatives.  The relative step size\\n\t\t is set to \
+\!\(\*SuperscriptBox[\(10\), \(JacobianStep\)]\).\\n\t \
+RadialCFMinDepth\[Rule]300\\n\t\t The minimum value for the Radial Continued \
+Fraction Depth.\\n\t RadialCFDepth\[Rule]1\\n\t\t The initial Radial \
+Continued Fraction Depth is usually taken from the prior \\n\t\t solution in \
+the sequence.  Fractional values reduce this initial value by that\\n\t\t \
+fraction.  Integer values larger than RadialCFMinDepth are used as the new\\n\
+\t\t  initial value.\\n\t RadialRelax\[Rule]1\\n\t\t Initial under-relaxation \
+parameter used in Radial Newton iterations.\\n\t Root\[Epsilon]\[Rule]-14\\n\t\
+\t \!\(\*SuperscriptBox[\(10\), \(Root\[Epsilon]\)]\) is the maximum allowed \
+magnitude for the Radial Continued Fraction.\\n\t SchDebug\[Rule]0 : \
+0,1,2,3,...\\n\t\t 'Verbosity' level during the Schwarzschile iterations.\\n\t\
+ RadialDebug\[Rule]0 : 0,1,2,3,...\\n\t\t 'Verbosity' level during the Radial \
+Newton iterations.\\n\"\>", "MSG"]], "Print", "PrintUsage",
+ CellChangeTimes->{3.703004009192337*^9},
+ CellTags->"Info113702989609-6234237"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Options", "[", "SchwarzschildQNM", "]"}]], "Input",
+ CellChangeTimes->{{3.703001929278804*^9, 3.703001935065398*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"JacobianStep", "\[Rule]", 
+    RowBox[{"-", "10"}]}], ",", 
+   RowBox[{"ModePrecision", "\[Rule]", "24"}], ",", 
+   RowBox[{"RadialCFDepth", "\[Rule]", "1"}], ",", 
+   RowBox[{"RadialCFMinDepth", "\[Rule]", "300"}], ",", 
+   RowBox[{"RadialDebug", "\[Rule]", "0"}], ",", 
+   RowBox[{"RadialRelax", "\[Rule]", "1"}], ",", 
+   RowBox[{"Root\[Epsilon]", "\[Rule]", 
+    RowBox[{"Null", "[", "]"}]}], ",", 
+   RowBox[{"SchDebug", "\[Rule]", "0"}], ",", 
+   RowBox[{"SpinWeight", "\[Rule]", 
+    RowBox[{"-", "2"}]}]}], "}"}]], "Output",
+ CellChangeTimes->{3.703001935616907*^9, 3.703003150048807*^9, 
+  3.703003639022719*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"SchwarzschildQNM", "[", 
+  RowBox[{"2", ",", "0"}], "]"}]], "Input",
+ CellChangeTimes->{{3.702996642142729*^9, 3.702996648602644*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Computing (l=\"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\",n=\"\>", "\[InvisibleSpace]", "0", 
+   "\[InvisibleSpace]", "\<\")\"\>"}],
+  SequenceForm["Computing (l=", 2, ",n=", 0, ")"],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.702996999058085*^9, 3.702997216876129*^9, 3.702997402835373*^9, 
+   3.70299745372698*^9, 3.702997970785453*^9, 3.702998041544976*^9, 
+   3.7029981198766203`*^9, 3.702998510427006*^9, 3.702998758095312*^9, 
+   3.702999021990355*^9, 3.702999178163144*^9, 3.702999340033287*^9, {
+   3.702999497652939*^9, 3.7029995077325068`*^9}, 3.7029997219739237`*^9, 
+   3.7029997654015503`*^9, 3.702999852514052*^9, 3.703000106763824*^9, 
+   3.703000384522138*^9, 3.703000660224947*^9, 3.703000781541874*^9, 
+   3.703000861139119*^9, 3.7030011544367847`*^9, {3.7030012632500277`*^9, 
+   3.703001286656453*^9}, 3.703001356876718*^9, 3.70300170523313*^9, 
+   3.703002944392241*^9, 3.703003154094206*^9, 3.7030036440891457`*^9, 
+   3.703004057976989*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{
+   "0.3736716844180418357934920029859322151305629420284932062499`24.\
+13643136138472", "-", 
+    RowBox[{
+    "0.0889623156889356982804609271864407628105882981965995623574`24.", " ", 
+     "\[ImaginaryI]"}]}], ",", "0", ",", "300", ",", 
+   RowBox[{"-", "14"}], ",", 
+   "9.75515457051863827731063227699352823653216531456726363386`24.\
+301029995663985*^-21"}], "}"}]], "Print",
+ CellChangeTimes->{
+  3.702996999058085*^9, 3.702997216876129*^9, 3.702997402835373*^9, 
+   3.70299745372698*^9, 3.702997970785453*^9, 3.702998041544976*^9, 
+   3.7029981198766203`*^9, 3.702998510427006*^9, 3.702998758095312*^9, 
+   3.702999021990355*^9, 3.702999178163144*^9, 3.702999340033287*^9, {
+   3.702999497652939*^9, 3.7029995077325068`*^9}, 3.7029997219739237`*^9, 
+   3.7029997654015503`*^9, 3.702999852514052*^9, 3.703000106763824*^9, 
+   3.703000384522138*^9, 3.703000660224947*^9, 3.703000781541874*^9, 
+   3.703000861139119*^9, 3.7030011544367847`*^9, {3.7030012632500277`*^9, 
+   3.703001286656453*^9}, 3.703001356876718*^9, 3.70300170523313*^9, 
+   3.703002944392241*^9, 3.703003154094206*^9, 3.7030036440891457`*^9, 
+   3.703004058151236*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"SchwarzschildQNM", "[", 
+  RowBox[{"2", ",", "1"}], "]"}]], "Input",
+ CellChangeTimes->{{3.702996642142729*^9, 3.702996648602644*^9}, 
+   3.703000128138528*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Computing (l=\"\>", "\[InvisibleSpace]", "2", 
+   "\[InvisibleSpace]", "\<\",n=\"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\")\"\>"}],
+  SequenceForm["Computing (l=", 2, ",n=", 1, ")"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.703000128758065*^9, 3.7030003885601892`*^9, 
+  3.7030006718947697`*^9, 3.703000786250596*^9, 3.703000862888228*^9, 
+  3.703001156012134*^9, 3.7030012899807987`*^9, 3.7030013597781973`*^9, 
+  3.703001707292652*^9, 3.703004059528164*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{
+   "0.3467109968791634397176824260580274445911303413080484799932`24.\
+040474336518823", "-", 
+    RowBox[{
+    "0.2739148752912348173495520702356059702102828029992391702417`24.", " ", 
+     "\[ImaginaryI]"}]}], ",", "1", ",", "300", ",", 
+   RowBox[{"-", "14"}], ",", 
+   "4.4837476245968354128873196395050756248306359329559591`24.301029995663985*^\
+-25"}], "}"}]], "Print",
+ CellChangeTimes->{3.703000128758065*^9, 3.7030003885601892`*^9, 
+  3.7030006718947697`*^9, 3.703000786250596*^9, 3.703000862888228*^9, 
+  3.703001156012134*^9, 3.7030012899807987`*^9, 3.7030013597781973`*^9, 
+  3.703001707292652*^9, 3.703004059742671*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"SchwarzschildQNM", "[", 
+  RowBox[{"3", ",", "0"}], "]"}]], "Input",
+ CellChangeTimes->{{3.702996642142729*^9, 3.702996648602644*^9}, 
+   3.702999261650714*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Computing (l=\"\>", "\[InvisibleSpace]", "3", 
+   "\[InvisibleSpace]", "\<\",n=\"\>", "\[InvisibleSpace]", "0", 
+   "\[InvisibleSpace]", "\<\")\"\>"}],
+  SequenceForm["Computing (l=", 3, ",n=", 0, ")"],
+  Editable->False]], "Print",
+ CellChangeTimes->{
+  3.7029992628917437`*^9, 3.702999342334525*^9, {3.70299950245772*^9, 
+   3.702999512405571*^9}, 3.702999724227935*^9, 3.7029997692224894`*^9, 
+   3.702999854259573*^9, 3.703000108231553*^9, 3.703000393707026*^9, 
+   3.7030006753145742`*^9, 3.7030007883453207`*^9, 3.70300086437903*^9, 
+   3.7030011574673643`*^9, 3.703001292449061*^9, 3.7030013627493963`*^9, 
+   3.703001709327915*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{
+   "0.5994432884374900727394939776009878077366801127197796926934`24.\
+144713280031173", "-", 
+    RowBox[{
+    "0.0927030479449476039700741067118246122381227160642654878745`24.", " ", 
+     "\[ImaginaryI]"}]}], ",", "0", ",", "300", ",", 
+   RowBox[{"-", "14"}], ",", 
+   "3.15217925795790847916051520474695666177623208720275095553`24.\
+301029995663985*^-21"}], "}"}]], "Print",
+ CellChangeTimes->{
+  3.7029992628917437`*^9, 3.702999342334525*^9, {3.70299950245772*^9, 
+   3.702999512405571*^9}, 3.702999724227935*^9, 3.7029997692224894`*^9, 
+   3.702999854259573*^9, 3.703000108231553*^9, 3.703000393707026*^9, 
+   3.7030006753145742`*^9, 3.7030007883453207`*^9, 3.70300086437903*^9, 
+   3.7030011574673643`*^9, 3.703001292449061*^9, 3.7030013627493963`*^9, 
+   3.703001709495388*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"SchwarzschildQNM", "[", 
+  RowBox[{"3", ",", "1"}], "]"}]], "Input",
+ CellChangeTimes->{{3.702996642142729*^9, 3.702996648602644*^9}, 
+   3.702999261650714*^9, 3.703000136874407*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Computing (l=\"\>", "\[InvisibleSpace]", "3", 
+   "\[InvisibleSpace]", "\<\",n=\"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\")\"\>"}],
+  SequenceForm["Computing (l=", 3, ",n=", 1, ")"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.703000137845851*^9, 3.703000396727425*^9, 
+  3.703000678167276*^9, 3.703000790063272*^9, 3.703000865824645*^9, 
+  3.7030011593291063`*^9, 3.703001304133356*^9, 3.7030013646942987`*^9, 
+  3.703001711285819*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{
+   "0.58264380303329943061584078550014122218654148509028015072`24.\
+079174366904766", "-", 
+    RowBox[{
+    "0.2812981134350440446788382644965500270356563696965963758997`24.", " ", 
+     "\[ImaginaryI]"}]}], ",", "1", ",", "300", ",", 
+   RowBox[{"-", "14"}], ",", 
+   "8.685580047586448846224212303941472796935764540575134174`24.\
+301029995663985*^-23"}], "}"}]], "Print",
+ CellChangeTimes->{3.703000137845851*^9, 3.703000396727425*^9, 
+  3.703000678167276*^9, 3.703000790063272*^9, 3.703000865824645*^9, 
+  3.7030011593291063`*^9, 3.703001304133356*^9, 3.7030013646942987`*^9, 
+  3.70300171180637*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"SchwarzschildQNM", "[", 
+  RowBox[{"4", ",", "0"}], "]"}]], "Input",
+ CellChangeTimes->{{3.702996642142729*^9, 3.702996648602644*^9}, 
+   3.702999261650714*^9, 3.702999349971417*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Computing (l=\"\>", "\[InvisibleSpace]", "4", 
+   "\[InvisibleSpace]", "\<\",n=\"\>", "\[InvisibleSpace]", "0", 
+   "\[InvisibleSpace]", "\<\")\"\>"}],
+  SequenceForm["Computing (l=", 4, ",n=", 0, ")"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.702999350960149*^9, 3.702999516177434*^9, 
+  3.702999725824644*^9, 3.7029998556911087`*^9, 3.703000110194771*^9, 
+  3.7030004052092457`*^9, 3.7030006815897017`*^9, 3.703000792272954*^9, 
+  3.703000869100926*^9, 3.703001161994841*^9, 3.703001312169092*^9, 
+  3.703001366190086*^9, 3.7030017136867743`*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{
+   "0.8091783775322391406937891954911170946864259943176721338241`24.\
+12735035762369", "-", 
+    RowBox[{
+    "0.0941639609889232494057997980542562310973461993328920289817`24.", " ", 
+     "\[ImaginaryI]"}]}], ",", "0", ",", "300", ",", 
+   RowBox[{"-", "14"}], ",", 
+   "1.533195466638000615592094437806111310067602728857428454`24.\
+30102999566398*^-23"}], "}"}]], "Print",
+ CellChangeTimes->{3.702999350960149*^9, 3.702999516177434*^9, 
+  3.702999725824644*^9, 3.7029998556911087`*^9, 3.703000110194771*^9, 
+  3.7030004052092457`*^9, 3.7030006815897017`*^9, 3.703000792272954*^9, 
+  3.703000869100926*^9, 3.703001161994841*^9, 3.703001312169092*^9, 
+  3.703001366190086*^9, 3.703001714232242*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"SchwarzschildQNM", "[", 
+  RowBox[{"4", ",", "1", ",", 
+   RowBox[{"RadialDebug", "\[Rule]", "0"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.702996642142729*^9, 3.702996648602644*^9}, 
+   3.702999261650714*^9, {3.703000136874407*^9, 3.703000145226327*^9}, {
+   3.703000240749093*^9, 3.7030002466831636`*^9}, {3.703001320617117*^9, 
+   3.703001332599921*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Computing (l=\"\>", "\[InvisibleSpace]", "4", 
+   "\[InvisibleSpace]", "\<\",n=\"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\")\"\>"}],
+  SequenceForm["Computing (l=", 4, ",n=", 1, ")"],
+  Editable->False]], "Print",
+ CellChangeTimes->{{3.703000146214044*^9, 3.703000167852923*^9}, 
+   3.703000248193183*^9, 3.703000455829599*^9, 3.703000686545906*^9, 
+   3.703001171442481*^9, {3.703001321200883*^9, 3.7030013334061537`*^9}, 
+   3.7030013676107397`*^9, 3.703001716227316*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{
+   "0.7966315320345025151602554661830798559263269483822145135244`24.\
+098001280288834", "-", 
+    RowBox[{
+    "0.2843343494048407186458421675366350212823448636809409806348`24.", " ", 
+     "\[ImaginaryI]"}]}], ",", "1", ",", "300", ",", 
+   RowBox[{"-", "14"}], ",", 
+   "9.548240532999685251778988683567493920431174684110353391`24.\
+301029995663985*^-23"}], "}"}]], "Print",
+ CellChangeTimes->{{3.703000146214044*^9, 3.703000167852923*^9}, 
+   3.703000248193183*^9, 3.703000455829599*^9, 3.703000686545906*^9, 
+   3.703001171442481*^9, {3.703001321200883*^9, 3.7030013334061537`*^9}, 
+   3.7030013676107397`*^9, 3.7030017169087687`*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"SchwarzschildQNM", "[", 
+  RowBox[{"5", ",", "0"}], "]"}]], "Input",
+ CellChangeTimes->{3.702999562933754*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Computing (l=\"\>", "\[InvisibleSpace]", "5", 
+   "\[InvisibleSpace]", "\<\",n=\"\>", "\[InvisibleSpace]", "0", 
+   "\[InvisibleSpace]", "\<\")\"\>"}],
+  SequenceForm["Computing (l=", 5, ",n=", 0, ")"],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.702999563599852*^9, 3.70300011863391*^9, 
+  3.70300133891591*^9, 3.7030013689606237`*^9, 3.7030017199522343`*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{
+   "1.0122953121353505008792041358761169100802728121270567811443`24.\
+14182689237792", "-", 
+    RowBox[{
+    "0.0948705160816095119808521246272962147834393915206473809102`24.", " ", 
+     "\[ImaginaryI]"}]}], ",", "0", ",", "300", ",", 
+   RowBox[{"-", "14"}], ",", 
+   "3.06264856995914149615042490894621544493673272424180074948`24.\
+30102999566398*^-21"}], "}"}]], "Print",
+ CellChangeTimes->{3.702999563599852*^9, 3.70300011863391*^9, 
+  3.70300133891591*^9, 3.7030013689606237`*^9, 3.703001720253542*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"SchwarzschildQNM", "[", 
+  RowBox[{"5", ",", "1"}], "]"}]], "Input",
+ CellChangeTimes->{3.702999562933754*^9, 3.703001345236685*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"Computing (l=\"\>", "\[InvisibleSpace]", "5", 
+   "\[InvisibleSpace]", "\<\",n=\"\>", "\[InvisibleSpace]", "1", 
+   "\[InvisibleSpace]", "\<\")\"\>"}],
+  SequenceForm["Computing (l=", 5, ",n=", 1, ")"],
+  Editable->False]], "Print",
+ CellChangeTimes->{{3.703001346178084*^9, 3.7030013743655777`*^9}, 
+   3.7030017220339413`*^9}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{
+   "1.0022210278905583744242520388970817697111499381204031152783`24.\
+125125403885626", "-", 
+    RowBox[{
+    "0.2858173817722630603127707201336595456017272780592569361246`24.", " ", 
+     "\[ImaginaryI]"}]}], ",", "1", ",", "300", ",", 
+   RowBox[{"-", "14"}], ",", 
+   "7.0439156256414365508778953711208391055341327652008139982`24.\
+30102999566398*^-22"}], "}"}]], "Print",
+ CellChangeTimes->{{3.703001346178084*^9, 3.7030013743655777`*^9}, 
+   3.7030017223756733`*^9}]
+}, Open  ]]
+}, Open  ]]
 },
 WindowSize->{865, 1055},
-WindowMargins->{{Automatic, 140}, {-11, Automatic}},
+WindowMargins->{{452, Automatic}, {27, Automatic}},
 FrontEndVersion->"10.4 for Linux x86 (64-bit) (April 11, 2016)",
 StyleDefinitions->"Default.nb"
 ]
@@ -37,18 +526,99 @@ StyleDefinitions->"Default.nb"
 
 (* Internal cache information *)
 (*CellTagsOutline
-CellTagsIndex->{}
+CellTagsIndex->{
+ "Info103702989607-6234237"->{
+  Cell[3577, 106, 363, 6, 96, "Print",
+   CellTags->"Info103702989607-6234237"]},
+ "Info113702989609-6234237"->{
+  Cell[4083, 121, 1868, 26, 550, "Print",
+   CellTags->"Info113702989609-6234237"]}
+ }
 *)
 (*CellTagsIndex
-CellTagsIndex->{}
+CellTagsIndex->{
+ {"Info103702989607-6234237", 19962, 529},
+ {"Info113702989609-6234237", 20075, 532}
+ }
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[558, 20, 205, 4, 32, "Input"],
-Cell[766, 26, 141, 2, 32, "Input"]
+Cell[CellGroupData[{
+Cell[580, 22, 426, 9, 77, "Input"],
+Cell[1009, 33, 838, 15, 23, "Print"]
+}, Open  ]],
+Cell[1862, 51, 1563, 47, 143, "Input"],
+Cell[CellGroupData[{
+Cell[3450, 102, 124, 2, 32, "Input"],
+Cell[3577, 106, 363, 6, 96, "Print",
+ CellTags->"Info103702989607-6234237"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3977, 117, 103, 2, 32, "Input"],
+Cell[4083, 121, 1868, 26, 550, "Print",
+ CellTags->"Info113702989609-6234237"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5988, 152, 141, 2, 32, "Input"],
+Cell[6132, 156, 673, 16, 55, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6842, 177, 158, 3, 32, "Input"],
+Cell[CellGroupData[{
+Cell[7025, 184, 1042, 18, 23, "Print"],
+Cell[8070, 204, 1190, 23, 51, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9309, 233, 184, 4, 65, "Input"],
+Cell[CellGroupData[{
+Cell[9518, 241, 538, 10, 23, "Print"],
+Cell[10059, 253, 683, 15, 51, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[10791, 274, 184, 4, 32, "Input"],
+Cell[CellGroupData[{
+Cell[11000, 282, 688, 13, 23, "Print"],
+Cell[11691, 297, 837, 18, 51, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[12577, 321, 206, 4, 32, "Input"],
+Cell[CellGroupData[{
+Cell[12808, 329, 512, 10, 23, "Print"],
+Cell[13323, 341, 656, 15, 51, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[14028, 362, 206, 4, 32, "Input"],
+Cell[CellGroupData[{
+Cell[14259, 370, 607, 11, 23, "Print"],
+Cell[14869, 383, 750, 16, 51, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[15668, 405, 382, 7, 32, "Input"],
+Cell[CellGroupData[{
+Cell[16075, 416, 541, 10, 23, "Print"],
+Cell[16619, 428, 690, 15, 51, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[17358, 449, 134, 3, 32, "Input"],
+Cell[CellGroupData[{
+Cell[17517, 456, 416, 8, 23, "Print"],
+Cell[17936, 466, 561, 13, 51, "Print"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[18546, 485, 156, 3, 32, "Input"],
+Cell[CellGroupData[{
+Cell[18727, 492, 377, 8, 23, "Print"],
+Cell[19107, 502, 524, 13, 51, "Print"]
+}, Open  ]]
+}, Open  ]]
 }
 ]
 *)
-
-(* End of internal cache information *)
 
