@@ -29,7 +29,7 @@ SetSpinWeight::usage=
 	"\t s= 0 : Scalar perturbations."
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Definitions for KerrModes Namespace*)
 
 
@@ -85,7 +85,7 @@ Module[{C12tmp,C1,C2,C3,C4,C5,Rem,Err},
 If[!KerrQNMDebug,Protect[RadialCFRemainder]];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Set SpinWeight and Data-Variable Names*)
 
 
@@ -108,7 +108,7 @@ If[!KerrModeDebug,Protect[SetSpinWeight]];
 End[] (* KerrModes`Private` *)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions in KerrQNM Namespace*)
 
 
@@ -153,7 +153,7 @@ Protect[];
 Begin["`Private`"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Initial Guesses*)
 
 
@@ -163,6 +163,13 @@ Options[SchwarzschildQNM]=Options[KerrModes`Private`SchwarzschildMode];
 SchwarzschildQNM[l_Integer,n_Integer,
 				opts:OptionsPattern[]]:=
 Module[{SavePrecision=$MinPrecision,saneopts},
+	SchwarzschildQNM::spinweight="SpinWeight has not been set.  You must call SetSpinWeight[]";
+	SchwarzschildQNM::argl="The order l is set to `1`, but must be \[GreaterEqual] |`2`|";
+	SchwarzschildQNM::argn="The overtone n is set to `1`, but must be \[GreaterEqual] 0";
+	If[OptionValue[SpinWeight]==Null[],Message[SchwarzschildQNM::spinweight];Abort[]];
+	If[l<Abs[OptionValue[SpinWeight]],
+			Message[SchwarzschildQNM::argl,l,OptionValue[SpinWeight]];Abort[]];
+	If[n<0,Message[SchwarzschildQNM::argn,n];Abort[]];
 	(* saneopts ensures options set via SetOptions[SchwarzschildQNM,...] are used *)
 	saneopts=Flatten[Union[{opts},FilterRules[Options[SchwarzschildQNM],Except[Flatten[{opts}]]]]];
 	CheckAbort[KerrModes`Private`SchwarzschildMode[l,n,FilterRules[saneopts,Options[SchwarzschildQNM]]],

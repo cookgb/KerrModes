@@ -4,7 +4,7 @@
 (*Modes of Kerr*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation *)
 
 
@@ -28,7 +28,7 @@
 (*This package is intended to be included in a "wrapper" package that supplies the definitions necessary to compute a specific type of mode: QNM, Subscript[TTM, L], Subscript[TTM, R]*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Begin KerrModes Package*)
 
 
@@ -41,11 +41,11 @@ If[KerrModeDebug,Unprotect["KerrModes`*"];Unprotect["KerrModes`Private`*"]];
 Protect[KerrModeDebug];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Reserved Globals*)
 
 
@@ -56,11 +56,11 @@ Protect[SpinWeight,ModePrecision,RadialCFDepth,RadialCFMinDepth,RadialDebug,Radi
 Begin["`Private`"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Radial Equation : Modified Leaver' s Method*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Newton' s Method for finding roots of Radial Equation*)
 
 
@@ -202,11 +202,11 @@ Module[{sol1,\[Omega]root=\[Omega],\[Delta]\[Omega]1,\[Delta]\[Omega]2,Almc,Ninv
 If[!modeDebug,Protect[RadialLentzStep,RadialLentzRoot]];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Evaluate nth inversion of the Radial Equation' s continued fraction equation*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*"Bottom-up" evaluation at the Nmax element with remainder approximation*)
 
 
@@ -305,37 +305,51 @@ Options[SchGuess]={SpinWeight->Null[]};
 
 SchGuess[l_Integer,n_Integer,opts:OptionsPattern[]]:=
 Module[{s=OptionValue[SpinWeight],guess},
+	SchGuess::spinweight="SpinWeight has not been properly set!";
+	SchGuess::argl="The order l is set to `1`, but must be \[GreaterEqual] |`2`|";
+	SchGuess::argn="The overtone n is set to `1`, but must be \[GreaterEqual] 0";
+	SchGuess::guess="Need initial guess for `1`[`2`,`3`]";
+	SchGuess::count="Overtone count in `1`[`2`]=`3` is incorrect";
+	If[OptionValue[SpinWeight]==Null[],Message[SchGuess::spinweight];Abort[]];
+	If[l<Abs[s],Message[SchGuess::argl,l,s];Abort[]];
+	If[n<0,Message[SchGuess::argn,n];Abort[]];
+	If[Head[SchTable[Abs[s], 0]]==SchTable,
+			Message[SchGuess::guess,SchTable,Abs[s],0];Abort[]];
+	If[Head[SchTable[Abs[s], 1]]==SchTable,
+			Message[SchGuess::guess,SchTable,Abs[s],1];Abort[]];
+	If[Head[SchTable[Abs[s]]]==SchTable,
+			Message[SchGuess::count,SchTable,Abs[s],Null];Abort[]];
+	If[SchTable[Abs[s]]<2,
+			Message[SchGuess::count,SchTable,Abs[s],SchTable[Abs[s]]];Abort[]];
+	If[l>Abs[s],
+		If[Head[SchTable[Abs[s]+1, 0]]==SchTable,
+				Message[SchGuess::guess,SchTable,Abs[s]+1,0];Abort[]];
+		If[Head[SchTable[Abs[s]+1, 1]]==SchTable,
+				Message[SchGuess::guess,SchTable,Abs[s]+1,1];Abort[]];
+		If[Head[SchTable[Abs[s]+1]]==SchTable,
+				Message[SchGuess::count,SchTable,Abs[s]+1,Null];Abort[]];
+		If[SchTable[Abs[s]+1]<2,
+				Message[SchGuess::count,SchTable,Abs[s]+1,SchTable[Abs[s]+1]];Abort[]];
+	];
 	If[n<SchTable[l],
 		(* Initial guess is in Table *)
 		SchTable[l,n],
-		(* Interpolate initial Guess *)
-		If[n<=0,Print[SchTable," not properly initialized"];Abort[]];
-		guess=2 SchGuess[l,n-1,FilterRules[{opts},Options[SchGuess]]]-SchGuess[l,n-2,FilterRules[{opts},Options[SchGuess]]];
-		guess[[1]]=Abs[Re[guess[[1]]]]+I Im[guess[[1]]];
-		guess[[2]]=n; (* Use preferred inversion *)
-		guess,
-		(* No guesses yet for l *)
-		If[Head[SchTable[Abs[s], 0]]==SchTable,
-				Print["Need initial guess for ",SchTable,"[",Abs[s],",0]"];Abort[]];
-		If[Head[SchTable[Abs[s]+1, 0]]==SchTable,
-				Print["Need initial guess for ",SchTable,"[",Abs[s]+1,",0]"];Abort[]];
-		If[Head[SchTable[Abs[s], 1]]==SchTable,
-				Print["Need initial guess for ",SchTable,"[",Abs[s],",1]"];Abort[]];
-		If[Head[SchTable[Abs[s]+1, 1]]==SchTable,
-				Print["Need initial guess for ",SchTable,"[",Abs[s]+1,",1]"];Abort[]];
-		If[l<=Abs[s],Print["Problem with ",SchTable];Abort[]];
-		guess=2 SchGuess[l-1,0,FilterRules[{opts},Options[SchGuess]]]-SchGuess[l-2,0,FilterRules[{opts},Options[SchGuess]]];
-		guess[[1]]=Abs[Re[guess[[1]]]]+I Im[guess[[1]]];
-		guess[[2]]=n; (* Use preferred inversion *)
-		guess[[3]]=0;guess[[4]]=0;guess[[5]]=0;
-		SchTable[l,0]=guess;
-		guess=2 SchGuess[l-1,1,FilterRules[{opts},Options[SchGuess]]]-SchGuess[l-2,1,FilterRules[{opts},Options[SchQGuess]]];
-		guess[[1]]=Abs[Re[guess[[1]]]]+I Im[guess[[1]]];
-		guess[[2]]=n; (* Use preferred inversion *)
-		guess[[3]]=0;guess[[4]]=0;guess[[5]]=0;
-		SchTable[l,1]=guess;
-		SchTable[l]=2;
-		SchGuess[l,n,FilterRules[{opts},Options[SchGuess]]]
+		If[n>SchTable[l],Message[SchGuess::count,SchTable,l,SchTable[l]];Abort[]];
+		If[l>=Abs[s]+1 && n<2,
+			guess=2 SchGuess[l-1,n,FilterRules[{opts},Options[SchGuess]]]-
+							SchGuess[l-2,n,FilterRules[{opts},Options[SchGuess]]];
+			guess[[1]]=Abs[Re[guess[[1]]]]+I Im[guess[[1]]];
+			guess[[2]]=n; (* Use preferred inversion *)
+			guess[[3]]=0;guess[[4]]=0;guess[[5]]=0;
+			SchTable[l,n]=guess,
+			guess=2 SchGuess[l,n-1,FilterRules[{opts},Options[SchGuess]]]-
+							SchGuess[l,n-2,FilterRules[{opts},Options[SchGuess]]];
+			guess[[1]]=Abs[Re[guess[[1]]]]+I Im[guess[[1]]];
+			guess[[2]]=n; (* Use preferred inversion *)
+			SchTable[l,n]=guess
+		],
+		Message[SchGuess::count,SchTable,l,SchTable[l]];
+		Abort[];
 	]
 ]
 
@@ -352,51 +366,44 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 		notconverged,guess,sol0,sol1,\[Epsilon]=-14,
 		RCFmin=OptionValue[RadialCFMinDepth],
 		precision=OptionValue[ModePrecision]},
+	SchwarzschildMode::spinweight="SpinWeight has not been properly set!";
+	SchwarzschildMode::argl="The order l is set to `1`, but must be \[GreaterEqual] |`2`|";
+	SchwarzschildMode::argn="The overtone n is set to `1`, but must be \[GreaterEqual] 0";
+	SchwarzschildMode::convergence="Solution failed to converge for (`1`,`2`)";
+	If[OptionValue[SpinWeight]==Null[],Message[SchwarzschildMode::spinweight];Abort[]];
+	If[l<Abs[s],Message[SchwarzschildMode::argl,l,s];Abort[]];
+	If[n<0,Message[SchwarzschildMode::argn,n];Abort[]];
 	$MinPrecision = precision;
-	If[SchTable[l]<n, 
-		SchwarzschildMode[l,n-1,FilterRules[{opts},Options[SchwarzschildMode]]],
-		Null[],
-		(* No initial guesses yet for l *)
-		SchGuess[l,n,FilterRules[{opts},Options[SchGuess]]];
-	];
+	If[Head[SchTable[l]]==SchTable,SchTable[l]=0];
+	If[SchTable[l]<n,SchwarzschildMode[l,n-1,FilterRules[{opts},Options[SchwarzschildMode]]]];
+	Print["Computing (l=", l, ",n=", n, ")"];
+	sol1=SchGuess[l, n,FilterRules[{opts},Options[SchGuess]]];
+	Ninv = n;
 	If[rcfdepth>RCFmin,Nrcf=IntegerPart[rcfdepth]];
 	If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
 	Nrcf=Max[Nrcf,RCFmin];
-	If[SchTable[l]>=n,
-		Print["Computing (l=", l, ",n=", n, ")"];
-		If[Head[SchTable[l, n]]==SchTable,
-			Print["No prior guess"];
-			sol1=SchGuess[l, n];
-			Ninv = n, (* Use preferred inversion *)
-			(*False Case*)
-			sol1 = SchGuess[l, n];
-			Ninv = n, (* Use preferred inversion *)
-			(*Unevaluated Case*)
-			sol1 = SchGuess[l, n];
-			Ninv = n; (* Use preferred inversion *)
+	notconverged = True;
+	While[notconverged,
+		sol1=RadialLentzRoot[Ninv,s,0,0,l(l+1)-s(s+1),SetPrecision[sol1[[1]],precision],Nrcf,l+2,\[Epsilon],10^(-3),FilterRules[{opts},Options[RadialLentzRoot]]];
+		If[sol1[[1, 1]],
+			jacobianmatrix=sol1[[1,3]];
+			sol1=sol1[[2]];
+			rcferr=TestRadialCFConvergence[Ninv,s,0,0,l(l+1)-s(s+1),SetPrecision[sol1[[1]],precision],Nrcf,jacobianmatrix,\[Epsilon],RCFmin,l+2,1,FilterRules[{opts},Options[TestRadialCFConvergence]]];
+			Nradialnew=rcferr[[1]];
+			If[debug>0,Print["RadialConverg : ",rcferr]];
+			If[(Nradialnew>Nrcf),
+				Nrcf=Nradialnew;
+				If[debug>0,Print["Increase Nradial to ",Nrcf]];
+				,
+				notconverged=False;
+			],
+			Message[SchwarzschildMode::convergence,l,n];
+			Abort[];
 		];
-		notconverged = True;
-		While[notconverged,
-			sol1=RadialLentzRoot[Ninv,s,0,0,l(l+1)-s(s+1),SetPrecision[sol1[[1]],precision],Nrcf,l+2,\[Epsilon],10^(-3),FilterRules[{opts},Options[RadialLentzRoot]]];
-			If[sol1[[1, 1]],
-				jacobianmatrix=sol1[[1,3]];
-				sol1=sol1[[2]];
-				rcferr=TestRadialCFConvergence[Ninv,s,0,0,l(l+1)-s(s+1),SetPrecision[sol1[[1]],precision],Nrcf,jacobianmatrix,\[Epsilon],RCFmin,l+2,1,FilterRules[{opts},Options[TestRadialCFConvergence]]];
-				Nradialnew=rcferr[[1]];
-				If[debug>0,Print["RadialConverg : ",rcferr]];
-				If[(Nradialnew>Nrcf),
-					Nrcf=Nradialnew;
-					If[debug>0,Print["Increase Nradial to ",Nrcf]];
-					,
-					notconverged=False;
-				],
-				Return[];
-			];
-		];
-		SchTable[l,n]=sol1;
-		SchTable[l]=Max[SchTable[l],n+1];
-		Print[sol1];
 	];
+	SchTable[l,n]=sol1;
+	SchTable[l]=Max[SchTable[l],n+1];
+	Print[sol1];
 ]
 
 
