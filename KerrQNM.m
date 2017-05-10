@@ -91,11 +91,12 @@ If[!KerrQNMDebug,Protect[RadialCFRemainder]];
 
 SetSpinWeight[s_Integer]:=
 Module[{},
+	SetSpinWeight::spinweight="Invalid QNM Spin Weight : `1`";
 	Switch[s,
 		   -2,modeName:=Global`KerrQNM; SchTable:=Global`SchQNMTable,
 		   -1,modeName:=Global`KerrQNMe; SchTable:=Global`SchQNMeTable,
 		    0,modeName:=Global`KerrQNMs; SchTable:=Global`SchQNMsTable,
-			_,Print["Invalid QNM Spin Weight : ",s];Abort[]
+			_,Message[SetSpinWeight::spinweight,s];Abort[]
 		  ];
 	SetOptions[KerrQNM`SchwarzschildQNM,SpinWeight->s];
 	Print["All KerrMode routines (QNM) set for Spin-Weight s = ",s];
@@ -143,11 +144,20 @@ SchwarzschildQNM::usage=
 	"\t\t 'Verbosity' level during the Radial Newton iterations.\n"
 
 
-(* ::Subsection:: *)
+PlotSchQNM::usage=
+	"PlotSchQNM[l] plots both the \"positive\" and \"negative\" frequency QNMs.  "<>
+	"By default, the gravitational modes are plotted, but the PlotSpinWeight option "<>
+	"can be set to change this.\n\n"<>
+	"Options:\n"<>
+	"\t PlotSpinWeight->-2 : -2,-1,0\n\n"<>
+	"PlotSchQNM also take all of the options available to ListPlot.\n"
+
+
+(* ::Subsection::Closed:: *)
 (*Reserved Globals*)
 
 
-Protect[];
+Protect[PlotSpinWeight];
 
 
 Begin["`Private`"]
@@ -175,6 +185,27 @@ Module[{SavePrecision=$MinPrecision,saneopts},
 	CheckAbort[KerrModes`Private`SchwarzschildMode[l,n,FilterRules[saneopts,Options[SchwarzschildQNM]]],
 				$MinPrecision=SavePrecision;Abort[]];
 	$MinPrecision=SavePrecision;
+]
+
+
+(* ::Section::Closed:: *)
+(*Graphics*)
+
+
+Options[PlotSchQNM]=Union[{PlotSpinWeight->-2},Options[KerrModes`Private`PlotSchModes]];
+
+
+PlotSchQNM[l_Integer,opts:OptionsPattern[]]:=
+Module[{s=OptionValue[PlotSpinWeight],ptable},
+	PlotSchQNM::spinweight="Invalid QNM Spin Weight : `1`";
+	Switch[s,
+		   -2,ptable:=Global`SchQNMTable,
+		   -1,ptable:=Global`SchQNMeTable,
+		    0,ptable:=Global`SchQNMsTable,
+			_,Message[PlotSchQNM::spinweight,s];Abort[]
+		  ];
+	KerrModes`Private`PlotSchModes[l,PlotTable->ptable,
+									FilterRules[{opts},Options[KerrModes`Private`PlotSchModes]]]
 ]
 
 

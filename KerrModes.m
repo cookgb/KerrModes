@@ -296,7 +296,7 @@ MyPrecision[x_?NumberQ]:=Module[{saveprecision,returnprecision},
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Initial Guesses*)
 
 
@@ -404,6 +404,23 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 	SchTable[l,n]=sol1;
 	SchTable[l]=Max[SchTable[l],n+1];
 	Print[sol1];
+]
+
+
+(* ::Section::Closed:: *)
+(*Graphics*)
+
+
+Options[PlotSchModes]=Union[{PlotTable->Null[]},Options[ListPlot]];
+
+
+PlotSchModes[l_Integer,opts:OptionsPattern[]]:=
+Module[{ptable=OptionValue[PlotTable]},
+	PlotSchModes::plottable="Invalid PlotTable : `1`";
+	If[ptable==Null[],Message[PlotSchModes::plottable,Null[]];Abort[]];
+	plist=Table[{Re[ptable[l,n][[1]]],-Im[ptable[l,n][[1]]]},{n,0,ptable[l]-1}];
+	mlist=Table[{-Re[ptable[l,n][[1]]],-Im[ptable[l,n][[1]]]},{n,0,ptable[l]-1}];
+	ListLinePlot[{plist,mlist},PlotMarkers->Automatic,FilterRules[{opts},Options[ListLinePlot]]]
 ]
 
 
