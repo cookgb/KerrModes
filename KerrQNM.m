@@ -29,14 +29,14 @@ SetSpinWeight::usage=
 	"\t s= 0 : Scalar perturbations."
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Definitions for KerrModes Namespace*)
 
 
 Begin["KerrModes`Private`"]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Define the QNM Radial Equation recurrence relation coefficients*)
 
 
@@ -58,11 +58,11 @@ D3=Simplify[4p*\[Alpha]-\[Alpha]*\[Delta]-\[Sigma]]; D4=Simplify[\[Alpha](1+\[Al
 \[Gamma]r[n_Integer|n_Plus|n_Symbol,s_Integer,m_Integer,a_Rational|a_Integer,Alm_?NumberQ,\[Omega]_?NumberQ]=n^2+(D2-3)n+D4-D2+2;
 
 
-Clear[rp,rm,\[Sigma]p,C0,C1,C2,C3,C4,D0,D1,D2,D3,D4];
+Clear[rp,rm,\[Sigma]p,\[Sigma]m,\[Zeta],\[Xi],\[Eta],p,\[Alpha],\[Gamma],\[Delta],\[Sigma],D0,D1,D2,D3,D4];
 If[!KerrQNMDebug,Protect[\[Alpha]r,\[Beta]r,\[Gamma]r]];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Approximation of remainder at the Nmax element of the continued fraction*)
 
 
