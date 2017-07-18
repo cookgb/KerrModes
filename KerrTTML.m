@@ -98,7 +98,7 @@ Module[{},
 		    0,modeName:=Global`KerrTTMLs; SchTable:=Global`SchTTMLsTable,
 			_,Message[SetSpinWeight::spinweight,s];Abort[]
 		  ];
-	SetOptions[KerrTTML`schwarzschildTTML,SpinWeight->s];
+	SetOptions[KerrTTML`SchwarzschildTTML,SpinWeight->s];
 	Print["All KerrMode routines (TTML) set for Spin-Weight s = ",s];
 ]
 
@@ -113,8 +113,8 @@ End[] (* KerrModes`Private` *)
 (*Documentation of External Functions in KerrTTML Namespace*)
 
 
-schwarzschildTTML::usage=
-	"schwarzschildTTML[l,n] computes the Quasi-Normal Mode solutions for overtone n of mode l.  "<>
+SchwarzschildTTML::usage=
+	"SchwarzschildTTML[l,n] computes the Quasi-Normal Mode solutions for overtone n of mode l.  "<>
 	"The mode is computed to an accuracy of \!\(\*SuperscriptBox[\(10\), \(-14\)]\).  For given 'l', if solutions with overtones "<>
 	"(n-1) and (n-2) have not been computed, then the routine is recersively called for overtone "<>
 	"'(n-1).  If no solutions exist for mode l, then the first two overtones of (l-1) and (l-2) "<>
@@ -144,7 +144,7 @@ schwarzschildTTML::usage=
 	"\t\t 'Verbosity' level during the Radial Newton iterations.\n"
 
 
-SchTTMLTable::usage=
+PlotSchTTML::usage=
 	"SchTTMLTable[l] plots both the \"positive\" and \"negative\" frequency TTMLs.  "<>
 	"By default, the gravitational modes are plotted, but the PlotSpinWeight option "<>
 	"can be set to change this.\n\n"<>
@@ -167,22 +167,22 @@ Begin["`Private`"]
 (*Initial Guesses*)
 
 
-Options[schwarzschildTTML]=Options[KerrModes`Private`SchwarzschildMode];
+Options[SchwarzschildTTML]=Options[KerrModes`Private`SchwarzschildMode];
 
 
-schwarzschildTTML[l_Integer,n_Integer,
+SchwarzschildTTML[l_Integer,n_Integer,
 				opts:OptionsPattern[]]:=
 Module[{SavePrecision=$MinPrecision,saneopts},
-	schwarzschildTTML::spinweight="SpinWeight has not been set.  You must call SetSpinWeight[]";
-	schwarzschildTTML::argl="The order l is set to `1`, but must be \[GreaterEqual] |`2`|";
-	schwarzschildTTML::argn="The overtone n is set to `1`, but must be \[GreaterEqual] 0";
-	If[OptionValue[SpinWeight]==Null[],Message[schwarzschildTTML::spinweight];Abort[]];
+	SchwarzschildTTML::spinweight="SpinWeight has not been set.  You must call SetSpinWeight[]";
+	SchwarzschildTTML::argl="The order l is set to `1`, but must be \[GreaterEqual] |`2`|";
+	SchwarzschildTTML::argn="The overtone n is set to `1`, but must be \[GreaterEqual] 0";
+	If[OptionValue[SpinWeight]==Null[],Message[SchwarzschildTTML::spinweight];Abort[]];
 	If[l<Abs[OptionValue[SpinWeight]],
-			Message[schwarzschildTTML::argl,l,OptionValue[SpinWeight]];Abort[]];
-	If[n<0,Message[schwarzschildTTML::argn,n];Abort[]];
-	(* saneopts ensures options set via SetOptions[schwarzschildTTML,...] are used *)
-	saneopts=Flatten[Union[{opts},FilterRules[Options[schwarzschildTTML],Except[Flatten[{opts}]]]]];
-	CheckAbort[KerrModes`Private`SchwarzschildMode[l,n,FilterRules[saneopts,Options[schwarzschildTTML]]],
+			Message[SchwarzschildTTML::argl,l,OptionValue[SpinWeight]];Abort[]];
+	If[n<0,Message[SchwarzschildTTML::argn,n];Abort[]];
+	(* saneopts ensures options set via SetOptions[SchwarzschildTTML,...] are used *)
+	saneopts=Flatten[Union[{opts},FilterRules[Options[SchwarzschildTTML],Except[Flatten[{opts}]]]]];
+	CheckAbort[KerrModes`Private`SchwarzschildMode[l,n,FilterRules[saneopts,Options[SchwarzschildTTML]]],
 				$MinPrecision=SavePrecision;Abort[]];
 	$MinPrecision=SavePrecision;
 ]
@@ -192,17 +192,17 @@ Module[{SavePrecision=$MinPrecision,saneopts},
 (*Graphics*)
 
 
-Options[SchTTMLTable]=Union[{PlotSpinWeight->-2},Options[KerrModes`Private`PlotSchModes]];
+Options[PlotSchTTML]=Union[{PlotSpinWeight->-2},Options[KerrModes`Private`PlotSchModes]];
 
 
-SchTTMLTable[l_Integer,opts:OptionsPattern[]]:=
+PlotSchTTML[l_Integer,opts:OptionsPattern[]]:=
 Module[{s=OptionValue[PlotSpinWeight],ptable},
-	SchTTMLTable::spinweight="Invalid TTML Spin Weight : `1`";
+	PlotSchTTML::spinweight="Invalid TTML Spin Weight : `1`";
 	Switch[s,
 		   -2,ptable:=Global`SchTTMLTable,
 		   -1,ptable:=Global`SchTTMLeTable,
 		    0,ptable:=Global`SchTTMLsTable,
-			_,Message[SchTTMLTable::spinweight,s];Abort[]
+			_,Message[PlotSchTTML::spinweight,s];Abort[]
 		  ];
 	KerrModes`Private`PlotSchModes[l,PlotTable->ptable,
 									FilterRules[{opts},Options[KerrModes`Private`PlotSchModes]]]
