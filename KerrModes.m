@@ -45,6 +45,12 @@ Protect[KerrModeDebug];
 (*Documentation of External Functions*)
 
 
+PlotContFrac::usage=""
+
+
+PlotContFrac2::usage=""
+
+
 (* ::Subsection::Closed:: *)
 (*Reserved Globals*)
 
@@ -409,6 +415,22 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 
 (* ::Section::Closed:: *)
 (*Graphics*)
+
+
+PlotContFrac[n_Integer,s_Integer,m_Integer,a_Rational|a_Integer,
+			Alm_?NumberQ,\[Omega]_?NumberQ,Nrcf_Integer,Nm_Integer]:= 
+Module[{Alm\[Omega]},
+	Alm\[Omega]=AngularSpectralRoot[s,m,a*\[Omega],Alm,Nm][[1]];
+	RadialCFRem[n,s,m,a,Alm\[Omega],\[Omega],Nrcf][[1]]
+]
+
+
+PlotContFrac2[n_Integer,s_Integer,m_Integer,a_Rational|a_Integer,
+			lindex_Integer,\[Omega]_?NumberQ,Nrcf_Integer,Nm_Integer]:= 
+Module[{Alm\[Omega]},
+	Alm\[Omega]=AngularSpectralRootIndex[s,m,a*\[Omega],lindex,Nm][[1]];
+	RadialCFRem[n,s,m,a,Alm\[Omega],\[Omega],Nrcf][[1]]
+]
 
 
 Options[PlotSchModes]=Union[{PlotTable->Null[]},Options[ListPlot]];
