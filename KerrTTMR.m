@@ -24,19 +24,19 @@ Protect[KerrTTMRDebug];
 SetSpinWeight::usage=
 	"SetSpinWeight[s] sets the value of the spin-weight used in all subsequent "<>
 	"TTMR computations:\n"<>
-	"\t s=-2 : Gravitational perturbations\n"<>
-	"\t s=-1 : Electro-Magnetic perturbations\n"<>
-	"\t s= 0 : Scalar perturbations."
+	"\t s=2 : Gravitational perturbations\n"<>
+	"\t s=1 : Electro-Magnetic perturbations\n"<>
+	"\t s=0 : Scalar perturbations."
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Definitions for KerrModes Namespace*)
 
 
 Begin["KerrModes`Private`"]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Define the TTMR Radial Equation recurrence relation coefficients*)
 
 
@@ -62,7 +62,7 @@ Clear[rp,rm,\[Sigma]p,\[Sigma]m,\[Zeta],\[Xi],\[Eta],p,\[Alpha],\[Gamma],\[Delta
 If[!KerrTTMRDebug,Protect[\[Alpha]r,\[Beta]r,\[Gamma]r]];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Approximation of remainder at the Nmax element of the continued fraction*)
 
 
@@ -93,10 +93,10 @@ SetSpinWeight[s_Integer]:=
 Module[{},
 	SetSpinWeight::spinweight="Invalid TTMR Spin Weight : `1`";
 	Switch[s,
-		   -2,modeName:=Global`KerrTTMR; SchTable:=Global`SchTTMRTable,
-		   -1,modeName:=Global`KerrTTMRe; SchTable:=Global`SchTTMReTable,
-		    0,modeName:=Global`KerrTTMRs; SchTable:=Global`SchTTMRsTable,
-			_,Message[SetSpinWeight::spinweight,s];Abort[]
+		   2,modeName:=Global`KerrTTMR; SchTable:=Global`SchTTMRTable,
+		   1,modeName:=Global`KerrTTMRe; SchTable:=Global`SchTTMReTable,
+		   0,modeName:=Global`KerrTTMRs; SchTable:=Global`SchTTMRsTable,
+		   _,Message[SetSpinWeight::spinweight,s];Abort[]
 		  ];
 	SetOptions[KerrTTMR`SchwarzschildTTMR,SpinWeight->s];
 	Print["All KerrMode routines (TTMR) set for Spin-Weight s = ",s];
@@ -120,7 +120,7 @@ SchwarzschildTTMR::usage=
 	"'(n-1).  If no solutions exist for mode l, then the first two overtones of (l-1) and (l-2) "<>
 	"are used to extrapolate initial guesses for these modes.\n\n"<>
 	"Options:\n"<>
-	"\t SpinWeight\[Rule]Null : -2,-1,0\n"<>
+	"\t SpinWeight\[Rule]Null : 2,1,0\n"<>
 	"\t\t The spin weight must be set via a call to SetSpinWeight before any KerrTTMR\n"<>
 	"\t\t function call.\n"<>
 	"\t ModePrecision\[Rule]24\n"<>
@@ -149,7 +149,7 @@ PlotSchTTMR::usage=
 	"By default, the gravitational modes are plotted, but the PlotSpinWeight option "<>
 	"can be set to change this.\n\n"<>
 	"Options:\n"<>
-	"\t PlotSpinWeight->-2 : -2,-1,0\n\n"<>
+	"\t PlotSpinWeight->2 : 2,1,0\n\n"<>
 	"PlotSchTTMR also take all of the options available to ListPlot.\n"
 
 
@@ -163,7 +163,7 @@ Protect[PlotSpinWeight];
 Begin["`Private`"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Initial Guesses*)
 
 
@@ -192,17 +192,17 @@ Module[{SavePrecision=$MinPrecision,saneopts},
 (*Graphics*)
 
 
-Options[PlotSchTTMR]=Union[{PlotSpinWeight->-2},Options[KerrModes`Private`PlotSchModes]];
+Options[PlotSchTTMR]=Union[{PlotSpinWeight->2},Options[KerrModes`Private`PlotSchModes]];
 
 
 PlotSchTTMR[l_Integer,opts:OptionsPattern[]]:=
 Module[{s=OptionValue[PlotSpinWeight],ptable},
 	PlotSchTTMR::spinweight="Invalid TTMR Spin Weight : `1`";
 	Switch[s,
-		   -2,ptable:=Global`SchTTMRTable,
-		   -1,ptable:=Global`SchTTMReTable,
-		    0,ptable:=Global`SchTTMRsTable,
-			_,Message[PlotSchTTMR::spinweight,s];Abort[]
+		   2,ptable:=Global`SchTTMRTable,
+		   1,ptable:=Global`SchTTMReTable,
+		   0,ptable:=Global`SchTTMRsTable,
+		   _,Message[PlotSchTTMR::spinweight,s];Abort[]
 		  ];
 	KerrModes`Private`PlotSchModes[l,PlotTable->ptable,
 									FilterRules[{opts},Options[KerrModes`Private`PlotSchModes]]]
