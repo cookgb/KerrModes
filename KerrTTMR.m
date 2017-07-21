@@ -1,7 +1,7 @@
 (* ::Package:: *)
 
 (* ::Title:: *)
-(*Total Transmission Modes of Kerr*)
+(*Right Total Transmission Modes of Kerr*)
 
 
 (* ::Section::Closed:: *)
@@ -49,8 +49,8 @@ rp=1+Sqrt[1-a^2]; rm=1-Sqrt[1-a^2]; \[Sigma]p=(2\[Omega]*rp-m a)/(rp-rm); \[Sigm
 p=(rp-rm)\[Zeta]/2; \[Alpha]=1+s+\[Xi]+\[Eta]-2\[Zeta]+s*I*\[Omega]/\[Zeta]; \[Gamma]=1+s+2\[Eta]; \[Delta]=1+s+2\[Xi]; \[Sigma]=Alm+a^2*\[Omega]^2-8\[Omega]^2+p(2\[Alpha]+\[Gamma]-\[Delta])+(1+s-(\[Gamma]+\[Delta])/2)(s+(\[Gamma]+\[Delta])/2);
 
 
-D0=Simplify[\[Delta]]; D1=Simplify[-2-4 p+2 \[Alpha]-\[Gamma]-3 \[Delta]]; D2=Simplify[2-2 \[Alpha]+\[Gamma]+2 \[Delta]];
-D3=Simplify[4 p (\[Alpha]-\[Delta])+\[Alpha] \[Delta]-\[Gamma] \[Delta]-\[Delta]^2-\[Sigma]]; D4=Simplify[(-1+\[Alpha]-\[Delta]) (\[Alpha]-\[Gamma]-\[Delta])];
+D0=Simplify[\[Delta]]; D1=Simplify[-2+4p-2\[Alpha]+\[Gamma]-\[Delta]]; D2=Simplify[2+2\[Alpha]-\[Gamma]];
+D3=Simplify[4p*\[Alpha]-\[Alpha]*\[Delta]-\[Sigma]]; D4=Simplify[\[Alpha](1+\[Alpha]-\[Gamma])];
 
 
 \[Alpha]r[n_Integer|n_Plus|n_Symbol,s_Integer,m_Integer,a_Rational|a_Integer,Alm_?NumberQ,\[Omega]_?NumberQ]=n^2+(D0+1)n+D0;
@@ -69,13 +69,13 @@ If[!KerrTTMRDebug,Protect[\[Alpha]r,\[Beta]r,\[Gamma]r]];
 RadialCFRemainder[s_Integer,m_Integer,a_Rational|a_Integer,
 				  Alm_?NumberQ,\[Omega]_?NumberQ,Nmax_Integer]:=
 Module[{C12tmp,C1,C2,C3,C4,C5,Rem,Err},
-	C12tmp=-4I Sqrt[1-a^2]\[Omega];
+	C12tmp=4I Sqrt[1-a^2]\[Omega];
 	C1 = Sqrt[C12tmp];
 	If[Re[C1]>0,C1=-C1];
-	C2=-(3-4s+8I(\[Omega]+Sqrt[1-a^2]\[Omega]))/4;
-	C3=(3+16Alm+16s+16s^2-32a m \[Omega]-128\[Omega]^2+80a^2\[Omega]^2-128Sqrt[1-a^2]\[Omega]^2-32I(-5Sqrt[1-a^2]\[Omega]+4Sqrt[1-a^2]s \[Omega]))/(32C1);
-	C4=(32\[Omega](9+4Alm+2s(-5+4s)+4a \[Omega](-2m+a \[Omega]))+(I(3+16Alm+96a m \[Omega]+16(s^2+(32-51a^2+32Sqrt[1-a^2])\[Omega]^2+s(1+16a \[Omega](-m+2a \[Omega])))))/Sqrt[1-a^2])/(256\[Omega]);
-	C5=-(1/(8192(-1+a^2)C1 \[Omega]))I(-256Sqrt[1-a^2]Alm^2+Sqrt[1-a^2](63+288s+32s^2-512s^3-256s^4)+64I(21+100s+48s^2-64s^3+I a Sqrt[1-a^2]m(9+48s+112s^2)+a^2(-21-100s-48s^2+64s^3))\[Omega]+32(320I a m(-3+4s)-320I a^3m(-3+4s)-8(-3+225Sqrt[1-a^2]-16(1+19Sqrt[1-a^2])s+16(-1+3Sqrt[1-a^2])s^2)+a^2(3(-8+591Sqrt[1-a^2])+224Sqrt[1-a^2]m^2-16(8+133Sqrt[1-a^2])s+16(-8+59Sqrt[1-a^2])s^2))\[Omega]^2-1024I(-8I a(1+Sqrt[1-a^2])m-I a^3(-8+15Sqrt[1-a^2])m-5a^4(-7+4s)+8(1+Sqrt[1-a^2])(3+4s)-a^2(59+24Sqrt[1-a^2]+4(3+8Sqrt[1-a^2])s))\[Omega]^3+256(-128(1+Sqrt[1-a^2])+a^4(-80+7Sqrt[1-a^2])+16a^2(13+9Sqrt[1-a^2]))\[Omega]^4-32Alm(Sqrt[1-a^2](-9+16s+16s^2)-32I(7+3I a Sqrt[1-a^2]m-4s+a^2(-7+4s))\[Omega]-16(8(1+Sqrt[1-a^2])+a^2(-8+11Sqrt[1-a^2]))\[Omega]^2));
+	C2=(-3-4s+(8I)(\[Omega]+Sqrt[1-a^2]\[Omega]))/4;
+	C3=(3+16Alm+16s+16s^2+32a*m*\[Omega]-256\[Omega]^2+80a^2\[Omega]^2-256Sqrt[1-a^2]\[Omega]^2-(32I)(5Sqrt[1-a^2]\[Omega]+2Sqrt[1-a^2]s*\[Omega]))/(32C1);
+	C4=(-3I-(16I)s(1+s)+288Sqrt[1-a^2]\[Omega]+16(Alm(-I+8Sqrt[1-a^2]\[Omega])+\[Omega](2a*m(3I+8(2+Sqrt[1-a^2])\[Omega])+a^2\[Omega](51I+8(8+Sqrt[1-a^2])\[Omega])+8(3Sqrt[1-a^2]s-(1+Sqrt[1-a^2])\[Omega](7I+16\[Omega])))))/(256Sqrt[1-a^2]\[Omega]);
+	C5=(-63I+(256I)Alm^2+(256I)s^4-1344Sqrt[1-a^2]\[Omega]-(576I)a*m*\[Omega]+(59904I)\[Omega]^2-(56736I)a^2\[Omega]^2+(1536I)Sqrt[1-a^2]\[Omega]^2-30720a*Sqrt[1-a^2]m*\[Omega]^2-(7168I)a^2m^2\[Omega]^2+147456\[Omega]^3-147456a^2\[Omega]^3+147456Sqrt[1-a^2]\[Omega]^3-35840a^2Sqrt[1-a^2]\[Omega]^3+(81920I)a*m*\[Omega]^3-(15360I)a^3m*\[Omega]^3+(81920I)a*Sqrt[1-a^2]m*\[Omega]^3-(262144I)\[Omega]^4+(172032I)a^2\[Omega]^4-(1792I)a^4\[Omega]^4-(262144I)Sqrt[1-a^2]\[Omega]^4+(40960I)a^2Sqrt[1-a^2]\[Omega]^4+512s^3(I+4Sqrt[1-a^2]\[Omega])+(32I)s^2(-1+32((5I)Sqrt[1-a^2]+a*m)\[Omega]+16(-24+13a^2+16Sqrt[1-a^2])\[Omega]^2)+32s(-9I-4(53Sqrt[1-a^2]+(24I)a*m)\[Omega]+16((-35I)a^2+(8I)(5+2Sqrt[1-a^2])+8a*Sqrt[1-a^2]m)\[Omega]^2+64(-16(1+Sqrt[1-a^2])+a^2(16+5Sqrt[1-a^2]))\[Omega]^3)+32Alm((16I)s^2+16s(I+4Sqrt[1 - a^2]\[Omega])+I(-9+(32*I)(7Sqrt[1-a^2]+(3I)a*m)\[Omega]+16(16-11a^2+16Sqrt[1-a^2])\[Omega]^2)))/(8192Sqrt[1-a^2]C1*\[Omega]);
 	Rem=1+C1/Sqrt[Nmax]+C2/Nmax+C3/(Nmax^(3/2))+C4/Nmax^2+C5/(Nmax^(5/2));
 	Err=Abs[(C5/(Nmax^(5/2)))/Rem];
 	{Rem,Err}
