@@ -28,7 +28,7 @@
 (*This package is intended to be included in a "wrapper" package that supplies the definitions necessary to compute a specific type of mode: QNM, Subscript[TTM, L], Subscript[TTM, R]*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Begin KerrModes Package*)
 
 
@@ -41,7 +41,7 @@ If[KerrModeDebug,Unprotect["KerrModes`*"];Unprotect["KerrModes`Private`*"]];
 Protect[KerrModeDebug];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions*)
 
 
@@ -51,7 +51,7 @@ PlotContFrac::usage=""
 PlotContFrac2::usage=""
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Reserved Globals*)
 
 
@@ -62,11 +62,11 @@ Protect[SpinWeight,ModePrecision,RadialCFDepth,RadialCFMinDepth,RadialDebug,Radi
 Begin["`Private`"]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Radial Equation : Modified Leaver' s Method*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Newton' s Method for finding roots of Radial Equation*)
 
 
@@ -79,6 +79,12 @@ RadialLentzStep[n_Integer,s_Integer,m_Integer,
 				Nrcf_Integer,Nm_Integer,\[Epsilon]_Integer,OptionsPattern[]]:= 
 Module[{\[Omega]r,\[Omega]i,Almr,sol,solpr,\[CapitalDelta]sol,pcount,pflag,\[CapitalDelta]\[Omega]r,\[CapitalDelta]\[Omega]i,RedRd\[Omega]r,RedRd\[Omega]i,ImdRd\[Omega]r,ImdRd\[Omega]i,\[Delta]\[Omega],WorkPrec,
 		radialdebug=OptionValue[RadialDebug]},
+	RadialLentzStep::increase="Excessive increase in Precision, Abort";
+	RadialLentzStep::debug4="RadialLentzStep :`1` : `2`";
+	RadialLentzStep::debug5Re="`1` \[Delta]\[Omega]r + `2` \[Delta]\[Omega]i==`3`";
+	RadialLentzStep::debug5Im="`1` \[Delta]\[Omega]r + `2` \[Delta]\[Omega]i==`3`";
+	RadialLentzStep::debug6="Precision - \[Delta]\[Omega] : `1`, `2`";
+	RadialLentzStep::pflag="Set $MinPrecision =`1`";
 	sol=RadialCFRem[n,s,m,a,Alm,\[Omega],Nrcf];
 	\[CapitalDelta]\[Omega]r=Re[\[Omega]]\[Omega]step;\[CapitalDelta]\[Omega]i=Im[\[Omega]]\[Omega]step;
 	\[Omega]r=Re[\[Omega]](1+\[Omega]step)+I Im[\[Omega]];
@@ -96,10 +102,12 @@ Module[{\[Omega]r,\[Omega]i,Almr,sol,solpr,\[CapitalDelta]sol,pcount,pflag,\[Cap
 		];
 		On[Precision::mnprec,Accuracy::mnprec];
 		pflag=True;
-		If[++pcount==10,Print["Excessive increase in Precision, Abort"];Abort[]];
+		(*If[++pcount==10,Print["Excessive increase in Precision, Abort"];Abort[]];*)
+		If[++pcount==10,Message[RadialLentzStep::increase];Abort[]];
 		sol=RadialCFRem[n,s,m,a,Alm,\[Omega],Nrcf];
 	];
-	If[pflag,Print["Set $MinPrecision = ",$MinPrecision]];
+	(*If[pflag,Print["Set $MinPrecision = ",$MinPrecision]];*)
+	If[pflag,Message[RadialLentzStep::pflag,$MinPrecision]];
 	RedRd\[Omega]r=Re[\[CapitalDelta]sol]/\[CapitalDelta]\[Omega]r;
 	ImdRd\[Omega]r=Im[\[CapitalDelta]sol]/\[CapitalDelta]\[Omega]r;
 	ImdRd\[Omega]i=RedRd\[Omega]r;
@@ -107,9 +115,13 @@ Module[{\[Omega]r,\[Omega]i,Almr,sol,solpr,\[CapitalDelta]sol,pcount,pflag,\[Cap
 	If[Abs[sol[[1]]]==0,
 		Return[{Solve[{\[Delta]\[Omega]r==0,\[Delta]\[Omega]i==0},{\[Delta]\[Omega]r,\[Delta]\[Omega]i}][[1]],sol,{{RedRd\[Omega]r,RedRd\[Omega]i},{ImdRd\[Omega]r,ImdRd\[Omega]i}}}];
 	]; (* Avoid error case *)
-	If[radialdebug>4,
+	(*If[radialdebug>4,
 		Print[RedRd\[Omega]r,"\[Delta]\[Omega]r + ",RedRd\[Omega]i,"\[Delta]\[Omega]i==",-Re[sol[[1]]]];
 		Print[ImdRd\[Omega]r,"\[Delta]\[Omega]r + ",ImdRd\[Omega]i,"\[Delta]\[Omega]i==",-Im[sol[[1]]]]
+	];*)
+	If[radialdebug>4,
+		Print[Style[StringForm[RadialLentzStep::debug5Re,RedRd\[Omega]r,RedRd\[Omega]i,-Re[sol[[1]]]],{Medium,Darker[Yellow]}]];
+		Print[Style[StringForm[RadialLentzStep::debug5Im,ImdRd\[Omega]r,ImdRd\[Omega]i,-Im[sol[[1]]]],{Medium,Darker[Yellow]}]];
 	];
 	If[Accuracy[RedRd\[Omega]r]<=0,RedRd\[Omega]r=0];
 	If[Accuracy[RedRd\[Omega]i]<=0,RedRd\[Omega]i=0];
@@ -123,8 +135,10 @@ Module[{\[Omega]r,\[Omega]i,Almr,sol,solpr,\[CapitalDelta]sol,pcount,pflag,\[Cap
 	]; (* Avoid error case *)
 	WorkPrec = 2Max[$MinPrecision,Quiet[Precision[sol[[1]]]]];
 	\[Delta]\[Omega]=Solve[{RedRd\[Omega]r \[Delta]\[Omega]r + RedRd\[Omega]i \[Delta]\[Omega]i==-Re[sol[[1]]], ImdRd\[Omega]r \[Delta]\[Omega]r + ImdRd\[Omega]i \[Delta]\[Omega]i==-Im[sol[[1]]]},{\[Delta]\[Omega]r,\[Delta]\[Omega]i},WorkingPrecision->WorkPrec][[1]];
-	If[radialdebug>3,Print["RadialLentzStep : ",\[Delta]\[Omega]," : ",sol]];
-	If[radialdebug>5,Print["Precision - \[Delta]\[Omega] : ",Precision[\[Delta]\[Omega][[1]]]," " ,Precision[\[Delta]\[Omega][[2]]]]];
+	(*If[radialdebug>3,Print["RadialLentzStep : ",\[Delta]\[Omega]," : ",sol]];
+	If[radialdebug>5,Print["Precision - \[Delta]\[Omega] : ",Precision[\[Delta]\[Omega][[1]]]," " ,Precision[\[Delta]\[Omega][[2]]]]];*)
+	If[radialdebug>3,Print[Style[StringForm[RadialLentzStep::debug4,\[Delta]\[Omega],sol],{Medium, Darker[Orange]}]]];
+	If[radialdebug>5,Print[Style[StringForm[RadialLentzStep::debug6,Precision[\[Delta]\[Omega][[1]]],Precision[\[Delta]\[Omega][[2]]]],{Medium,Darker[Cyan]}]]];
 	{\[Delta]\[Omega],sol,{{RedRd\[Omega]r,RedRd\[Omega]i},{ImdRd\[Omega]r,ImdRd\[Omega]i}}}
 ]
 
@@ -144,14 +158,20 @@ Module[{sol1,\[Omega]root=\[Omega],\[Delta]\[Omega]1,\[Delta]\[Omega]2,Almc,Ninv
 		\[Omega]step=10^(OptionValue[JacobianStep]),\[Epsilon]root=OptionValue[Root\[Epsilon]],
 		radialdebug=OptionValue[RadialDebug],
 		radialrelax=Rationalize[OptionValue[RadialRelax]]},
+	RadialLentzRoot::fail="RadialLentzStep failed, returning `1`";
+	RadialLentzRoot::debug1="\[Delta]\[Omega]=`1`  root=`2` ";
+	RadialLentzRoot::debug2="\[Omega]=`1` ";
+	RadialLentzRoot::debug3="Conv.Rate: `1` : `2`";
 	If[Not[NumberQ[\[Epsilon]root]],\[Epsilon]root=\[Epsilon]];
 	lastrealsign=Sign[Re[\[Omega]]];
 	Almc=AngularSpectralRoot[s,m,a*\[Omega]root,Alm,Nm][[1]];
 	sol1=RadialLentzStep[n,s,m,a,Almc,\[Omega]root,\[Omega]step,Nrcf,Nm,\[Epsilon],FilterRules[{opts},Options[RadialLentzStep]]];
 	\[Delta]\[Omega]1 = sol1[[1,1,2]]+I sol1[[1,2,2]];
-	If[Not[NumberQ[\[Delta]\[Omega]1]],Print["RadialLentzStep failed, returning ",sol1];Abort[]];
+	(*If[Not[NumberQ[\[Delta]\[Omega]1]],Print["RadialLentzStep failed, returning ",sol1];Abort[]];*)
+	If[Not[NumberQ[\[Delta]\[Omega]1]],Message[RadialLentzStep::fail,sol1];Abort[]];
 	Ninv=n;
-	If[radialdebug>0,Print["\[Delta]\[Omega]= ",\[Delta]\[Omega]1," root= ",Abs[sol1[[2,1]]]]];
+	(*If[radialdebug>0,Print["\[Delta]\[Omega]= ",\[Delta]\[Omega]1," root= ",Abs[sol1[[2,1]]]]];*)
+	If[radialdebug>0,Print[Style[StringForm[RadialLentzRoot::debug1,\[Delta]\[Omega]1,Abs[sol1[[2,1]]]],{Medium, Darker[Green,0.5]}]]];
 	jacobianmatrix=sol1[[3]];
 	While[Abs[\[Delta]\[Omega]1]>10^\[Epsilon] || Abs[sol1[[2,1]]]>10^\[Epsilon]root,
 		If[++iteration > 40,
@@ -188,15 +208,19 @@ Module[{sol1,\[Omega]root=\[Omega],\[Delta]\[Omega]1,\[Delta]\[Omega]2,Almc,Ninv
 			];
 			reflipcount=0;
 		];
-		If[radialdebug>1,Print["\[Omega]= ",\[Omega]root]];
+		(*If[radialdebug>1,Print["\[Omega]= ",\[Omega]root]];*)
+		If[radialdebug>1,Print[Style[StringForm[RadialLentzRoot::debug2 ,\[Omega]root],{Medium,Darker[Blue,0.5]}]]];
 		Almc=AngularSpectralRoot[s,m,a*\[Omega]root,Alm,Nm][[1]];
 		sol1=RadialLentzStep[Ninv,s,m,a,Almc,\[Omega]root,\[Omega]step,Nrcf,Nm,\[Epsilon],FilterRules[{opts},Options[RadialLentzStep]]];
 		\[Delta]\[Omega]1 = sol1[[1,1,2]]+I sol1[[1,2,2]];
-		If[Not[NumberQ[\[Delta]\[Omega]1]],Print["RadialLentzStep failed, returning ",sol1];Abort[]];
-		If[radialdebug>0,Print["\[Delta]\[Omega]= ",\[Delta]\[Omega]1," root= ",Abs[sol1[[2,1]]]]];
+		(*If[Not[NumberQ[\[Delta]\[Omega]1]],Print["RadialLentzStep failed, returning ",sol1];Abort[]];*)
+		If[Not[NumberQ[\[Delta]\[Omega]1]],Message[RadialLentzStep::fail,sol1];Abort[]];
+		(*If[radialdebug>0,Print["\[Delta]\[Omega]= ",\[Delta]\[Omega]1," root= ",Abs[sol1[[2,1]]]]];*)
+		If[radialdebug>0,Print[Style[StringForm[RadialLentzRoot::debug1,\[Delta]\[Omega]1,Abs[sol1[[2,1]]]],{Medium, Darker[Green,0.5]}]]];
 		If[Abs[\[Delta]\[Omega]1]/Abs[\[Delta]\[Omega]2]>1/2,
 		If[++convcount>5,slow=True],convcount=0,slow=False];
-		If[radialdebug>2,Print["Conv.Rate: ",Abs[\[Delta]\[Omega]2]/Abs[\[Delta]\[Omega]1]," : ",slow]]; 
+		(*If[radialdebug>2,Print["Conv.Rate: ",Abs[\[Delta]\[Omega]2]/Abs[\[Delta]\[Omega]1]," : ",slow]]; *)
+		If[radialdebug>2,Print[Style[StringForm[RadialLentzRoot::debug3,Abs[\[Delta]\[Omega]2]/Abs[\[Delta]\[Omega]1],slow],{Medium,Darker[Magenta,0.4]}]]]; 
 		If[Head[sol1[[3]]]==List,jacobianmatrix=sol1[[3]]];
 	];
 	\[Delta]\[Omega]1=If[Abs[\[Delta]\[Omega]1]>Radius,Radius \[Delta]\[Omega]1/Abs[\[Delta]\[Omega]1],\[Delta]\[Omega]1];
@@ -208,18 +232,20 @@ Module[{sol1,\[Omega]root=\[Omega],\[Delta]\[Omega]1,\[Delta]\[Omega]2,Almc,Ninv
 If[!modeDebug,Protect[RadialLentzStep,RadialLentzRoot]];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Evaluate nth inversion of the Radial Equation' s continued fraction equation*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*"Bottom-up" evaluation at the Nmax element with remainder approximation*)
 
 
 RadialCFRem[n_Integer,s_Integer,m_Integer,a_Rational|a_Integer,
 			Alm_?NumberQ,\[Omega]_?NumberQ,Nmax_Integer]:= 
 Module[{Rem,i,func,t},
-	If[n>Nmax,Print["inversion greater than CF depth"];Abort[]];
+	RadialCFRem::inversion="inversion greater than CF depth";
+	(*If[n>Nmax,Print["inversion greater than CF depth"];Abort[]];*)
+	If[n>Nmax,Message[RadialCFRem::inversion];Abort[]];
 	Rem=If[Nmax>0,RadialCFRemainder[s,m,a,Alm,\[Omega],Nmax][[1]],-1];
 (*Print["Start RadialCFRem, Remainder = ",Rem];*)
 	func=Simplify[{\[Alpha]r[i,s,m,a,Alm,\[Omega]],\[Beta]r[i,s,m,a,Alm,\[Omega]],\[Gamma]r[i,s,m,a,Alm,\[Omega]]}];
@@ -236,8 +262,11 @@ TestRadialCFConvergence[n_Integer,s_Integer,m_Integer,a_Rational|a_Integer,
 						Alm_?NumberQ,\[Omega]_?NumberQ,Nrcf_Integer,jacobian_,\[Epsilon]_Integer,Nrcfmin_Integer,
 						Nm_Integer,\[Alpha]_Real|\[Alpha]_Rational|\[Alpha]_Integer,opts:OptionsPattern[]]:= 
 Module[{N1,N2,Rem,CFval,CFval1,CFval2,cfpow,newNrcf,saveNrcf,diff,diffh,diffl,sol,cfpowcut=-2},
+	TestRadialCFConvergence::notset="WARNING: Jacobian not set when Nradialnew needs computation!";
+	TestRadialCFConvergence::accuracyceiling="WARNING: \[CapitalDelta]CF=0 testing RCF Depth with Acc : 10^(-`1`) ";
+	TestRadialCFConvergence::diff="WARNING: cfpow>-1/2 (diff =`1` , diffh =`2` )";
 	If[Head[jacobian]==List,Null[],Null[],
-		Print["WARNING: Jacobian not set when Nradialnew needs computation!"];
+		Message[TestRadialCFConvergence::notset];
 		Return[{Max[Nrcfmin,Ceiling[3/2 Nrcf]],0,0,0,Null[]}]
 	];
 	N1=Ceiling[2*Nrcf/3];
@@ -252,15 +281,19 @@ Module[{N1,N2,Rem,CFval,CFval1,CFval2,cfpow,newNrcf,saveNrcf,diff,diffh,diffl,so
 (*Print["Debug 1: diff==0"];*)
 		If[-\[Epsilon]<=IntegerPart[Accuracy[diff]-(Log10[Det[jacobian]]/2)],
 			Return[{Max[Nrcfmin,Ceiling[1/2 Nrcf]],diff,CFval,Rem,Null[]}],
-			Print["WARNING: \[CapitalDelta]CF=0 testing RCF Depth with Acc : 10^(-",
+			Message[TestRadialCFConvergence::accuracyceiling,
 					Ceiling[Accuracy[diff]-(Log10[Det[jacobian]]/2)],")"];
 			Return[{Nrcf,diff,CFval,Rem,Null[]}];
 		];
 	];
 	cfpow=(Log10[diff]-Log10[diffh])/Log10[3/2];
 (*Print["Debug 2: cfpow = ",cfpow];*)
-	If[cfpow>-1/2,(* Untrusted Sloap *)
+	(*If[cfpow>-1/2,(* Untrusted Sloap *)
 		Print["Debug 3: cfpow>-1/2 (diff = ",diff,", diffh = ",diffh];
+		Return[{Max[Nrcfmin,Ceiling[3/2 Nrcf]],diff,CFval,Rem,Null[]}]
+	];*)
+	If[cfpow>-1/2,(* Untrusted Slope *)
+		Print[Style[StringForm[TestRadialCFConvergence::diff,diff,diffh],{Medium,Magenta}]];
 		Return[{Max[Nrcfmin,Ceiling[3/2 Nrcf]],diff,CFval,Rem,Null[]}]
 	];
 	newNrcf=Max[Nrcfmin,Ceiling[Nrcf/10],Ceiling[Nrcf (Sqrt[Det[jacobian]]10^\[Epsilon]/diff)^(1/cfpow)]];
@@ -285,11 +318,11 @@ Print["Warning: resetting newNrcf = ",newNrcf];
 If[!modeDebug,Protect[RadialCF,TestRadialCFConvergence]];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Kerr Modes methods*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Utility routines*)
 
 
@@ -302,7 +335,7 @@ MyPrecision[x_?NumberQ]:=Module[{saveprecision,returnprecision},
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Initial Guesses*)
 
 
@@ -413,7 +446,7 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Graphics*)
 
 
@@ -421,7 +454,7 @@ PlotContFrac[n_Integer,s_Integer,m_Integer,a_Rational|a_Integer,
 			Alm_?NumberQ,\[Omega]_?NumberQ,Nrcf_Integer,Nm_Integer]:= 
 Module[{Alm\[Omega]},
 	Alm\[Omega]=AngularSpectralRoot[s,m,a*\[Omega],Alm,Nm][[1]];
-	RadialCFRem[n,s,m,a,Alm\[Omega],\[Omega],Nrcf][[1]]
+     RadialCFRem[n,s,m,a,Alm\[Omega],\[Omega],Nrcf][[1]]
 ]
 
 
