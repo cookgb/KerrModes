@@ -28,7 +28,7 @@
 (*This package is intended to be included in a "wrapper" package that supplies the definitions necessary to compute a specific type of mode: QNM, Subscript[TTM, L], Subscript[TTM, R]*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Begin KerrModes Package*)
 
 
@@ -45,13 +45,13 @@ Protect[KerrModeDebug];
 (*Documentation of External Functions*)
 
 
-PlotContFrac::usage=""
+PlotModeFunction::usage="n and Nrcf are not used in this plot function so place dummy value in place"
 
 
-PlotContFrac2::usage=""
+PlotModeFunctionL::usage="n and Nrcf are not used in this plot function so place dummy value in place"
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Reserved Globals*)
 
 
@@ -65,11 +65,11 @@ Protect[SpinWeight,ModePrecision,RadialCFDepth,RadialCFMinDepth,RadialDebug,Radi
 Begin["`Private`"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Radial Equation : Modified Leaver' s Method*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Newton' s Method for finding roots of Radial Equation*)
 
 
@@ -235,11 +235,11 @@ Module[{sol1,\[Omega]root=\[Omega],\[Delta]\[Omega]1,\[Delta]\[Omega]2,Almc,Ninv
 If[!modeDebug,Protect[RadialLentzStep,RadialLentzRoot]];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Evaluate nth inversion of the Radial Equation' s continued fraction equation*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*"Bottom-up" evaluation at the Nmax element with remainder approximation*)
 
 
@@ -321,7 +321,7 @@ Print["Warning: resetting newNrcf = ",newNrcf];
 If[!modeDebug,Protect[RadialCF,TestRadialCFConvergence]];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Starobinsky Constant*)
 
 
@@ -360,7 +360,7 @@ MyPrecision[x_?NumberQ]:=Module[{saveprecision,returnprecision},
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Initial Guesses*)
 
 
@@ -476,23 +476,23 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Graphics*)
 
 
-PlotContFrac[n_Integer,s_Integer,m_Integer,a_Rational|a_Integer,
+PlotModeFunction[n_Integer,s_Integer,m_Integer,a_Rational|a_Integer,
 			Alm_?NumberQ,\[Omega]_?NumberQ,Nrcf_Integer,Nm_Integer]:= 
 Module[{Alm\[Omega]},
 	Alm\[Omega]=AngularSpectralRoot[s,m,a*\[Omega],Alm,Nm][[1]];
-     RadialCFRem[n,s,m,a,Alm\[Omega],\[Omega],Nrcf][[1]]
+     ModeFunction[n,s,m,a,Alm\[Omega],\[Omega],Nrcf][[1]]
 ]
 
 
-PlotContFrac2[n_Integer,s_Integer,m_Integer,a_Rational|a_Integer,
+PlotModeFunctionL[n_Integer,s_Integer,m_Integer,a_Rational|a_Integer,
 			lindex_Integer,\[Omega]_?NumberQ,Nrcf_Integer,Nm_Integer]:= 
 Module[{Alm\[Omega]},
 	Alm\[Omega]=AngularSpectralRootIndex[s,m,a*\[Omega],lindex,Nm][[1]];
-	RadialCFRem[n,s,m,a,Alm\[Omega],\[Omega],Nrcf][[1]]
+	ModeFunction[n,s,m,a,Alm\[Omega],\[Omega],Nrcf][[1]]
 ]
 
 
