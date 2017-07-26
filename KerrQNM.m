@@ -4,7 +4,7 @@
 (*QuasiNormal Modes of Kerr*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Begin KerrQNM Package*)
 
 
@@ -17,7 +17,7 @@ If[KerrQNMDebug,Unprotect["KerrQNM`*"];Unprotect["KerrQNM`Private`*"]];
 Protect[KerrQNMDebug];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions in KerrModes Namespace*)
 
 
@@ -27,6 +27,11 @@ SetSpinWeight::usage=
 	"\t s=-2 : Gravitational perturbations\n"<>
 	"\t s=-1 : Electro-Magnetic perturbations\n"<>
 	"\t s= 0 : Scalar perturbations."
+
+
+SelectMode::usage=
+	"Must set desired mode before beginning package"<>
+	"QNM must use, and is preselected to be in ContinuedFractionMode"
 
 
 (* ::Section:: *)
@@ -85,13 +90,17 @@ Module[{C12tmp,C1,C2,C3,C4,C5,Rem,Err},
 If[!KerrQNMDebug,Protect[RadialCFRemainder]];
 
 
-(* ::Subsection::Closed:: *)
-(*Set SpinWeight and Data-Variable Names*)
+(* ::Subsection:: *)
+(*Set SpinWeight, SelectMode, and Data-Variable Names*)
 
 
 SetSpinWeight[s_Integer]:=
 Module[{},
+(*Mode selection automatically set for QNM*)
+	Unprotect[RunCFConvergence];RunCFConvergence=True;Protect[RunCFConvergence];
+	ModeFunction[n_,s1_,m_,a_,Alm_,\[Omega]_,Nrcf_]=RadialCFRem[n,s1,m,a,Alm,\[Omega],Nrcf];
 	SetSpinWeight::spinweight="Invalid QNM Spin Weight : `1`";
+	SetSpinWeight::confirm="All KerrMode routines (QNM) set for Spin-Weight s = `1`";
 	Switch[s,
 		   -2,modeName:=Global`KerrQNM; SchTable:=Global`SchQNMTable,
 		   -1,modeName:=Global`KerrQNMe; SchTable:=Global`SchQNMeTable,
@@ -99,7 +108,7 @@ Module[{},
 			_,Message[SetSpinWeight::spinweight,s];Abort[]
 		  ];
 	SetOptions[KerrQNM`SchwarzschildQNM,SpinWeight->s];
-	Print["All KerrMode routines (QNM) set for Spin-Weight s = ",s];
+	Print[Style[StringForm[SetSpinWeight::confirm,s],{Medium,Darker[Green]}]];
 ]
 
 

@@ -4,7 +4,7 @@
 (*Right Total Transmission Modes of Kerr*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Begin KerrTTMR Package*)
 
 
@@ -17,7 +17,7 @@ If[KerrTTMRDebug,Unprotect["KerrTTMR`*"];Unprotect["KerrTTMR`Private`*"]];
 Protect[KerrTTMRDebug];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions in KerrModes Namespace*)
 
 
@@ -29,7 +29,12 @@ SetSpinWeight::usage=
 	"\t s=0 : Scalar perturbations."
 
 
-(* ::Section::Closed:: *)
+SelectMode::usage=
+	"Must set desired mode before beginning package"<>
+	"Either PolynomialMode or ContinuedFractionMode"
+
+
+(* ::Section:: *)
 (*Definitions for KerrModes Namespace*)
 
 
@@ -85,13 +90,14 @@ Module[{C12tmp,C1,C2,C3,C4,C5,Rem,Err},
 If[!KerrTTMRDebug,Protect[RadialCFRemainder]];
 
 
-(* ::Subsection::Closed:: *)
-(*Set SpinWeight and Data-Variable Names*)
+(* ::Subsection:: *)
+(*Set SpinWeight, SelectMode, and Data-Variable Names*)
 
 
 SetSpinWeight[s_Integer]:=
 Module[{},
 	SetSpinWeight::spinweight="Invalid TTMR Spin Weight : `1`";
+	SetSpinWeight::confirm="All KerrMode routines (TTMR) set for Spin-Weight s = `1`";
 	Switch[s,
 		   2,modeName:=Global`KerrTTMR; SchTable:=Global`SchTTMRTable,
 		   1,modeName:=Global`KerrTTMRe; SchTable:=Global`SchTTMReTable,
@@ -99,7 +105,29 @@ Module[{},
 		   _,Message[SetSpinWeight::spinweight,s];Abort[]
 		  ];
 	SetOptions[KerrTTMR`SchwarzschildTTMR,SpinWeight->s];
-	Print["All KerrMode routines (TTMR) set for Spin-Weight s = ",s];
+	Print[Style[StringForm[SetSpinWeight::confirm,s],{Medium,Darker[Green]}]];
+]
+
+
+SelectMode[funcmodechoice_]:=
+Module[{},
+	SelectMode::polynomial="Mode set to find Polynomial solutions";
+	SelectMode::continuedfraction="Mode set to find Continued Fraction solutions";
+	SelectMode::choose="Must Choose PolynomialMode or ContinuedFractionMode for respective solutions";
+	Switch[funcmodechoice,
+			PolynomialMode,
+				Print[Style[StringForm[SelectMode::polynomial],{Medium,Darker[Green]}]];
+				Unprotect[RunCFConvergence];RunCFConvergence=False;Protect[RunCFConvergence];
+				ModeFunction[n_,s_,m_,a_,Alm_,\[Omega]_,Nrcf_]=Starobinsky[s,m,a,Alm,\[Omega]],
+			ContinuedFractionMode,
+				Print[Style[StringForm[SelectMode::continuedfraction],{Medium,Darker[Green]}]];
+				Unprotect[RunCFConvergence];RunCFConvergence=True;Protect[RunCFConvergence];
+				ModeFunction[n_,s_,m_,a_,Alm_,\[Omega]_,Nrcf_]=RadialCFRem[n,s,m,a,Alm,\[Omega],Nrcf],
+			_,
+				Message[SelectMode::choose];
+				Unprotect[RunCFConvergence];RunCFConvergence=Null[];Protect[RunCFConvergence];
+				Abort[]
+		];
 ]
 
 
@@ -163,7 +191,7 @@ Protect[PlotSpinWeight];
 Begin["`Private`"]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Initial Guesses*)
 
 

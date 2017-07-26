@@ -1,7 +1,7 @@
 (* ::Package:: *)
 
 (* ::Title:: *)
-(*Total Transmission Modes of Kerr*)
+(*Left Total Transmission Modes of Kerr*)
 
 
 (* ::Section:: *)
@@ -27,6 +27,11 @@ SetSpinWeight::usage=
 	"\t s=-2 : Gravitational perturbations\n"<>
 	"\t s=-1 : Electro-Magnetic perturbations\n"<>
 	"\t s= 0 : Scalar perturbations."
+
+
+SelectMode::usage=
+	"Must set desired mode before beginning package"<>
+	"Either PolynomialMode or ContinuedFractionMode"
 
 
 (* ::Section:: *)
@@ -86,12 +91,13 @@ If[!KerrTTMLDebug,Protect[RadialCFRemainder]];
 
 
 (* ::Subsection:: *)
-(*Set SpinWeight and Data-Variable Names*)
+(*Set SpinWeight, SelectMode, and Data-Variable Names*)
 
 
 SetSpinWeight[s_Integer]:=
 Module[{},
 	SetSpinWeight::spinweight="Invalid TTML Spin Weight : `1`";
+	SetSpinWeight::confirm="All KerrMode routines (TTML) set for Spin-Weight s = `1`";
 	Switch[s,
 		   -2,modeName:=Global`KerrTTML; SchTable:=Global`SchTTMLTable,
 		   -1,modeName:=Global`KerrTTMLe; SchTable:=Global`SchTTMLeTable,
@@ -99,7 +105,29 @@ Module[{},
 			_,Message[SetSpinWeight::spinweight,s];Abort[]
 		  ];
 	SetOptions[KerrTTML`SchwarzschildTTML,SpinWeight->s];
-	Print["All KerrMode routines (TTML) set for Spin-Weight s = ",s];
+	Print[Style[StringForm[SetSpinWeight::confirm,s],{Medium,Darker[Green]}]];
+]
+
+
+SelectMode[funcmodechoice_]:=
+Module[{},
+	SelectMode::polynomial="Mode set to find Polynomial solutions";
+	SelectMode::continuedfraction="Mode set to find Continued Fraction solutions";
+	SelectMode::choose="Must Choose PolynomialMode or ContinuedFractionMode for respective solutions";
+	Switch[funcmodechoice,
+			PolynomialMode,
+				Print[Style[StringForm[SelectMode::polynomial],{Medium,Darker[Green]}]];
+				Unprotect[RunCFConvergence];RunCFConvergence=False;Protect[RunCFConvergence];
+				ModeFunction[n_,s_,m_,a_,Alm_,\[Omega]_,Nrcf_]=Starobinsky[s,m,a,Alm,\[Omega]],
+			ContinuedFractionMode,
+				Print[Style[StringForm[SelectMode::continuedfraction],{Medium,Darker[Green]}]];
+				Unprotect[RunCFConvergence];RunCFConvergence=True;Protect[RunCFConvergence];
+				ModeFunction[n_,s_,m_,a_,Alm_,\[Omega]_,Nrcf_]=RadialCFRem[n,s,m,a,Alm,\[Omega],Nrcf],
+			_,
+				Message[SelectMode::choose];
+				Unprotect[RunCFConvergence];RunCFConvergence=Null[];Protect[RunCFConvergence];
+				Abort[]
+		];
 ]
 
 

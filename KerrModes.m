@@ -55,6 +55,9 @@ PlotContFrac2::usage=""
 (*Reserved Globals*)
 
 
+Protect[PolynomialMode,ContinuedFractionMode,RunCFConvergence];
+
+
 Protect[SpinWeight,ModePrecision,RadialCFDepth,RadialCFMinDepth,RadialDebug,RadialRelax,
         JacobianStep,Root\[Epsilon],SchDebug];
 
@@ -85,14 +88,14 @@ Module[{\[Omega]r,\[Omega]i,Almr,sol,solpr,\[CapitalDelta]sol,pcount,pflag,\[Cap
 	RadialLentzStep::debug5Im="`1` \[Delta]\[Omega]r + `2` \[Delta]\[Omega]i==`3`";
 	RadialLentzStep::debug6="Precision - \[Delta]\[Omega] : `1`, `2`";
 	RadialLentzStep::pflag="Set $MinPrecision =`1`";
-	sol=RadialCFRem[n,s,m,a,Alm,\[Omega],Nrcf];
+	sol=ModeFunction[n,s,m,a,Alm,\[Omega],Nrcf];
 	\[CapitalDelta]\[Omega]r=Re[\[Omega]]\[Omega]step;\[CapitalDelta]\[Omega]i=Im[\[Omega]]\[Omega]step;
 	\[Omega]r=Re[\[Omega]](1+\[Omega]step)+I Im[\[Omega]];
 	\[Omega]i=Re[\[Omega]]+I Im[\[Omega]](1+\[Omega]step);
 	Almr=AngularSpectralRoot[s,m,a*\[Omega]r,Alm,Nm][[1]];
 	pcount=0;pflag=False;
 	While[True,
-		solpr=RadialCFRem[n,s,m,a,Almr,\[Omega]r,Nrcf];
+		solpr=ModeFunction[n,s,m,a,Almr,\[Omega]r,Nrcf];
 		\[CapitalDelta]sol=solpr[[1]]-sol[[1]];
 		Off[Precision::mnprec,Accuracy::mnprec];
 		If[MyPrecision[\[CapitalDelta]sol]==Precision[\[CapitalDelta]sol],
@@ -104,7 +107,7 @@ Module[{\[Omega]r,\[Omega]i,Almr,sol,solpr,\[CapitalDelta]sol,pcount,pflag,\[Cap
 		pflag=True;
 		(*If[++pcount==10,Print["Excessive increase in Precision, Abort"];Abort[]];*)
 		If[++pcount==10,Message[RadialLentzStep::increase];Abort[]];
-		sol=RadialCFRem[n,s,m,a,Alm,\[Omega],Nrcf];
+		sol=ModeFunction[n,s,m,a,Alm,\[Omega],Nrcf];
 	];
 	(*If[pflag,Print["Set $MinPrecision = ",$MinPrecision]];*)
 	If[pflag,Message[RadialLentzStep::pflag,$MinPrecision]];
@@ -318,11 +321,33 @@ Print["Warning: resetting newNrcf = ",newNrcf];
 If[!modeDebug,Protect[RadialCF,TestRadialCFConvergence]];
 
 
-(* ::Section:: *)
+(* ::Subsection:: *)
+(*Starobinsky Constant*)
+
+
+Starobinsky[s_Integer,m_Integer,a_Rational|a_Integer,
+			Alm_?NumberQ,\[Omega]_?NumberQ]:= 
+Module[{\[Lambda],starob},
+		If [s <= 0,
+			\[Lambda]=Alm + a^2 \[Omega]^2 -2 m a \[Omega],
+			\[Lambda]=Alm + a^2 \[Omega]^2 -2 m a \[Omega]+2 s
+		];
+		If [Abs[s]==2,
+			starob=\[Lambda]^2(\[Lambda]+2)^2+8 \[Lambda] a \[Omega](6(a \[Omega]+m)-5\[Lambda](a \[Omega]-m))+144\[Omega]^2(1+a^2(a \[Omega]-m)^2),
+			If [Abs[s]==1,
+				starob=\[Lambda]^2-4 a \[Omega](a \[Omega]-m),Null[],Null[]],
+			Null[]
+		];
+	{starob,0}
+]
+
+
+
+(* ::Section::Closed:: *)
 (*Kerr Modes methods*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Utility routines*)
 
 
@@ -409,6 +434,8 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 	SchwarzschildMode::argl="The order l is set to `1`, but must be \[GreaterEqual] |`2`|";
 	SchwarzschildMode::argn="The overtone n is set to `1`, but must be \[GreaterEqual] 0";
 	SchwarzschildMode::convergence="Solution failed to converge for (`1`,`2`)";
+	SchwarzschildMode::debug0a="RadialConverg : `1`";
+	SchwarzschildMode::debug0b="Increase Nradial to `1`";
 	If[OptionValue[SpinWeight]==Null[],Message[SchwarzschildMode::spinweight];Abort[]];
 	If[l<Abs[s],Message[SchwarzschildMode::argl,l,s];Abort[]];
 	If[n<0,Message[SchwarzschildMode::argn,n];Abort[]];
@@ -427,14 +454,17 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 		If[sol1[[1, 1]],
 			jacobianmatrix=sol1[[1,3]];
 			sol1=sol1[[2]];
-			rcferr=TestRadialCFConvergence[Ninv,s,0,0,l(l+1)-s(s+1),SetPrecision[sol1[[1]],precision],Nrcf,jacobianmatrix,\[Epsilon],RCFmin,l+2,1,FilterRules[{opts},Options[TestRadialCFConvergence]]];
-			Nradialnew=rcferr[[1]];
-			If[debug>0,Print["RadialConverg : ",rcferr]];
-			If[(Nradialnew>Nrcf),
-				Nrcf=Nradialnew;
-				If[debug>0,Print["Increase Nradial to ",Nrcf]];
-				,
-				notconverged=False;
+			If[RunCFConvergence,
+				rcferr=TestRadialCFConvergence[Ninv,s,0,0,l(l+1)-s(s+1),SetPrecision[sol1[[1]],precision],Nrcf,jacobianmatrix,\[Epsilon],RCFmin,l+2,1,FilterRules[{opts},Options[TestRadialCFConvergence]]];
+				Nradialnew=rcferr[[1]];
+				(*If[debug>0,Print["RadialConverg : ",rcferr]];*)
+				If[debug>0,Print[Style[StringForm[SchwarzschildMode::debug0a,rcferr],{Medium,Purple}]]];
+				If[(Nradialnew>Nrcf),
+					Nrcf=Nradialnew;
+					If[debug>0,Print[Style[StringForm[SchwarzschildMode::debug0b,Nrcf],{Medium,Darker[Purple]}]]];
+					,
+					notconverged=False;
+				];
 			],
 			Message[SchwarzschildMode::convergence,l,n];
 			Abort[];
@@ -446,7 +476,7 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Graphics*)
 
 
