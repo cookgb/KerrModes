@@ -65,11 +65,11 @@ Protect[SpinWeight,ModePrecision,RadialCFDepth,RadialCFMinDepth,RadialDebug,Radi
 Begin["`Private`"]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Radial Equation : Modified Leaver' s Method*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Newton' s Method for finding roots of Radial Equation*)
 
 
@@ -108,7 +108,7 @@ Module[{\[Omega]r,\[Omega]i,Almr,sol,solpr,\[CapitalDelta]sol,pcount,pflag,\[Cap
 		If[++pcount==10,Message[RadialLentzStep::increase];Abort[]];
 		sol=ModeFunction[n,s,m,a,Alm,\[Omega],Nrcf];
 	];
-	If[pflag,Print[Style[StringForm[RadialLentzStep::pflag,$MinPrecision],{Medium,Darker[Blue]}]];
+	If[pflag,Print[Style[StringForm[RadialLentzStep::pflag,$MinPrecision],{Medium,Darker[Blue]}]]];
 	RedRd\[Omega]r=Re[\[CapitalDelta]sol]/\[CapitalDelta]\[Omega]r;
 	ImdRd\[Omega]r=Im[\[CapitalDelta]sol]/\[CapitalDelta]\[Omega]r;
 	ImdRd\[Omega]i=RedRd\[Omega]r;
@@ -223,6 +223,8 @@ Module[{sol1,\[Omega]root=\[Omega],\[Delta]\[Omega]1,\[Delta]\[Omega]2,Almc,Ninv
 
 
 If[!modeDebug,Protect[RadialLentzStep,RadialLentzRoot]];
+
+
 
 
 (* ::Subsection::Closed:: *)
