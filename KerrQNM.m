@@ -29,11 +29,6 @@ SetSpinWeight::usage=
 	"\t s= 0 : Scalar perturbations."
 
 
-SelectMode::usage=
-	"Must set desired mode before beginning package"<>
-	"QNM must use, and is preselected to be in ContinuedFractionMode"
-
-
 (* ::Section:: *)
 (*Definitions for KerrModes Namespace*)
 
@@ -96,7 +91,7 @@ If[!KerrQNMDebug,Protect[RadialCFRemainder]];
 
 SetSpinWeight[s_Integer]:=
 Module[{},
-(*Mode selection automatically set for QNM*)
+(* Mode selection set automatically for QNM *)
 	Unprotect[RunCFConvergence];RunCFConvergence=True;Protect[RunCFConvergence];
 	ModeFunction[n_,s1_,m_,a_,Alm_,\[Omega]_,Nrcf_]=RadialCFRem[n,s1,m,a,Alm,\[Omega],Nrcf];
 	SetSpinWeight::spinweight="Invalid QNM Spin Weight : `1`";
