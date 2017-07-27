@@ -41,14 +41,14 @@ If[KerrModeDebug,Unprotect["KerrModes`*"];Unprotect["KerrModes`Private`*"]];
 Protect[KerrModeDebug];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions*)
 
 
-PlotModeFunction::usage="n and Nrcf are not used in this plot function so place dummy value in place"
+PlotModeFunction::usage="n and Nrcf are not used in this plot function. Put dummy value in place"
 
 
-PlotModeFunctionL::usage="n and Nrcf are not used in this plot function so place dummy value in place"
+PlotModeFunctionL::usage="n and Nrcf are not used in this plot function. Put dummy value in place"
 
 
 (* ::Subsection::Closed:: *)
@@ -105,12 +105,10 @@ Module[{\[Omega]r,\[Omega]i,Almr,sol,solpr,\[CapitalDelta]sol,pcount,pflag,\[Cap
 		];
 		On[Precision::mnprec,Accuracy::mnprec];
 		pflag=True;
-		(*If[++pcount==10,Print["Excessive increase in Precision, Abort"];Abort[]];*)
 		If[++pcount==10,Message[RadialLentzStep::increase];Abort[]];
 		sol=ModeFunction[n,s,m,a,Alm,\[Omega],Nrcf];
 	];
-	(*If[pflag,Print["Set $MinPrecision = ",$MinPrecision]];*)
-	If[pflag,Message[RadialLentzStep::pflag,$MinPrecision]];
+	If[pflag,Print[Style[StringForm[RadialLentzStep::pflag,$MinPrecision],{Medium,Darker[Blue]}]];
 	RedRd\[Omega]r=Re[\[CapitalDelta]sol]/\[CapitalDelta]\[Omega]r;
 	ImdRd\[Omega]r=Im[\[CapitalDelta]sol]/\[CapitalDelta]\[Omega]r;
 	ImdRd\[Omega]i=RedRd\[Omega]r;
@@ -118,10 +116,6 @@ Module[{\[Omega]r,\[Omega]i,Almr,sol,solpr,\[CapitalDelta]sol,pcount,pflag,\[Cap
 	If[Abs[sol[[1]]]==0,
 		Return[{Solve[{\[Delta]\[Omega]r==0,\[Delta]\[Omega]i==0},{\[Delta]\[Omega]r,\[Delta]\[Omega]i}][[1]],sol,{{RedRd\[Omega]r,RedRd\[Omega]i},{ImdRd\[Omega]r,ImdRd\[Omega]i}}}];
 	]; (* Avoid error case *)
-	(*If[radialdebug>4,
-		Print[RedRd\[Omega]r,"\[Delta]\[Omega]r + ",RedRd\[Omega]i,"\[Delta]\[Omega]i==",-Re[sol[[1]]]];
-		Print[ImdRd\[Omega]r,"\[Delta]\[Omega]r + ",ImdRd\[Omega]i,"\[Delta]\[Omega]i==",-Im[sol[[1]]]]
-	];*)
 	If[radialdebug>4,
 		Print[Style[StringForm[RadialLentzStep::debug5Re,RedRd\[Omega]r,RedRd\[Omega]i,-Re[sol[[1]]]],{Medium,Darker[Yellow]}]];
 		Print[Style[StringForm[RadialLentzStep::debug5Im,ImdRd\[Omega]r,ImdRd\[Omega]i,-Im[sol[[1]]]],{Medium,Darker[Yellow]}]];
@@ -138,8 +132,6 @@ Module[{\[Omega]r,\[Omega]i,Almr,sol,solpr,\[CapitalDelta]sol,pcount,pflag,\[Cap
 	]; (* Avoid error case *)
 	WorkPrec = 2Max[$MinPrecision,Quiet[Precision[sol[[1]]]]];
 	\[Delta]\[Omega]=Solve[{RedRd\[Omega]r \[Delta]\[Omega]r + RedRd\[Omega]i \[Delta]\[Omega]i==-Re[sol[[1]]], ImdRd\[Omega]r \[Delta]\[Omega]r + ImdRd\[Omega]i \[Delta]\[Omega]i==-Im[sol[[1]]]},{\[Delta]\[Omega]r,\[Delta]\[Omega]i},WorkingPrecision->WorkPrec][[1]];
-	(*If[radialdebug>3,Print["RadialLentzStep : ",\[Delta]\[Omega]," : ",sol]];
-	If[radialdebug>5,Print["Precision - \[Delta]\[Omega] : ",Precision[\[Delta]\[Omega][[1]]]," " ,Precision[\[Delta]\[Omega][[2]]]]];*)
 	If[radialdebug>3,Print[Style[StringForm[RadialLentzStep::debug4,\[Delta]\[Omega],sol],{Medium, Darker[Orange]}]]];
 	If[radialdebug>5,Print[Style[StringForm[RadialLentzStep::debug6,Precision[\[Delta]\[Omega][[1]]],Precision[\[Delta]\[Omega][[2]]]],{Medium,Darker[Cyan]}]]];
 	{\[Delta]\[Omega],sol,{{RedRd\[Omega]r,RedRd\[Omega]i},{ImdRd\[Omega]r,ImdRd\[Omega]i}}}
@@ -170,10 +162,8 @@ Module[{sol1,\[Omega]root=\[Omega],\[Delta]\[Omega]1,\[Delta]\[Omega]2,Almc,Ninv
 	Almc=AngularSpectralRoot[s,m,a*\[Omega]root,Alm,Nm][[1]];
 	sol1=RadialLentzStep[n,s,m,a,Almc,\[Omega]root,\[Omega]step,Nrcf,Nm,\[Epsilon],FilterRules[{opts},Options[RadialLentzStep]]];
 	\[Delta]\[Omega]1 = sol1[[1,1,2]]+I sol1[[1,2,2]];
-	(*If[Not[NumberQ[\[Delta]\[Omega]1]],Print["RadialLentzStep failed, returning ",sol1];Abort[]];*)
 	If[Not[NumberQ[\[Delta]\[Omega]1]],Message[RadialLentzStep::fail,sol1];Abort[]];
 	Ninv=n;
-	(*If[radialdebug>0,Print["\[Delta]\[Omega]= ",\[Delta]\[Omega]1," root= ",Abs[sol1[[2,1]]]]];*)
 	If[radialdebug>0,Print[Style[StringForm[RadialLentzRoot::debug1,\[Delta]\[Omega]1,Abs[sol1[[2,1]]]],{Medium, Darker[Green,0.5]}]]];
 	jacobianmatrix=sol1[[3]];
 	While[Abs[\[Delta]\[Omega]1]>10^\[Epsilon] || Abs[sol1[[2,1]]]>10^\[Epsilon]root,
@@ -247,10 +237,8 @@ RadialCFRem[n_Integer,s_Integer,m_Integer,a_Rational|a_Integer,
 			Alm_?NumberQ,\[Omega]_?NumberQ,Nmax_Integer]:= 
 Module[{Rem,i,func,t},
 	RadialCFRem::inversion="inversion greater than CF depth";
-	(*If[n>Nmax,Print["inversion greater than CF depth"];Abort[]];*)
 	If[n>Nmax,Message[RadialCFRem::inversion];Abort[]];
 	Rem=If[Nmax>0,RadialCFRemainder[s,m,a,Alm,\[Omega],Nmax][[1]],-1];
-(*Print["Start RadialCFRem, Remainder = ",Rem];*)
 	func=Simplify[{\[Alpha]r[i,s,m,a,Alm,\[Omega]],\[Beta]r[i,s,m,a,Alm,\[Omega]],\[Gamma]r[i,s,m,a,Alm,\[Omega]]}];
 	t=Table[func,{i,0,Nmax}];
 	{Evaluate[t[[n+1,2]]+t[[n+1,3]]Fold[-#2[[1]]/(#2[[2]]+#2[[3]]#1)&,0,Take[t,n]]]+
@@ -281,7 +269,6 @@ Module[{N1,N2,Rem,CFval,CFval1,CFval2,cfpow,newNrcf,saveNrcf,diff,diffh,diffl,so
 	diff=Abs[CFval-CFval2];
 	diffh=Abs[CFval1-CFval2];
 	If[diff==0,
-(*Print["Debug 1: diff==0"];*)
 		If[-\[Epsilon]<=IntegerPart[Accuracy[diff]-(Log10[Det[jacobian]]/2)],
 			Return[{Max[Nrcfmin,Ceiling[1/2 Nrcf]],diff,CFval,Rem,Null[]}],
 			Message[TestRadialCFConvergence::accuracyceiling,
@@ -290,11 +277,6 @@ Module[{N1,N2,Rem,CFval,CFval1,CFval2,cfpow,newNrcf,saveNrcf,diff,diffh,diffl,so
 		];
 	];
 	cfpow=(Log10[diff]-Log10[diffh])/Log10[3/2];
-(*Print["Debug 2: cfpow = ",cfpow];*)
-	(*If[cfpow>-1/2,(* Untrusted Sloap *)
-		Print["Debug 3: cfpow>-1/2 (diff = ",diff,", diffh = ",diffh];
-		Return[{Max[Nrcfmin,Ceiling[3/2 Nrcf]],diff,CFval,Rem,Null[]}]
-	];*)
 	If[cfpow>-1/2,(* Untrusted Slope *)
 		Print[Style[StringForm[TestRadialCFConvergence::diff,diff,diffh],{Medium,Magenta}]];
 		Return[{Max[Nrcfmin,Ceiling[3/2 Nrcf]],diff,CFval,Rem,Null[]}]
@@ -457,7 +439,6 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 			If[RunCFConvergence,
 				rcferr=TestRadialCFConvergence[Ninv,s,0,0,l(l+1)-s(s+1),SetPrecision[sol1[[1]],precision],Nrcf,jacobianmatrix,\[Epsilon],RCFmin,l+2,1,FilterRules[{opts},Options[TestRadialCFConvergence]]];
 				Nradialnew=rcferr[[1]];
-				(*If[debug>0,Print["RadialConverg : ",rcferr]];*)
 				If[debug>0,Print[Style[StringForm[SchwarzschildMode::debug0a,rcferr],{Medium,Purple}]]];
 				If[(Nradialnew>Nrcf),
 					Nrcf=Nradialnew;
@@ -476,7 +457,7 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Graphics*)
 
 

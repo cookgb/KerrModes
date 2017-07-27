@@ -4,7 +4,7 @@
 (*QuasiNormal Modes of Kerr*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Begin KerrQNM Package*)
 
 
@@ -17,7 +17,7 @@ If[KerrQNMDebug,Unprotect["KerrQNM`*"];Unprotect["KerrQNM`Private`*"]];
 Protect[KerrQNMDebug];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions in KerrModes Namespace*)
 
 
@@ -36,7 +36,7 @@ SetSpinWeight::usage=
 Begin["KerrModes`Private`"]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Define the QNM Radial Equation recurrence relation coefficients*)
 
 
@@ -62,7 +62,7 @@ Clear[rp,rm,\[Sigma]p,\[Sigma]m,\[Zeta],\[Xi],\[Eta],p,\[Alpha],\[Gamma],\[Delta
 If[!KerrQNMDebug,Protect[\[Alpha]r,\[Beta]r,\[Gamma]r]];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Approximation of remainder at the Nmax element of the continued fraction*)
 
 
@@ -85,13 +85,13 @@ Module[{C12tmp,C1,C2,C3,C4,C5,Rem,Err},
 If[!KerrQNMDebug,Protect[RadialCFRemainder]];
 
 
-(* ::Subsection:: *)
-(*Set SpinWeight, SelectMode, and Data-Variable Names*)
+(* ::Subsection::Closed:: *)
+(*Set SpinWeight, and Data-Variable Names*)
 
 
 SetSpinWeight[s_Integer]:=
 Module[{},
-(* Mode selection set automatically for QNM *)
+(* Mode selection preset for QNM *)
 	Unprotect[RunCFConvergence];RunCFConvergence=True;Protect[RunCFConvergence];
 	ModeFunction[n_,s1_,m_,a_,Alm_,\[Omega]_,Nrcf_]=RadialCFRem[n,s1,m,a,Alm,\[Omega],Nrcf];
 	SetSpinWeight::spinweight="Invalid QNM Spin Weight : `1`";

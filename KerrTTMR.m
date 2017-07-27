@@ -4,7 +4,7 @@
 (*Right Total Transmission Modes of Kerr*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Begin KerrTTMR Package*)
 
 
@@ -17,7 +17,7 @@ If[KerrTTMRDebug,Unprotect["KerrTTMR`*"];Unprotect["KerrTTMR`Private`*"]];
 Protect[KerrTTMRDebug];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions in KerrModes Namespace*)
 
 
@@ -34,7 +34,7 @@ SelectMode::usage=
 	"Either PolynomialMode or ContinuedFractionMode"
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Definitions for KerrModes Namespace*)
 
 
@@ -90,7 +90,7 @@ Module[{C12tmp,C1,C2,C3,C4,C5,Rem,Err},
 If[!KerrTTMRDebug,Protect[RadialCFRemainder]];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Set SpinWeight, SelectMode, and Data-Variable Names*)
 
 
@@ -191,7 +191,7 @@ Protect[PlotSpinWeight];
 Begin["`Private`"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Initial Guesses*)
 
 

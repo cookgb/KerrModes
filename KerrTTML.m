@@ -4,7 +4,7 @@
 (*Left Total Transmission Modes of Kerr*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Begin KerrTTML Package*)
 
 
@@ -17,7 +17,7 @@ If[KerrTTMLDebug,Unprotect["KerrTTML`*"];Unprotect["KerrTTML`Private`*"]];
 Protect[KerrTTMLDebug];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions in KerrModes Namespace*)
 
 
@@ -34,14 +34,14 @@ SelectMode::usage=
 	"Either PolynomialMode or ContinuedFractionMode"
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Definitions for KerrModes Namespace*)
 
 
 Begin["KerrModes`Private`"]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Define the TTML Radial Equation recurrence relation coefficients*)
 
 
@@ -67,7 +67,7 @@ Clear[rp,rm,\[Sigma]p,\[Sigma]m,\[Zeta],\[Xi],\[Eta],p,\[Alpha],\[Gamma],\[Delta
 If[!KerrTTMLDebug,Protect[\[Alpha]r,\[Beta]r,\[Gamma]r]];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Approximation of remainder at the Nmax element of the continued fraction*)
 
 
@@ -90,7 +90,7 @@ Module[{C12tmp,C1,C2,C3,C4,C5,Rem,Err},
 If[!KerrTTMLDebug,Protect[RadialCFRemainder]];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Set SpinWeight, SelectMode, and Data-Variable Names*)
 
 
@@ -137,7 +137,7 @@ If[!KerrModeDebug,Protect[SetSpinWeight]];
 End[] (* KerrModes`Private` *)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions in KerrTTML Namespace*)
 
 
@@ -181,7 +181,7 @@ PlotSchTTML::usage=
 	"SchTTMLTable also take all of the options available to ListPlot.\n"
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Reserved Globals*)
 
 
@@ -191,7 +191,7 @@ Protect[PlotSpinWeight];
 Begin["`Private`"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Initial Guesses*)
 
 
@@ -216,7 +216,7 @@ Module[{SavePrecision=$MinPrecision,saneopts},
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Graphics*)
 
 
