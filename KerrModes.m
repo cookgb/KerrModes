@@ -458,31 +458,41 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 		precision=OptionValue[QNMPrecision],RCFdigits=OptionValue[RadialCFDigits],
 		RCFpowoverride=OptionValue[RCFPower]},
 	ModeSolution::soldebug1="\[Omega]g = `1` Almg = `2`";
-	ModeSolution::soldebug2="Initial Nradial : `1`";
-	ModeSolution::soldebug3=
+	ModeSolution::soldebug2a="Initial Nradial : `1`";
+	ModeSolution::soldebug2b="\[CapitalDelta]\[Omega] = `1`";
+	ModeSolution::soldebug2c="Nradial : `1` , Nradialnew : `2` ";
+	ModeSolution::soldebug3="a = `1` \[Omega] = `2` alm = `3` ";
 	ModeSolution::soldebug4="\[Omega]0 = `1`, Alm0 = `2` ";
-	ModeSolution::soldebug5="Expconv = `1` , N = `2`";
-	ModeSolution::soldebug6=
+	ModeSolution::soldebug5a="Expconv = `1` , N = `2`";
+	ModeSolution::soldebug5b="Increase Nradial to `1`";
+	ModeSolution::soldebug5c="Decrease Nradial to `1`";
+	ModeSolution::soldebug5d="Expconv =  `1`: count = `2`: N = `3`";
+	ModeSolution::soldebug6="Jacobian matrix : `1` , rcferr : `2`";
 	ModeSolution::underrelax="Reduce Under-relaxation parameter to \[Alpha] = `1`";
 	ModeSolution::iterations="Too many iterations";
-
+	ModeSolution::notnumber="Failure: Solution of RadialLentzRoot not a number";
+	ModeSolution::slowconv="Persistance slow convergence \[Alpha]= `1`";
+	ModeSolution::oscillations="Persistent oscillations: Abort";
+	ModeSolution::failure="Persistent failure of RadialLentzRoot: Abort";
+	ModeSolution::solwindow1="\[Omega] = `1`, is outside solution window";
+	ModeSolution::solwindow2="Alm outside solution window";
 	lmin = Max[Abs[m],Abs[s]];
 	lmax = Max[l+Ceiling[Nm/2],lmin+Nm-1];
 	Nmatrix=lmax-lmin+1;
 	Nradialnew=Nradial=Nrcf;
-	If[solutiondebug>1,Print[Style[StringForm[ModeSolution::soldebug2,Nradial],{Medium,Darker[Blue,0.7]}]]];
+	If[solutiondebug>1,Print[Style[StringForm[ModeSolution::soldebug2a,Nradial],{Medium,Darker[Blue,0.3]}]]];
 	old\[Omega]=\[Omega]g;oldAlm=Almg;
 	inversion=n;
 	count=0;
 	\[Alpha]=relax; (* under-relaxation parameter *)
-	If[solutiondebug>0,Print[Style[StringForm[ModeSolution::soldebug1,\[Omega]g,Almg],{Medium,Darker[Green,0.7]}]]];
-	If[solutiondebug>3,Print[Style[StringForm[ModeSolution::soldebug4,\[Omega]0,Alm0],{Medium,Darker[Orange,0.7]}]]];
+	If[solutiondebug>0,Print[Style[StringForm[ModeSolution::soldebug1,\[Omega]g,Almg],{Medium,Darker[Green,0.3]}]]];
+	If[solutiondebug>3,Print[Style[StringForm[ModeSolution::soldebug4,\[Omega]0,Alm0],{Medium,Darker[Orange,0.3]}]]];
 	c=a \[Omega]g;
 	angularsol=AngularSpectralRoot[s,m,c,oldAlm,Nmatrix];
 	expconv=Max[Take[Abs[angularsol[[3]]],-2]];
 	While[expconv >= 10^\[Epsilon]2 && ++count<5,  (* Make sure Spectral resolution is good before doing lots of work *)
 		angularsol=AngularSpectralRoot[s,m,c,oldAlm,++Nmatrix];
-		If[solutiondebug>4,Print[Style[StringForm[ModeSolution::soldebug5,expconv,Nmatrix],{Medium,Darker[Yellow,0.7]}]]];
+		If[solutiondebug>4,Print[Style[StringForm[ModeSolution::soldebug5a,expconv,Nmatrix],{Medium,Darker[Yellow,0.3]}]]];
 		expconv=Max[Take[Abs[angularsol[[3]]],-2]];
 	];
 	count=0;
@@ -516,7 +526,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 			If[Head[radialsol[[1,3]]]==List,jacobianmatrix=radialsol[[1,3]]];
 		];
 		If[Not[radialsol[[1,1]]],++radialfail;(*Print["WARNING: RadialLentzRoot failed to converged"]*)];
-		If[Not[NumberQ[radialsol[[2,1]]]],Print["Failure: Solution of RadialLentzRoot not a number"];Abort[]];
+		If[Not[NumberQ[radialsol[[2,1]]]],Message[ModeSolution::notnumber];Abort[]];
 		c=a radialsol[[2,1]];
 		angularsol=AngularSpectralRoot[s,m,c,oldAlm,Nmatrix];
 		\[CapitalDelta]\[Omega]2=\[CapitalDelta]\[Omega];
@@ -526,21 +536,21 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 				angularsol[[1]]=Conjugate[angularsol[[1]]];
 		];
 		old\[Omega]=radialsol[[2,1]];oldAlm=angularsol[[1]];
-		If[solutiondebug>2,Print["a = ",a," \[Omega] = ",old\[Omega]," alm = ",oldAlm]];
-		If[solutiondebug>1||NumberQ[RCFpowoverride],Print["\[CapitalDelta]\[Omega] = ",\[CapitalDelta]\[Omega]]];
+		If[solutiondebug>2,Print[Style[StringForm[ModeSolution::soldebug3,a,old\[Omega],oldAlm],{Medium,Darker[Magenta,0.3]}]]];
+		If[solutiondebug>1||NumberQ[RCFpowoverride],Print[Style[StringForm[ModeSolution::soldebug2b,\[CapitalDelta]\[Omega]],{Medium,Darker[Blue,0.3]}]]];
 		If[\[CapitalDelta]\[Omega]>0,
 			If[Abs[\[CapitalDelta]\[Omega]2]/Abs[\[CapitalDelta]\[Omega]]<1,
 				If[++slowcount2>slowval,
 					(* Try under-relaxation if solution is slow *)
 					slowcount2=0;radialfail=0;
 					\[Alpha]*=3/5;iteration=0;
-					Print["Persistent slow convergence: \[Alpha]= ",N[\[Alpha]]];
+					Print[Style[StringForm[ModeSolution::slowconv,N[\[Alpha]]],{Medium,Darker[Red]}]];
 					If[\[Alpha]<0.05,Return[{False}]]
 				], 
 				If[slowcount2 >0,slowcount2=0;
 					(* Try lower precision if persisitent oscillations *)
 					If[++oscillate>oscval,
-						Print["Persistent oscillations: Abort"];Abort[]
+						Message[ModeSolution::oscillations];Abort[]
 						(*
 						Print["Persistent oscillations: \[Epsilon]= ",\[Epsilon]2+1];
 						oscillate=0;radialfail=0;
@@ -556,7 +566,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 			Print["Persistent failure of RadialLentzRoot: \[Epsilon]= ",\[Epsilon]2+1];
 			If[\[Epsilon]2-\[Epsilon]<2,++\[Epsilon]2;iteration/=2,Return[{False}]]
 			*)
-			Print["Persistent failure of RadialLentzRoot: Abort"];Abort[]
+			Message[ModeSolution::failure];Abort[]
 		];
 		If[\[CapitalDelta]\[Omega]<10^\[Epsilon]2,
 			If[count==0,
@@ -565,18 +575,17 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 						Nradial,jacobianmatrix,\[Epsilon]2,RCFmin,Nmatrix,\[Alpha],FilterRules[{opts},Options[TestRadialCFConvergence]]];
 				Nradialnew=rcferr[[1]];rcfpower=rcferr[[5]];
 				If[solutiondebug>5,
-					Print["Jacobian matrix : ",jacobianmatrix];
-					Print["rcferr : ",rcferr];
+					Print[Style[StringForm[ModeSolution::soldebug6,jacobianmatrix,rcferr],{Medium,Darker[Cyan,0.7]}]];
 				];
-				If[solutiondebug>1,Print["Nradial : ",Nradial," ; Nradialnew : ",Nradialnew]];
+				If[solutiondebug>1,Print[Style[StringForm[ModeSolution::soldebug2c,Nradial,Nradialnew],{Medium,Darker[Blue,0.3]}]]];
 				If[Nradialnew>Nradial,
 					If[Nradialnew>(11/10)Nradial,
 						NradFlag=True;count=0;iteration/=2;slowcount2=0;oscillate=0;
-						If[solutiondebug>4,Print["Increase Nradial to ",Nradialnew]];
+						If[solutiondebug>4,Print[Style[StringForm[ModeSolution::soldebug5b,Nradialnew],{Medium,Darker[Yellow,0.3]}]]];
 					];
 					Nradial=Nradialnew;
 					,
-					If[solutiondebug>4 && Nradialnew<Nradial,Print["Decrease Nradial to ",Nradialnew]];
+					If[solutiondebug>4 && Nradialnew<Nradial,Print[Style[StringForm[ModeSolution::soldebug5c,Nradialnew],{Medium,Darker[Yellow,0.3]}]]];
 				];
 			];
 
@@ -585,7 +594,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 			If[expconv < 10^\[Epsilon]2,
 				If[!NradFlag,++count];
 				If[count>1&&radialsol[[1,1]],converged=True],
-				If[solutiondebug>4,Print["Expconv = ",expconv," : count = ",count," : N = ",Nmatrix+1]];
+				If[solutiondebug>4,Print[Style[StringForm[ModeSolution::soldebug5d,expconv,count,Nmatrix+1],{Medium,Darker[Yellow,0.3]}]]];
 				Nmatrix+=1;count=0;iteration/=2;slowcount2=0;oscillate=0
 			];
 			NradFlag=False,
@@ -596,11 +605,11 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 							SolutionSlow->10,SolutionOscillate->10,SolutionIter->50,
 							RadialCFDigits->8,RCFPower->Null[]},Options[RadialLentzRoot]];
 		If[Not[SolutionWindow[\[Omega]0,\[Omega]g,old\[Omega],rl,rt,True]],
-			Print["\[Omega] = ",old\[Omega]," outside solution window"];
+			Print[Style[StringForm[ModeSolution::solwindow1,old\[Omega]],{Medium,Darker[Red]}]];
 			Return[{False,\[Alpha],Nradialnew,{a,Join[radialsol[[2]],{Nradialnew,rcfpower,Det[jacobianmatrix]}],angularsol}}]
 		];
 		If[Not[SolutionWindow[Alm0,Almg,oldAlm,rl,rt,True]],
-			Print["Alm outside solution window"];
+			Print[Style[StringForm[ModeSolution::solwindow2],{Medium,Darker[Red]}]];
 			Return[{False,\[Alpha],Nradialnew,{a,Join[radialsol[[2]],{Nradialnew,rcfpower,Det[jacobianmatrix]}],angularsol}}]
 		];
 	];
