@@ -28,7 +28,7 @@
 (*This package is intended to be included in a "wrapper" package that supplies the definitions necessary to compute a specific type of mode: QNM, Subscript[TTM, L], Subscript[TTM, R]*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Begin KerrModes Package*)
 
 
@@ -41,7 +41,7 @@ If[KerrModeDebug,Unprotect["KerrModes`*"];Unprotect["KerrModes`Private`*"]];
 Protect[KerrModeDebug];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions*)
 
 
@@ -72,7 +72,7 @@ RadialLentzRoot::usage=
 
 
 ModeSolution::usage=
-	"QNMSolution[n,s,l,m,a,\[Omega]g,Almg,\[Epsilon],relax,Nrcf,Nm,\[Omega]0,Alm0,rl,rt] finds a "<>
+	"ModeSolution[n,s,l,m,a,\[Omega]g,Almg,\[Epsilon],relax,Nrcf,Nm,\[Omega]0,Alm0,rl,rt] finds a "<>
 	"solution of the coupled radial and angular Teukolsky equations with "<>
 	"spin-weight s, 'magnetic' index m, and dimensionless angular momentum a.  "<>
 	"\[Omega]g and Almg are initial guesses for the frequency and separation constant, "<>
@@ -143,7 +143,7 @@ PlotModeFunctionL::usage=
 "PolynomialMode will use SelectMode to replace Modefunction with Starobinsky.\n"
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Reserved Globals*)
 
 
@@ -152,6 +152,10 @@ Protect[PolynomialMode,ContinuedFractionMode,RunCFConvergence];
 
 Protect[SpinWeight,ModePrecision,RadialCFDepth,RadialCFMinDepth,RadialDebug,RadialRelax,
         JacobianStep,Root\[Epsilon],SchDebug];
+
+
+Protect[SolutionDebug,NoNeg\[Omega],QNMPrecision,SolutionSlow,SolutionOscillate,SolutionIter,
+		RadialCFDigits,RCFPower]
 
 
 Begin["`Private`"]
@@ -419,11 +423,11 @@ Module[{\[Lambda],starob},
 
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Kerr Modes methods*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Iterative simultaneous solution of radial & angular Teukolsky equations*)
 
 
@@ -432,7 +436,7 @@ Options[Set\[CapitalDelta]a]={Min\[CapitalDelta]alevel->1,Max\[CapitalDelta]alev
 
 Options[ModeSolution]=Union[{SolutionDebug->0,NoNeg\[Omega]->False,RadialCFMinDepth->300,QNMPrecision->24,
 							SolutionSlow->10,SolutionOscillate->10,SolutionIter->50,
-							RadialCFDigits->8,RCFPower->Null[]},Options[RadialLentzRoot2]];
+							RadialCFDigits->8,RCFPower->Null[]},Options[RadialLentzRoot]];
 
 
 ModeSolution[n_Integer,s_Integer,l_Integer,m_Integer,
