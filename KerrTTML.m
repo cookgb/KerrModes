@@ -191,6 +191,28 @@ Protect[PlotSpinWeight];
 Begin["`Private`"]
 
 
+(* ::Section:: *)
+(*Kerr TTML methods*)
+
+
+(* ::Subsection:: *)
+(*Adaptive Bisection sequencer*)
+
+
+Options[KerrTTMLSequence]=Options[KerrModeSequence];
+
+
+KerrTTMLSequence[l_Integer,m_Integer,n_Integer|n_List,\[Epsilon]_Integer,
+				opts:OptionsPattern[]]:=
+Module[{ModeSavePrecision=$MinPrecision,saneopts},
+	(* saneopts ensures options set via SetOptions[KerQNMSequenceB,...] are used *)
+	saneopts=Flatten[Union[{opts},FilterRules[Options[KerrModeSequence],Except[Flatten[{opts}]]]]];
+	CheckAbort[KerrModeSequence[l,m,n,\[Epsilon],FilterRules[saneopts,Options[KerrModeSequence]]],
+				$MinPrecision=ModeSavePrecision;Abort[]];
+	$MinPrecision=ModeSavePrecision;
+]
+
+
 (* ::Section::Closed:: *)
 (*Initial Guesses*)
 
