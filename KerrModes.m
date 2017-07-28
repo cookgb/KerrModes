@@ -161,7 +161,7 @@ Protect[SolutionDebug,NoNeg\[Omega],QNMPrecision,SolutionSlow,SolutionOscillate,
 Begin["`Private`"]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Radial Equation : Modified Leaver' s Method*)
 
 
@@ -457,24 +457,32 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 		solutiondebug=OptionValue[SolutionDebug],RCFmin=OptionValue[RadialCFMinDepth],
 		precision=OptionValue[QNMPrecision],RCFdigits=OptionValue[RadialCFDigits],
 		RCFpowoverride=OptionValue[RCFPower]},
+	ModeSolution::soldebug1="\[Omega]g = `1` Almg = `2`";
+	ModeSolution::soldebug2="Initial Nradial : `1`";
+	ModeSolution::soldebug3=
+	ModeSolution::soldebug4="\[Omega]0 = `1`, Alm0 = `2` ";
+	ModeSolution::soldebug5="Expconv = `1` , N = `2`";
+	ModeSolution::soldebug6=
+	ModeSolution::underrelax="Reduce Under-relaxation parameter to \[Alpha] = `1`";
+	ModeSolution::iterations="Too many iterations";
 
 	lmin = Max[Abs[m],Abs[s]];
 	lmax = Max[l+Ceiling[Nm/2],lmin+Nm-1];
 	Nmatrix=lmax-lmin+1;
 	Nradialnew=Nradial=Nrcf;
-	If[solutiondebug>1,Print["Initial Nradial : ",Nradial]];
+	If[solutiondebug>1,Print[Style[StringForm[ModeSolution::soldebug2,Nradial],{Medium,Darker[Blue,0.7]}]]];
 	old\[Omega]=\[Omega]g;oldAlm=Almg;
 	inversion=n;
 	count=0;
 	\[Alpha]=relax; (* under-relaxation parameter *)
-	If[solutiondebug>0,Print["\[Omega]g = ",\[Omega]g," : Almg = ",Almg]];
-	If[solutiondebug>3,Print["\[Omega]0 = ",\[Omega]0," : Alm0 = ",Alm0]];
+	If[solutiondebug>0,Print[Style[StringForm[ModeSolution::soldebug1,\[Omega]g,Almg],{Medium,Darker[Green,0.7]}]]];
+	If[solutiondebug>3,Print[Style[StringForm[ModeSolution::soldebug4,\[Omega]0,Alm0],{Medium,Darker[Orange,0.7]}]]];
 	c=a \[Omega]g;
 	angularsol=AngularSpectralRoot[s,m,c,oldAlm,Nmatrix];
 	expconv=Max[Take[Abs[angularsol[[3]]],-2]];
 	While[expconv >= 10^\[Epsilon]2 && ++count<5,  (* Make sure Spectral resolution is good before doing lots of work *)
 		angularsol=AngularSpectralRoot[s,m,c,oldAlm,++Nmatrix];
-		If[solutiondebug>4,Print["Expconv = ",expconv," : N = ",Nmatrix]];
+		If[solutiondebug>4,Print[Style[StringForm[ModeSolution::soldebug5,expconv,Nmatrix],{Medium,Darker[Yellow,0.7]}]]];
 		expconv=Max[Take[Abs[angularsol[[3]]],-2]];
 	];
 	count=0;
@@ -482,8 +490,8 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 		If[(++iteration>iterval && \[Epsilon]2==\[Epsilon] && \[Alpha]==1) || (\[Alpha]<1 && iteration > (3/5)iterval/\[Alpha]),
 			If[\[Alpha]>0.05,
 				\[Alpha]*=3/5;iteration=0;
-				Print["Reduce Under-relaxation parameter to \[Alpha] = ",N[\[Alpha]]],
-				Print["Too Many Iterations"];
+				Print[Style[StringForm[ModeSolution::underrelax,N[\[Alpha]]],{Medium,Darker[Red]}]],
+				Message[ModeSolution::iterations];
 				(*Print["a=",a," \[Omega]=",old\[Omega]," Alm=",oldAlm]*);
 				Return[{False}];
 			];
@@ -586,7 +594,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 	];
 	If[rl!=0 &&rt!=0,Options[ModeSolution]=Union[{SolutionDebug->0,NoNeg\[Omega]->False,RadialCFMinDepth->300,QNMPrecision->24,
 							SolutionSlow->10,SolutionOscillate->10,SolutionIter->50,
-							RadialCFDigits->8,RCFPower->Null[]},Options[RadialLentzRoot2]];
+							RadialCFDigits->8,RCFPower->Null[]},Options[RadialLentzRoot]];
 		If[Not[SolutionWindow[\[Omega]0,\[Omega]g,old\[Omega],rl,rt,True]],
 			Print["\[Omega] = ",old\[Omega]," outside solution window"];
 			Return[{False,\[Alpha],Nradialnew,{a,Join[radialsol[[2]],{Nradialnew,rcfpower,Det[jacobianmatrix]}],angularsol}}]
