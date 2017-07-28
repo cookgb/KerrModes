@@ -41,17 +41,42 @@ If[KerrModeDebug,Unprotect["KerrModes`*"];Unprotect["KerrModes`Private`*"]];
 Protect[KerrModeDebug];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions*)
 
 
-PlotModeFunction::usage="n and Nrcf are not used in this plot function. Put dummy value in place"
+PlotModeFunction::usage=
+"Arguments: n,s,m,a,Alm,\[Omega],Nrcf,Nm\n"<>
+"\t n -> Overtone level (integer).\n"<>
+"\t s -> SpinWeight (integer).\n"<>
+"\t m -> Azimuthal index (integer).\n"<>
+"\t a -> Dimensionless spin parameter(rational or integer).\n"<>
+"\t Alm -> Angular separation constant (integer).\n"<>
+"\t Nrcf -> How deep into the continued fraction (integer).\n"<>
+"\t Nm -> Number of azimuthal indecies(integer).\n\n"<>
+"When in ContinuedFractionMode, package will require input for all the arguments and will use SelectMode\n"<> 
+"\t to replace ModeFunction with RadialCFRem.\n"<>
+"When in PolynomialMode, n and Nrcf are not used in this plot function. Put dummy value in place.\n"<>
+"PolynomialMode will use SelectMode to replace Modefunction with Starobinsky.\n"
 
 
-PlotModeFunctionL::usage="n and Nrcf are not used in this plot function. Put dummy value in place"
+PlotModeFunctionL::usage=
+"Arguments: n,s,m,a,Alm,\[Omega],Nrcf,Nm\n"<>
+"\t n -> Overtone level (integer).\n"<>
+"\t s -> SpinWeight (integer).\n"<>
+"\t m -> Azimuthal index (integer).\n"<>
+"\t a -> Dimensionless spin parameter(rational or integer).\n"<>
+"\t Alm -> Angular separation constant (integer).\n"<>
+"\t L index -> Index into the Angular separation constants (integer).\n"<>
+"\t Nrcf -> How deep into the continued fraction (integer).\n"<>
+"\t Nm -> Number of azimuthal indecies(integer).\n\n"<>
+"When in ContinuedFractionMode, package will require input for all the arguments and will use SelectMode\n"<> 
+"\t to replace ModeFunction with RadialCFRem.\n"<>
+"When in PolynomialMode, n and Nrcf are not used in this plot function. Put dummy value in place.\n"<>
+"PolynomialMode will use SelectMode to replace Modefunction with Starobinsky.\n"
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Reserved Globals*)
 
 
@@ -331,7 +356,7 @@ Module[{\[Lambda],starob},
 (*Kerr Modes methods*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Utility routines*)
 
 
@@ -459,7 +484,7 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Graphics*)
 
 
