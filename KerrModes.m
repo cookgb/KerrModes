@@ -45,6 +45,73 @@ Protect[KerrModeDebug];
 (*Documentation of External Functions*)
 
 
+(* ::Subsection::Closed:: *)
+(*Eigenvalue Solvers*)
+
+
+RadialLentzRoot::usage=
+	"RadialLentzRoot[n,s,m,a,Alm,\[Omega],N,\[Epsilon],Radius] solves the radial Teukolsky "<>
+	"equation with spin-weight s, 'magnetic' index m, dimensionless angular "<>
+	"momentum a, and separation constant Alm.  The solution is obtained by "<>
+	"finding the root of the \!\(\*SuperscriptBox[\(n\), \(th\)]\) inversion "<>
+	"of the associated continued fraction equation.  Newton's method is used "<>
+	"and \[Omega] is taken as the initial guess.  The continued fraction is evalueated "<>
+	"'bottom up' starting with the approximate remainder for the "<>
+	"\!\(\*SuperscriptBox[\(N\), \(th\)]\) term.  Newton's method terminates "<>
+	"when the corrections are smaller than \!\(\*SuperscriptBox[\(10\),\(\[Epsilon]\)]\).  "<>
+	"Radius sets an upper limit to the magnitude of the Newton correction "<>
+	"during each iteration.\n\n"<>
+	"Options:\n"<>
+	"\t RadialDebug\[Rule]0 : Integer\n"<>
+	"\t\t Verbosity of debugging output.  Increasing value increases verbosity.\n"<>
+	"\t RadialRelax\[Rule]1: Rational(or Integer)\n"<>
+	"\t\t Under-relaxation parameter.\n"<>
+	"\t JacobianStep\[Rule]-10\n"<>
+	"\t\t Log10 of relative step size used in numerical evaluation of the \n"<>
+	"\t\t Jacobian in Newton's method."
+
+
+ModeSolution::usage=
+	"QNMSolution[n,s,l,m,a,\[Omega]g,Almg,\[Epsilon],relax,Nrcf,Nm,\[Omega]0,Alm0,rl,rt] finds a "<>
+	"solution of the coupled radial and angular Teukolsky equations with "<>
+	"spin-weight s, 'magnetic' index m, and dimensionless angular momentum a.  "<>
+	"\[Omega]g and Almg are initial guesses for the frequency and separation constant, "<>
+	"which are assumed to be associated with azimuthal index l and overtone "<>
+	"index n.\n\n"<>
+	"\tThe solution is found by iteration, calling AngularSpectralRoot and "<>
+	"RadialLentzRoot until the magnitude of the change produced by either "<>
+	"is less than \!\(\*SuperscriptBox[\(10\), \(\[Epsilon]\)]\).  'relax' is an initial "<>
+	"under-relaxation parameter used in updating the current guesses. For the "<>
+	"radial equation, the continued fraction is truncated at the "<>
+	"\!\(\*SuperscriptBox[\(Nrcf\),\(th\)]\) term.  For the angular equation, "<>
+	"Nm sets the size of the spectral approximation matrix.\n\n"<>
+	"\t\[Omega]0, Alm0, rl, and rt are used to specify solution windows centered "<>
+	"around the initial guesses \[Omega]g and Almg.  \[Omega]0 and Alm0 represent the prior "<>
+	"solutions in a sequence of solutions.  |\[Omega]0-\[Omega]g| and |Alm0-Almg| set a "<>
+	"length scale d for each solution.  The window for each solution is a "<>
+	"portion of an anulus centered on the prior solution.  The difference "<>
+	"between the inner and outer rings of the anulus is 2*rl*d with the "<>
+	"guess solution centered between.  The width of the wedge is 2*rt*d "<>
+	"along the outer ring.  Solutions falling outside the solution window "<>
+	"for either quantity are rejected.  If rl=0 or rt=0, the solution is "<>
+	"always accepted.\n\n"<>
+	"Options:\n"<>
+	"\t SolutionDebug\[Rule]0 : Integer\n"<>
+	"\t\t Verbosity of debugging output for solutions iteration.  Increasing\n"<>
+	"\t\t value increases verbosity.\n"<>
+	"\t RadialDebug\[Rule]0 : Integer\n"<>
+	"\t\t Verbosity of debugging output.  Increasing value increases verbosity.\n"<>
+	"\t RadialRelax\[Rule]1: Rational(or Integer)\n"<>
+	"\t\t Under-relaxation parameter.\n"<>
+	"\t JacobianStep\[Rule]-10\n"<>
+	"\t\t Log10 of relative step size used in numerical evaluation of the \n"<>
+	"\t\t Jacobian in Newton's method."
+
+
+(* ::Subsection::Closed:: *)
+(*Plotting Routines*)
+
+
 PlotModeFunction::usage=
 "Arguments: n,s,m,a,Alm,\[Omega],Nrcf,Nm\n"<>
 "\t n -> Overtone level (integer).\n"<>
@@ -76,7 +143,7 @@ PlotModeFunctionL::usage=
 "PolynomialMode will use SelectMode to replace Modefunction with Starobinsky.\n"
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Reserved Globals*)
 
 
@@ -352,11 +419,11 @@ Module[{\[Lambda],starob},
 
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Kerr Modes methods*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Iterative simultaneous solution of radial & angular Teukolsky equations*)
 
 
