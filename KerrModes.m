@@ -642,7 +642,7 @@ KerrModeSequence[l_Integer,m_Integer,n_Integer|n_List,\[Epsilon]max_Integer,
 					opts:OptionsPattern[]]:=
 Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqStatus,context,
 		ModeGuess,inversion,\[Omega],Alm,\[Omega]try,Almtry,ModeSol,a,index0=0,index0p,index0m,
-		\[Epsilon]=\[Epsilon]max,Nrcf,Nm=4,rl=0,rt=0,NKQNM=0,edat0,edat,ef,iv,afit,
+		\[Epsilon]=\[Epsilon]max,Nrcf,Nm=4,rl=0,rt=0,NKMode=0,edat0,edat,ef,iv,afit,
 		maxmimuma=1,blevel=0,\[CapitalDelta]a=10^(-3),\[CapitalDelta]a2,\[CapitalDelta]a3,dir=1,\[CapitalDelta]aincflag=False,\[CapitalDelta]aincstep=0,blevelsave,
 		\[Omega]0,\[Omega]p,\[Omega]m,Alm0,Almp,Almm,\[Omega]w=0,Almw=0,precisionsave,precisioncount=0,
 		Minb=OptionValue[Minblevel],Maxb=OptionValue[Maxblevel],
@@ -682,31 +682,31 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 	If[SeqStatus,
 (*Print["Untested section of code! 0"];*)
 		(* Sequence exists, extend *)
-		NKQNM=Length[KerrSEQ];
-		Print["KerrQNM[",l,",",m,",",n,"] sequence exists with ",NKQNM," entries"];
+		NKMode=Length[KerrSEQ];
+		Print["KerrQNM[",l,",",m,",",n,"] sequence exists with ",NKMode," entries"];
 		If[forward,
-			\[Epsilon]=Min[\[Epsilon]max,KerrSEQ[[NKQNM,2,4]]];
-			If[Length[KerrSEQ[[NKQNM,2]]]>=9,$MinPrecision=KerrSEQ[[NKQNM,2,9]],Print["Set $MinPrecision = ",$MinPrecision]],
+			\[Epsilon]=Min[\[Epsilon]max,KerrSEQ[[NKMode,2,4]]];
+			If[Length[KerrSEQ[[NKMode,2]]]>=9,$MinPrecision=KerrSEQ[[NKMode,2,9]],Print["Set $MinPrecision = ",$MinPrecision]],
 			\[Epsilon]=Min[\[Epsilon]max,KerrSEQ[[1,2,4]]];
 			If[Length[KerrSEQ[[1,2]]]>=9,$MinPrecision=KerrSEQ[[1,2,9]],Print["Set $MinPrecision = ",$MinPrecision]]
 		];
-		a=If[forward,KerrSEQ[[NKQNM,1]],KerrSEQ[[1,1]]];
+		a=If[forward,KerrSEQ[[NKMode,1]],KerrSEQ[[1,1]]];
 		inversion=If[Head[n]==Integer,n,Null[],n[[1]]];
 		If[forward,
-			\[Omega]=SetPrecision[KerrSEQ[[NKQNM,2,1]],Max[precision,$MinPrecision]];
-			Alm=SetPrecision[KerrSEQ[[NKQNM,3,1]],Max[precision,$MinPrecision]],
+			\[Omega]=SetPrecision[KerrSEQ[[NKMode,2,1]],Max[precision,$MinPrecision]];
+			Alm=SetPrecision[KerrSEQ[[NKMode,3,1]],Max[precision,$MinPrecision]],
 			\[Omega]=SetPrecision[KerrSEQ[[1,2,1]],Max[precision,$MinPrecision]];
 			Alm=SetPrecision[KerrSEQ[[1,3,1]],Max[precision,$MinPrecision]]
 		];
-		Nm=If[forward,KerrSEQ[[NKQNM,3,2]],KerrSEQ[[1,3,2]]];
+		Nm=If[forward,KerrSEQ[[NKMode,3,2]],KerrSEQ[[1,3,2]]];
 		Nrcf=If[forward,
-			If[Length[KerrSEQ[[NKQNM,2]]]>=6,KerrSEQ[[NKQNM,2,6]],KerrSEQ[[NKQNM,2,3]]],
+			If[Length[KerrSEQ[[NKMode,2]]]>=6,KerrSEQ[[NKMode,2,6]],KerrSEQ[[NKMode,2,3]]],
 			If[Length[KerrSEQ[[1,2]]]>=6,KerrSEQ[[1,2,6]],KerrSEQ[[1,2,3]]]
 		];
 		If[rcfdepth>RCFmin,Nrcf=IntegerPart[rcfdepth]];
 		If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
 		Nrcf=Max[Nrcf,RCFmin];
-		If[NKQNM>1,
+		If[NKMode>1,
 			If[Head[guess]==List,
 Print["Untested section of code! 1"];
 				\[Omega]=guess[[1]];
@@ -715,17 +715,17 @@ Print["Untested section of code! 1"];
 				If[Length[guess]==4,Nm=guess[[4]]];
 				Print["Guesses set: ",\[Omega]," : ",Alm," : ",Nrcf," : ",Nm];
 			];
-			If[NKQNM==2,
+			If[NKMode==2,
 Print["Untested section of code! 2"];
 				If[forward,
 					\[Omega]=2KerrSEQ[[2,2,1]]-KerrSEQ[[1,2,1]];Alm=2KerrSEQ[[2,3,1]]-KerrSEQ[[1,3,1]],
 					\[Omega]=2KerrSEQ[[1,2,1]]-KerrSEQ[[2,2,1]];Alm=2KerrSEQ[[1,3,1]]-KerrSEQ[[2,3,1]]
 				]
 			];
-			If[NKQNM>2,
+			If[NKMode>2,
 (*Print["Untested section of code! 3"];*)
-				index0=If[forward,NKQNM-1,2];
-				\[CapitalDelta]a=If[forward,KerrSEQ[[NKQNM,1]]-KerrSEQ[[index0,1]],KerrSEQ[[index0,1]]-KerrSEQ[[1,1]]];
+				index0=If[forward,NKMode-1,2];
+				\[CapitalDelta]a=If[forward,KerrSEQ[[NKMode,1]]-KerrSEQ[[index0,1]],KerrSEQ[[index0,1]]-KerrSEQ[[1,1]]];
 				blevelsave=blevel=Round[-(3+Log10[\[CapitalDelta]a])/Log10[2]];
 				\[CapitalDelta]a2=If[forward,KerrSEQ[[index0,1]]-KerrSEQ[[index0-1,1]],KerrSEQ[[index0+1,1]]-KerrSEQ[[index0,1]]];
 
@@ -753,8 +753,8 @@ Print["Untested section of code! 2"];
 					   -1,Global`KerrQNMe[l,m,n]=KerrSEQret,
 						0,Global`KerrQNMs[l,m,n]=KerrSEQret
 					  ];*)
-				NKQNM=Length[KerrSEQ];
-				index0=If[forward,NKQNM-1,2];
+				NKMode=Length[KerrSEQ];
+				index0=If[forward,NKMode-1,2];
 				\[CapitalDelta]a=2^(-blevel)/1000;
 				If[blevel>blevelsave,Print["Decreasing \[CapitalDelta]a, blevel = ",blevel]];
 				If[blevel<blevelsave,Print["Increasing \[CapitalDelta]a, blevel = ",blevel]];
@@ -791,17 +791,17 @@ Print["Untested section of code! 2"];
 						afit=NonlinearModelFit[edat,m/2+\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
 													{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
 						(*afit=NonlinearModelFit[edat,m/2+\[Beta] eps,{\[Beta]},eps];*)
-						\[Omega]=afit[1-(KerrSEQ[[NKQNM,1]]+\[CapitalDelta]a)];
+						\[Omega]=afit[1-(KerrSEQ[[NKMode,1]]+\[CapitalDelta]a)];
 						edat=Table[{1-edat0[[i,1]],Im[edat0[[i,2,1]]]},{i,1,Length[edat0]}];
 						afit=NonlinearModelFit[edat,\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
 													{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
-						\[Omega]+=I afit[1-(KerrSEQ[[NKQNM,1]]+\[CapitalDelta]a)];
+						\[Omega]+=I afit[1-(KerrSEQ[[NKMode,1]]+\[CapitalDelta]a)];
 						,Null[],
 						If[extraporder>2,
 							edat0=Take[KerrSEQ,If[forward,-(extraporder+1),extraporder+1]];
 							edat=Table[{edat0[[i,1]],edat0[[i,2,1]]},{i,1,Length[edat0]}];
 							ef[iv_]=InterpolatingPolynomial[edat,iv];
-							\[Omega]=ef[If[forward,KerrSEQ[[NKQNM,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]];
+							\[Omega]=ef[If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]];
 						];
 					];
 				];
@@ -886,17 +886,17 @@ Print["Untested section of code! 2"];
 						0,PrependTo[Global`KerrQNMs[l,m,n], ModeSol[[4]]]
 					  ];
 			];*)
-			NKQNM=Length[KerrSEQ];
-			If[NKQNM==1,\[Omega]=KerrSEQ[[1,2,1]];Alm=KerrSEQ[[1,3,1]]];
-			If[NKQNM>1,index0=If[forward,NKQNM-1,2]];
-			If[NKQNM==2,
+			NKMode=Length[KerrSEQ];
+			If[NKMode==1,\[Omega]=KerrSEQ[[1,2,1]];Alm=KerrSEQ[[1,3,1]]];
+			If[NKMode>1,index0=If[forward,NKMode-1,2]];
+			If[NKMode==2,
 (*Print["Untested section of code! 8"];*)
 				If[forward,
 					\[Omega]=2KerrSEQ[[2,2,1]]-KerrSEQ[[1,2,1]];Alm=2KerrSEQ[[2,3,1]]-KerrSEQ[[1,3,1]],
 					\[Omega]=2KerrSEQ[[1,2,1]]-KerrSEQ[[2,2,1]];Alm=2KerrSEQ[[1,3,1]]-KerrSEQ[[2,3,1]]
 				]
 			];
-			If[NKQNM>2,
+			If[NKMode>2,
 (*Print["Untested section of code! 9"];*)
 				blevelsave=blevel;
 				{KerrSEQret,blevel,\[CapitalDelta]aincflag,\[CapitalDelta]aincstep,\[Epsilon]}=
@@ -906,8 +906,8 @@ Print["Untested section of code! 2"];
 					   -1,Global`KerrQNMe[l,m,n]=KerrSEQret,
 						0,Global`KerrQNMs[l,m,n]=KerrSEQret
 					  ];
-				NKQNM=Length[KerrSEQ];
-				index0=If[forward,NKQNM-1,2];
+				NKMode=Length[KerrSEQ];
+				index0=If[forward,NKMode-1,2];
 (*Print["Ret from AC3: blevel = ",blevel," \[CapitalDelta]aincflag = ",\[CapitalDelta]aincflag];*)
 				\[CapitalDelta]a=2^(-blevel)/1000;
 				index0p=If[forward,index0+1,index0+\[CapitalDelta]aincstep];
@@ -945,17 +945,17 @@ Print["Untested section of code! 2"];
 						afit=NonlinearModelFit[edat,m/2+\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
 													{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
 						(*afit=NonlinearModelFit[edat,m/2+\[Beta] eps,{\[Beta]},eps];*)
-						\[Omega]=afit[1-(KerrSEQ[[NKQNM,1]]+\[CapitalDelta]a)];
+						\[Omega]=afit[1-(KerrSEQ[[NKMode,1]]+\[CapitalDelta]a)];
 						edat=Table[{1-edat0[[i,1]],Im[edat0[[i,2,1]]]},{i,1,Length[edat0]}];
 						afit=NonlinearModelFit[edat,\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
 													{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
-						\[Omega]+=I afit[1-(KerrSEQ[[NKQNM,1]]+\[CapitalDelta]a)];
+						\[Omega]+=I afit[1-(KerrSEQ[[NKMode,1]]+\[CapitalDelta]a)];
 						,Null[],
 						If[extraporder>2,
 							edat0=Take[KerrSEQ,If[forward,-(extraporder+1),extraporder+1]];
 							edat=Table[{edat0[[i,1]],edat0[[i,2,1]]},{i,1,Length[edat0]}];
 							ef[iv_]=InterpolatingPolynomial[edat,iv];
-							\[Omega]=ef[If[forward,KerrSEQ[[NKQNM,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]];
+							\[Omega]=ef[If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]];
 						];
 					];
 				];
@@ -964,13 +964,13 @@ Print["Untested section of code! 2"];
 (*Print["Untested section of code! 10"];*)
 			blevelsave= ++blevel;
 			If[blevel > Maxb,Return[]];
-			If[NKQNM==0,Print["No solution found at a = ",Block[{$MinPrecision=0},N[a+dir*\[CapitalDelta]a,{Infinity,20}]]];Abort[]];
+			If[NKMode==0,Print["No solution found at a = ",Block[{$MinPrecision=0},N[a+dir*\[CapitalDelta]a,{Infinity,20}]]];Abort[]];
 			Print["No solution found at a = ",Block[{$MinPrecision=0},N[a+dir*\[CapitalDelta]a,{Infinity,20}]],", try decreasing \[CapitalDelta]a, blevel = ",blevel];
-			If[NKQNM>2,
+			If[NKMode>2,
 				index0p=If[forward,index0+1,index0+\[CapitalDelta]aincstep];
 				index0m=If[forward,index0-\[CapitalDelta]aincstep,index0-1],
-Print["NKQNM <= 2 : index0 = ",index0];
-				If[NKQNM==2,
+Print["NKMode <= 2 : index0 = ",index0];
+				If[NKMode==2,
 					index0=If[forward,1,2];
 					index0p=If[forward,2,1];
 					index0m=If[forward,1,2],
@@ -1031,8 +1031,8 @@ Print["NKQNM <= 2 : index0 = ",index0];
 					   -1,Global`KerrQNMe[l,m,n]=KerrSEQret,
 						0,Global`KerrQNMs[l,m,n]=KerrSEQret
 					  ];
-				NKQNM=Length[KerrSEQ];
-				index0=If[forward,NKQNM-1,2];
+				NKMode=Length[KerrSEQ];
+				index0=If[forward,NKMode-1,2];
 				\[CapitalDelta]a=2^(-blevel)/1000;
 				a=KerrSEQ[[index0,1]]+dir*\[CapitalDelta]a;
 				If[\[CapitalDelta]aincflag,\[CapitalDelta]aincflag=False,blevel=blevelsave]; (* Don't allow \[CapitalDelta]a to increase *)
@@ -1062,17 +1062,17 @@ Print["NKQNM <= 2 : index0 = ",index0];
 					afit=NonlinearModelFit[edat,m/2+\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
 												{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
 					(*afit=NonlinearModelFit[edat,m/2+\[Beta] eps,{\[Beta]},eps];*)
-					\[Omega]=afit[1-(KerrSEQ[[NKQNM,1]]+\[CapitalDelta]a)];
+					\[Omega]=afit[1-(KerrSEQ[[NKMode,1]]+\[CapitalDelta]a)];
 					edat=Table[{1-edat0[[i,1]],Im[edat0[[i,2,1]]]},{i,1,Length[edat0]}];
 					afit=NonlinearModelFit[edat,\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
 												{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
-					\[Omega]+=I afit[1-(KerrSEQ[[NKQNM,1]]+\[CapitalDelta]a)];
+					\[Omega]+=I afit[1-(KerrSEQ[[NKMode,1]]+\[CapitalDelta]a)];
 					,Null[],
 					If[extraporder>2,
 						edat0=Take[KerrSEQ,If[forward,-(extraporder+1),extraporder+1]];
 						edat=Table[{edat0[[i,1]],edat0[[i,2,1]]},{i,1,Length[edat0]}];
 						ef[iv_]=InterpolatingPolynomial[edat,iv];
-						\[Omega]=ef[If[forward,KerrSEQ[[NKQNM,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]];
+						\[Omega]=ef[If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]];
 					];
 				]
 			],
