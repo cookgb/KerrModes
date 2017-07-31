@@ -1175,7 +1175,7 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 			Almg = (6Alm0+3Almp-Almm)/8;
 			If[extraporder==Accumulate,
 				If[!forward,
-					Message["AdaptCheck3::missuse"];
+					Message[AdaptCheck3::missuse];
 					Abort[]
 				];
 				edat0=SetPrecision[Take[KerrSEQ,{index0p-9,index0p}],Max[precision,$MinPrecision]];
