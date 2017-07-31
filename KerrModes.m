@@ -4,7 +4,7 @@
 (*Modes of Kerr*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation *)
 
 
@@ -161,7 +161,7 @@ Protect[SolutionDebug,NoNeg\[Omega],ModePrecision,SolutionSlow,SolutionOscillate
 Protect[Minblevel,Maxblevel,CurvatureRatio,Max\[CapitalDelta]\[Omega],ExtrapolationOrder]
 
 
-Protect[ModeaStart,QNMGuess,SeqDirection,Maximala\[Epsilon],SolutionRelax,SolutionWindowl,SolutionWindowt]
+Protect[ModeaStart,ModeGuess,SeqDirection,Maximala\[Epsilon],SolutionRelax,SolutionWindowl,SolutionWindowt]
 
 
 Begin["`Private`"]
@@ -631,7 +631,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 Options[AdaptCheck3]=Union[{Minblevel->0,Maxblevel->20,CurvatureRatio->1/2,Max\[CapitalDelta]\[Omega]->0.01,ExtrapolationOrder->2},Options[ModeSolution]];
 
 
-Options[KerrModeSequence]=Union[{SpinWeight->Null[],ModeaStart->0,QNMGuess->0,
+Options[KerrModeSequence]=Union[{SpinWeight->Null[],ModeaStart->0,ModeGuess->0,
 								SeqDirection->Forward,Maximala\[Epsilon]->10,
 								SolutionRelax->1,RadialCFDepth->1,
 								SolutionWindowl->1/2,SolutionWindowt->1/3},
@@ -655,7 +655,7 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 
 	KerrModeSequence::minprecision="Set $MinPrecision = `1`";
 	KerrModeSequence::invalidmax="Invalid value for Maximala\[Epsilon]";
-	KerrModeSequence::entries="KerrQNM[`1`,`2`,`3`] sequence exists with `4` entries";
+	KerrModeSequence::entries="KerrMode[`1`,`2`,`3`] sequence exists with `4` entries";
 	KerrModeSequence::untested1="Untested section of code! 1";
 	KerrModeSequence::untested2="Untested section of code! 2";
 	KerrModeSequence::guesses="Guesses set: `1`:`2`:`3`:`4`";
@@ -664,8 +664,8 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 	KerrModeSequence::decblevelmore="Further decreasing \[CapitalDelta]a, blevel = `1`";
 	KerrModeSequence::incblevel="Increasing \[CapitalDelta]a, blevel = `1`";
 	KerrModeSequence::missuse="Cannot use Accumulation extrapolation with backward sequencing";
-	KerrModeSequence::startseq="Starting KerrQNM[`1`,`2`,`3`] sequence";
-	KerrModeSequence::status="Error determining status of KerrQNM[`1`,`2`,`3`] sequence: Abort";
+	KerrModeSequence::startseq="Starting KerrMode[`1`,`2`,`3`] sequence";
+	KerrModeSequence::status="Error determining status of KerrMode[`1`,`2`,`3`] sequence: Abort";
 	KerrModeSequence::modesol="ModeSol a=`1`, \[Omega]=`2`, Alm=`3`";
 	KerrModeSequence::nosol="No solution found at a = `1`";
 	KerrModeSequence::nosoltry="No solution found at a = `1`, try decreasing \[CapitalDelta]a, blevel = `2`";
@@ -1342,7 +1342,7 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Stepsize and solution validation routines*)
 
 
