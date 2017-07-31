@@ -1123,6 +1123,18 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 		edat,edat0,ef,iv,afit,extraporder=OptionValue[ExtrapolationOrder],
 		Minb=OptionValue[Minblevel],Maxb=OptionValue[Maxblevel],RCFmin=OptionValue[RadialCFMinDepth],
 		maxcurvrat=OptionValue[CurvatureRatio],max\[CapitalDelta]\[Omega]=Abs[OptionValue[Max\[CapitalDelta]\[Omega]]],precision=OptionValue[ModePrecision]},
+	AdaptCheck3::incorrectam="Incorrect \[CapitalDelta]a(-)";
+	AdaptCheck3::incorrectap="Incorrect \[CapitalDelta]a(+)";
+	AdaptCheck3::missuse="Cannot use Accumulation extrapolation with backward sequencing";
+	AdaptCheck3::modesolpm="ModeSol+/- a=`1`, \[Omega]=`2`, Alm=`3`";
+	AdaptCheck3::apsolfail="a+ solution failed.";
+	AdaptCheck3::modesolm="ModeSol- a=`1`, \[Omega]=`2`, Alm=`3`";
+	AdaptCheck3::amsolfail="a- solution failed.";
+	AdaptCheck3::modesolpp="ModeSol++ a=`1`, \[Omega]=`2`, Alm=`3`";
+	AdaptCheck3::appsolfail="a++ solution failed.";
+	AdaptCheck3::modesolmm="ModeSol-- a=`1`, \[Omega]=`2`, Alm=`3`";
+	AdaptCheck3::ammsolfail="a-- solution failed.";
+
 	(*If[blevel>Maxb || blevel<Minb,Print["\[CapitalDelta]a level out of bounds."];Abort[]];*)
 	a0=KerrSEQ[[index0,1]];
 	\[CapitalDelta]a=2^(-blevel)/1000;
@@ -1135,8 +1147,8 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 			While[KerrSEQ[[index0p,1]]-KerrSEQ[[index0,1]]<\[CapitalDelta]a,++index0p;++incstep]
 		]
 	];
-	If[KerrSEQ[[index0,1]]-KerrSEQ[[index0m,1]]!=\[CapitalDelta]a,Print["Incorrect \[CapitalDelta]a(-)"];Abort[]];
-	If[KerrSEQ[[index0p,1]]-KerrSEQ[[index0,1]]!=\[CapitalDelta]a,Print["Incorrect \[CapitalDelta]a(+)"];Abort[]];
+	If[KerrSEQ[[index0,1]]-KerrSEQ[[index0m,1]]!=\[CapitalDelta]a,Message[AdaptCheck3::incorrectam];Abort[]];
+	If[KerrSEQ[[index0p,1]]-KerrSEQ[[index0,1]]!=\[CapitalDelta]a,Message[AdaptCheck3::incorrectap];Abort[]];
 	\[Omega]0=KerrSEQ[[index0,2,1]];
 	\[Omega]p=KerrSEQ[[index0p,2,1]];
 	\[Omega]m=KerrSEQ[[index0m,2,1]];
@@ -1163,7 +1175,7 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 			Almg = (6Alm0+3Almp-Almm)/8;
 			If[extraporder==Accumulate,
 				If[!forward,
-					Print["Cannot use Accumulation extrapolation with backward sequencing"];
+					Message["AdaptCheck3::missuse"];
 					Abort[]
 				];
 				edat0=SetPrecision[Take[KerrSEQ,{index0p-9,index0p}],Max[precision,$MinPrecision]];
@@ -1203,7 +1215,7 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 				blevelp=AC3ret[[2]];
 				\[Epsilon]p=AC3ret[[5]];
 				,(* invalid solution *)
-				Print["a+ solution failed."];
+				Message[AdaptCheck3::apsolfail];
 				Abort[];
 			];
 		];
@@ -1214,7 +1226,7 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 			Almg = (6Alm0+3Almm-Almp)/8;
 			If[extraporder==Accumulate,
 				If[!forward,
-					Print["Cannot use Accumulation extrapolation with backward sequencing"];
+					Message[AdaptCheck3::missuse];
 					Abort[]
 				];
 				edat0=SetPrecision[Take[KerrSEQ,{index0p-9,index0p}],Max[precision,$MinPrecision]];
@@ -1245,7 +1257,7 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 								Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[ModeSolution]]];
 			If[ModeSol[[1]],(* valid solution *)
 (*Print["Untested section of code! 17"];*)
-				Print["ModeSol- a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision]," Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision]];
+				Print[Style[StringForm[AdaptCheck3::modesolm,Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]],SetPrecision[ModeSol[[4,2,1]],MachinePrecision],SetPrecision[ModeSol[[4,3,1]],MachinePrecision]],{Medium,Darker[Green]}]];
 				blevelm=blevel+1;
 				KerrSEQ=Insert[KerrSEQ,ModeSol[[4]],index0];
 				AC3ret=AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon]2,relax,index0m,blevelm,forward,False,True,FilterRules[{opts},Options[AdaptCheck3]]];
@@ -1253,7 +1265,7 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 				blevelm=AC3ret[[2]];
 				\[Epsilon]m=AC3ret[[5]];
 				,(* invalid solution *)
-				Print["a- solution failed."];
+				Message[AdaptCheck3::amsolfail];
 				Abort[];
 			];
 		];
@@ -1276,10 +1288,10 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 									SetPrecision[Almg,Max[precision,$MinPrecision]],\[Epsilon]2,relax,
 									Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[ModeSolution]]];
 				If[ModeSol[[1]],
-					Print["ModeSol++ a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision]," Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision]];
+					Print[Style[StringForm[AdaptCheck3::modesolpp,Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]],SetPrecision[ModeSol[[4,2,1]],MachinePrecision],SetPrecision[ModeSol[[4,3,1]],MachinePrecision]],{MediumDarker[Green]}]];
 					KerrSEQ=Insert[KerrSEQ,ModeSol[[4]],ind0+1];
 					,(* invalid solution *)
-					Print["a++ solution failed."];
+					Message[AdaptCheck3::appsolfail];
 					Abort[];
 				];
 			,If[\[CapitalDelta]am>2\[CapitalDelta]ap,
@@ -1294,10 +1306,10 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 									SetPrecision[Almg,Max[precision,$MinPrecision]],\[Epsilon]2,relax,
 									Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[ModeSolution]]];
 				If[ModeSol[[1]],
-					Print["ModeSol-- a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision]," Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision]];
+					Print[AdaptCheck3::modesolmm,Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]],SetPrecision[ModeSol[[4,2,1]],MachinePrecision],SetPrecision[ModeSol[[4,3,1]],MachinePrecision]],{MediumDarker[Green]}]];
 					KerrSEQ=Insert[KerrSEQ,ModeSol[[4]],ind0++]; (* must increment to keep ind0 at same a *)
 					,(* invalid solution *)
-					Print["a-- solution failed."];
+					Message[AdaptCheck3::ammsolfail];
 					Abort[];
 				];
 			]];
