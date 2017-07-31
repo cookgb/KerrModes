@@ -4,7 +4,7 @@
 (*Modes of Kerr*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation *)
 
 
@@ -41,7 +41,7 @@ If[KerrModeDebug,Unprotect["KerrModes`*"];Unprotect["KerrModes`Private`*"]];
 Protect[KerrModeDebug];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions*)
 
 
@@ -143,7 +143,7 @@ PlotModeFunctionL::usage=
 "PolynomialMode will use SelectMode to replace Modefunction with Starobinsky.\n"
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Reserved Globals*)
 
 
@@ -154,14 +154,14 @@ Protect[SpinWeight,ModePrecision,RadialCFDepth,RadialCFMinDepth,RadialDebug,Radi
         JacobianStep,Root\[Epsilon],SchDebug];
 
 
-Protect[SolutionDebug,NoNeg\[Omega],QNMPrecision,SolutionSlow,SolutionOscillate,SolutionIter,
+Protect[SolutionDebug,NoNeg\[Omega],ModePrecision,SolutionSlow,SolutionOscillate,SolutionIter,
 		RadialCFDigits,RCFPower]
 
 
 Protect[Minblevel,Maxblevel,CurvatureRatio,Max\[CapitalDelta]\[Omega],ExtrapolationOrder]
 
 
-Protect[QNMaStart,QNMGuess,SeqDirection,Maximala\[Epsilon],SolutionRelax,SolutionWindowl,SolutionWindowt]
+Protect[ModeaStart,QNMGuess,SeqDirection,Maximala\[Epsilon],SolutionRelax,SolutionWindowl,SolutionWindowt]
 
 
 Begin["`Private`"]
@@ -433,14 +433,14 @@ Module[{\[Lambda],starob},
 (*Kerr Modes methods*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Iterative simultaneous solution of radial & angular Teukolsky equations*)
 
 
 Options[Set\[CapitalDelta]a]={Min\[CapitalDelta]alevel->1,Max\[CapitalDelta]alevel->4,\[Omega]poly->Null[],Max\[CapitalDelta]\[Phi]->0.0005,Max\[CapitalDelta]\[Omega]->0.01};
 
 
-Options[ModeSolution]=Union[{SolutionDebug->0,NoNeg\[Omega]->False,RadialCFMinDepth->300,QNMPrecision->24,
+Options[ModeSolution]=Union[{SolutionDebug->0,NoNeg\[Omega]->False,RadialCFMinDepth->300,ModePrecision->24,
 							SolutionSlow->10,SolutionOscillate->10,SolutionIter->50,
 							RadialCFDigits->8,RCFPower->Null[]},Options[RadialLentzRoot]];
 
@@ -461,7 +461,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 		slowval=OptionValue[SolutionSlow],oscval=OptionValue[SolutionOscillate],
 		iterval=OptionValue[SolutionIter],jacobianstep=OptionValue[JacobianStep],
 		solutiondebug=OptionValue[SolutionDebug],RCFmin=OptionValue[RadialCFMinDepth],
-		precision=OptionValue[QNMPrecision],RCFdigits=OptionValue[RadialCFDigits],
+		precision=OptionValue[ModePrecision],RCFdigits=OptionValue[RadialCFDigits],
 		RCFpowoverride=OptionValue[RCFPower]},
 	ModeSolution::soldebug1="\[Omega]g = `1` Almg = `2`";
 	ModeSolution::soldebug2a="Initial Nradial : `1`";
@@ -607,7 +607,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 			count=0
 		];
 	];
-	If[rl!=0 &&rt!=0,Options[ModeSolution]=Union[{SolutionDebug->0,NoNeg\[Omega]->False,RadialCFMinDepth->300,QNMPrecision->24,
+	If[rl!=0 &&rt!=0,Options[ModeSolution]=Union[{SolutionDebug->0,NoNeg\[Omega]->False,RadialCFMinDepth->300,ModePrecision->24,
 							SolutionSlow->10,SolutionOscillate->10,SolutionIter->50,
 							RadialCFDigits->8,RCFPower->Null[]},Options[RadialLentzRoot]];
 		If[Not[SolutionWindow[\[Omega]0,\[Omega]g,old\[Omega],rl,rt,True]],
@@ -631,7 +631,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 Options[AdaptCheck3]=Union[{Minblevel->0,Maxblevel->20,CurvatureRatio->1/2,Max\[CapitalDelta]\[Omega]->0.01,ExtrapolationOrder->2},Options[ModeSolution]];
 
 
-Options[KerrModeSequence]=Union[{SpinWeight->Null[],QNMaStart->0,QNMGuess->0,
+Options[KerrModeSequence]=Union[{SpinWeight->Null[],ModeaStart->0,QNMGuess->0,
 								SeqDirection->Forward,Maximala\[Epsilon]->10,
 								SolutionRelax->1,RadialCFDepth->1,
 								SolutionWindowl->1/2,SolutionWindowt->1/3},
@@ -647,13 +647,15 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 		\[Omega]0,\[Omega]p,\[Omega]m,Alm0,Almp,Almm,\[Omega]w=0,Almw=0,precisionsave,precisioncount=0,
 		Minb=OptionValue[Minblevel],Maxb=OptionValue[Maxblevel],
 		forward=If[OptionValue[SeqDirection]==Backward,False,True,True],
-		qnmastart=OptionValue[QNMaStart],guess=OptionValue[QNMGuess],
-		precision=OptionValue[QNMPrecision],extraporder=OptionValue[ExtrapolationOrder],
+		modeastart=OptionValue[ModeaStart],guess=OptionValue[ModeGuess],
+		precision=OptionValue[ModePrecision],extraporder=OptionValue[ExtrapolationOrder],
 		solwinl=OptionValue[SolutionWindowl],solwint=OptionValue[SolutionWindowt],
 		relax,srelax=Rationalize[OptionValue[SolutionRelax]],RCFmin=OptionValue[RadialCFMinDepth],
 		rcfdepth=OptionValue[RadialCFDepth]},
 
-	If[precision!=$MinPrecision,Print["Set $MinPrecision = ",precision]];
+	KerrModeSequence::minprecision="Set $MinPrecision = `1`";
+
+	If[precision!=$MinPrecision,Print[Style[StringForm[KerrModeSequence::minprecision,precision],{Medium,Darker[Red]}]];
 	$MinPrecision=precisionsave=precision; (* Sets the minimum precision for entire calculation *)
 	maxmimuma=If[OptionValue[Maximala\[Epsilon]] \[Element] Integers,
 				1-(2^-OptionValue[Maximala\[Epsilon]])/1000,
@@ -739,11 +741,12 @@ Print["Untested section of code! 2"];
 						{KerrSEQret,blevel,\[CapitalDelta]aincflag,\[CapitalDelta]aincstep,\[Epsilon]}=
 						AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,forward,False,False,FilterRules[{opts},Options[AdaptCheck3]]]
 					];
-					Switch[s,
+					modeName[l,m,n]=KerrSEQret;
+					(*Switch[s,
 						   -2,Global`KerrQNM[l,m,n]=KerrSEQret,
 						   -1,Global`KerrQNMe[l,m,n]=KerrSEQret,
 							0,Global`KerrQNMs[l,m,n]=KerrSEQret
-						  ];
+						  ];*)
 				];
 				(*If[\[CapitalDelta]a==2\[CapitalDelta]a2,\[CapitalDelta]aincflag=True];
 				{KerrSEQret,blevel,\[CapitalDelta]aincflag,\[CapitalDelta]aincstep,\[Epsilon]}=
@@ -813,13 +816,13 @@ Print["Untested section of code! 2"];
 			Print["Starting KerrQNM[",l,",",m,",",n,"] sequence"];
 			a=0;
 			inversion=If[Head[n]==Integer,n,Null[],n[[1]]];
-			If[Head[qnmastart]==List,
+			If[Head[modeastart]==List,
 (*Print["Untested section of code! 6"];*)
 			(* For cases that cannot start at a=0 *)
-				a=qnmastart[[1]];
-				\[Omega]=SetPrecision[qnmastart[[2]],Max[precision,$MinPrecision]];
-				Alm=SetPrecision[qnmastart[[3]],Max[precision,$MinPrecision]];
-				If[Length[qnmastart]==4,Nm=qnmastart[[4]]],
+				a=modeastart[[1]];
+				\[Omega]=SetPrecision[modeastart[[2]],Max[precision,$MinPrecision]];
+				Alm=SetPrecision[modeastart[[3]],Max[precision,$MinPrecision]];
+				If[Length[modeastart]==4,Nm=modeastart[[4]]],
 				Null[],
 (*Print["Untested section of code! 6a"];*)
 				ModeGuess=If[Head[n]==Integer,
@@ -834,11 +837,12 @@ Print["Untested section of code! 2"];
 			Nrcf=RCFmin;
 			If[rcfdepth>RCFmin,Nrcf=IntegerPart[rcfdepth]];
 (*Print["Starting with ",\[Omega]," : ",Alm," | a : ",a+dir*\[CapitalDelta]a," | Nrcf : ",Nrcf];*)
-			Switch[s,
+			modeName[l,m,n]={}
+			(*Switch[s,
 				   -2,Global`KerrQNM[l,m,n]={},
 				   -1,Global`KerrQNMe[l,m,n]={},
 					0,Global`KerrQNMs[l,m,n]={}
-					],
+					],*)
 			Print["Error determining status of KerrQNM[",l,",",m,",",n,"] sequence: Abort"];
 			Abort[],
 			Print["Error determining status of KerrQNM[",l,",",m,",",n,"] sequence: Abort"];
@@ -901,11 +905,12 @@ Print["Untested section of code! 2"];
 				blevelsave=blevel;
 				{KerrSEQret,blevel,\[CapitalDelta]aincflag,\[CapitalDelta]aincstep,\[Epsilon]}=
 					AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,forward,\[CapitalDelta]aincflag,False,FilterRules[{opts},Options[AdaptCheck3]]];
-				Switch[s,
+				modeName[l,m,n]=KerrSEQret;
+				(*Switch[s,
 					   -2,Global`KerrQNM[l,m,n]=KerrSEQret,
 					   -1,Global`KerrQNMe[l,m,n]=KerrSEQret,
 						0,Global`KerrQNMs[l,m,n]=KerrSEQret
-					  ];
+					  ];*)
 				NKMode=Length[KerrSEQ];
 				index0=If[forward,NKMode-1,2];
 (*Print["Ret from AC3: blevel = ",blevel," \[CapitalDelta]aincflag = ",\[CapitalDelta]aincflag];*)
@@ -1018,19 +1023,21 @@ Print["NKMode <= 2 : index0 = ",index0];
 (*Print["Untested section of code! 11"];*)
 				Print["ModeSol+/- a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision]," Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision]];
 				If[forward,index0=index0+1];
-				Switch[s,
+				modeName[l,m,n]=Insert[KerrSEQ,ModeSol[[4]],index0];
+				(*Switch[s,
 					   -2,Global`KerrQNM[l,m,n] =Insert[KerrSEQ,ModeSol[[4]],index0],
 					   -1,Global`KerrQNMe[l,m,n]=Insert[KerrSEQ,ModeSol[[4]],index0],
 						0,Global`KerrQNMs[l,m,n]=Insert[KerrSEQ,ModeSol[[4]],index0]
-					  ];
+					  ];*)
 				blevelsave=blevel;
 				{KerrSEQret,blevel,\[CapitalDelta]aincflag,\[CapitalDelta]aincstep,\[Epsilon]}=
 					AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,forward,False,False,Minblevel->Max[blevel,OptionValue[Minblevel]],FilterRules[{opts},Options[AdaptCheck3]]];
-				Switch[s,
+				modeName[l,m,n]=KerrSEQret;
+				(*Switch[s,
 					   -2,Global`KerrQNM[l,m,n]=KerrSEQret,
 					   -1,Global`KerrQNMe[l,m,n]=KerrSEQret,
 						0,Global`KerrQNMs[l,m,n]=KerrSEQret
-					  ];
+					  ];*)
 				NKMode=Length[KerrSEQ];
 				index0=If[forward,NKMode-1,2];
 				\[CapitalDelta]a=2^(-blevel)/1000;
@@ -1095,7 +1102,7 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 		ModeSol,incres=False,incstep=1,inctmp,
 		edat,edat0,ef,iv,afit,extraporder=OptionValue[ExtrapolationOrder],
 		Minb=OptionValue[Minblevel],Maxb=OptionValue[Maxblevel],RCFmin=OptionValue[RadialCFMinDepth],
-		maxcurvrat=OptionValue[CurvatureRatio],max\[CapitalDelta]\[Omega]=Abs[OptionValue[Max\[CapitalDelta]\[Omega]]],precision=OptionValue[QNMPrecision]},
+		maxcurvrat=OptionValue[CurvatureRatio],max\[CapitalDelta]\[Omega]=Abs[OptionValue[Max\[CapitalDelta]\[Omega]]],precision=OptionValue[ModePrecision]},
 	(*If[blevel>Maxb || blevel<Minb,Print["\[CapitalDelta]a level out of bounds."];Abort[]];*)
 	a0=KerrSEQ[[index0,1]];
 	\[CapitalDelta]a=2^(-blevel)/1000;
