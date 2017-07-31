@@ -433,7 +433,7 @@ Module[{\[Lambda],starob},
 (*Kerr Modes methods*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Iterative simultaneous solution of radial & angular Teukolsky equations*)
 
 
@@ -654,6 +654,25 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 		rcfdepth=OptionValue[RadialCFDepth]},
 
 	KerrModeSequence::minprecision="Set $MinPrecision = `1`";
+	KerrModeSequence::invalidmax="Invalid value for Maximala\[Epsilon]";
+	KerrModeSequence::entries="KerrQNM[`1`,`2`,`3`] sequence exists with `4` entries";
+	KerrModeSequence::untested1="Untested section of code! 1";
+	KerrModeSequence::untested2="Untested section of code! 2";
+	KerrModeSequence::guesses="Guesses set: `1`:`2`:`3`:`4`";
+	KerrModeSequence::unusualstepsize="Sequence has unusual stepsizes, Aborting";
+	KerrModeSequence::decblevel="Decreasing \[CapitalDelta]a, blevel = `1`";
+	KerrModeSequence::decblevelmore="Further decreasing \[CapitalDelta]a, blevel = `1`";
+	KerrModeSequence::incblevel="Increasing \[CapitalDelta]a, blevel = `1`";
+	KerrModeSequence::missuse="Cannot use Accumulation extrapolation with backward sequencing";
+	KerrModeSequence::startseq="Starting KerrQNM[`1`,`2`,`3`] sequence";
+	KerrModeSequence::status="Error determining status of KerrQNM[`1`,`2`,`3`] sequence: Abort";
+	KerrModeSequence::modesol="ModeSol a=`1`, \[Omega]=`2`, Alm=`3`";
+	KerrModeSequence::nosol="No solution found at a = `1`";
+	KerrModeSequence::nosoltry="No solution found at a = `1`, try decreasing \[CapitalDelta]a, blevel = `2`";
+	KerrModeSequence::nkmodeindex="NKMode <= 2 : index0 = `1`";
+	KerrModeSequence::solfail="a+/- solution failed.";
+	KerrModeSequence::modesolpm="ModeSol+/- a=`1`, \[Omega]=`2`, Alm=`3`";
+	KerrModeSequence::invalidcall="Invalid call to ModeSolution";
 
 	If[precision!=$MinPrecision,Print[Style[StringForm[KerrModeSequence::minprecision,precision],{Medium,Darker[Red]}]];
 	$MinPrecision=precisionsave=precision; (* Sets the minimum precision for entire calculation *)
@@ -661,7 +680,7 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 				1-(2^-OptionValue[Maximala\[Epsilon]])/1000,
 				If[OptionValue[Maximala\[Epsilon]] \[Element] Booleans && OptionValue[Maximala\[Epsilon]]==False,
 					1,
-					Print["Invalide value for Maximala\[Epsilon]"];Abort[]
+					Message[KerrModeSequence::invalidmax];Abort[]
 				]];
 	SpinWeightTable:=modeName;
 					];
@@ -685,12 +704,13 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 (*Print["Untested section of code! 0"];*)
 		(* Sequence exists, extend *)
 		NKMode=Length[KerrSEQ];
-		Print["KerrQNM[",l,",",m,",",n,"] sequence exists with ",NKMode," entries"];
+		(*Print["KerrQNM[",l,",",m,",",n,"] sequence exists with ",NKMode," entries"];*)
+		Print[Style[StringForm[KerrModeSequence::entries,l,m,n,NKMode],{Medium,Darker[Green]}]];
 		If[forward,
 			\[Epsilon]=Min[\[Epsilon]max,KerrSEQ[[NKMode,2,4]]];
-			If[Length[KerrSEQ[[NKMode,2]]]>=9,$MinPrecision=KerrSEQ[[NKMode,2,9]],Print["Set $MinPrecision = ",$MinPrecision]],
+			If[Length[KerrSEQ[[NKMode,2]]]>=9,$MinPrecision=KerrSEQ[[NKMode,2,9]],Print[Style[StringForm[KerrModeSequence::minprecision,precision],{Medium,Darker[Red]}]]],
 			\[Epsilon]=Min[\[Epsilon]max,KerrSEQ[[1,2,4]]];
-			If[Length[KerrSEQ[[1,2]]]>=9,$MinPrecision=KerrSEQ[[1,2,9]],Print["Set $MinPrecision = ",$MinPrecision]]
+			If[Length[KerrSEQ[[1,2]]]>=9,$MinPrecision=KerrSEQ[[1,2,9]],Print[Style[StringForm[KerrModeSequence::minprecision,precision],{Medium,Darker[Red]}]]];
 		];
 		a=If[forward,KerrSEQ[[NKMode,1]],KerrSEQ[[1,1]]];
 		inversion=If[Head[n]==Integer,n,Null[],n[[1]]];
@@ -710,15 +730,15 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 		Nrcf=Max[Nrcf,RCFmin];
 		If[NKMode>1,
 			If[Head[guess]==List,
-Print["Untested section of code! 1"];
+Print[Style[StringForm[KerrModeSequence::untested1],{Medium,Darker[Red]}]];
 				\[Omega]=guess[[1]];
 				Alm=guess[[2]];
 				If[Length[guess]>=3,Nrcf=guess[[3]]];
 				If[Length[guess]==4,Nm=guess[[4]]];
-				Print["Guesses set: ",\[Omega]," : ",Alm," : ",Nrcf," : ",Nm];
+				Print[KerrModeSequence::guesses,\[Omega],Alm,Nrcf,Nm];
 			];
 			If[NKMode==2,
-Print["Untested section of code! 2"];
+Print[KerrModeSequence::untested2];
 				If[forward,
 					\[Omega]=2KerrSEQ[[2,2,1]]-KerrSEQ[[1,2,1]];Alm=2KerrSEQ[[2,3,1]]-KerrSEQ[[1,3,1]],
 					\[Omega]=2KerrSEQ[[1,2,1]]-KerrSEQ[[2,2,1]];Alm=2KerrSEQ[[1,3,1]]-KerrSEQ[[2,3,1]]
@@ -731,7 +751,7 @@ Print["Untested section of code! 2"];
 				blevelsave=blevel=Round[-(3+Log10[\[CapitalDelta]a])/Log10[2]];
 				\[CapitalDelta]a2=If[forward,KerrSEQ[[index0,1]]-KerrSEQ[[index0-1,1]],KerrSEQ[[index0+1,1]]-KerrSEQ[[index0,1]]];
 
-				If[\[CapitalDelta]a > 2\[CapitalDelta]a2,Print["Sequence has unusual stepsizes, Aborting"];Abort[]];
+				If[\[CapitalDelta]a > 2\[CapitalDelta]a2,Message[KerrModeSequence::unusualstepsize];Abort[]];
 				\[CapitalDelta]a3=2^(-Maxb)/1000;
 				If[a+dir*\[CapitalDelta]a3>maxmimuma,Return[]];
 				If[\[CapitalDelta]a>=\[CapitalDelta]a2,
@@ -759,8 +779,8 @@ Print["Untested section of code! 2"];
 				NKMode=Length[KerrSEQ];
 				index0=If[forward,NKMode-1,2];
 				\[CapitalDelta]a=2^(-blevel)/1000;
-				If[blevel>blevelsave,Print["Decreasing \[CapitalDelta]a, blevel = ",blevel]];
-				If[blevel<blevelsave,Print["Increasing \[CapitalDelta]a, blevel = ",blevel]];
+				If[blevel>blevelsave,Print[Style[StringForm[KerrModeSequence::decblevel,blevel],{Medium,Darker[Green]}]]];
+				If[blevel<blevelsave,Print[Style[StringForm[KerrModeSequence::incblevel,blevel],{Medium,Darker[Green]}]]];
 				index0p=If[forward,index0+1,index0+\[CapitalDelta]aincstep];
 				index0m=If[forward,index0-\[CapitalDelta]aincstep,index0-1];
 				\[Omega]0=SetPrecision[KerrSEQ[[index0,2,1]],Max[precision,$MinPrecision]];
@@ -786,7 +806,7 @@ Print["Untested section of code! 2"];
 					];
 					If[extraporder==Accumulate,
 						If[!forward,
-							Print["Cannot use Accumulation extrapolation with backward sequencing"];
+							Message[KerrModeSequence::missuse];
 							Abort[]
 						];
 						edat0=SetPrecision[Take[KerrSEQ,-10],Max[precision,$MinPrecision]];
@@ -813,7 +833,7 @@ Print["Untested section of code! 2"];
 		(* Sequence does not exist, start it *)
 		If[Head[KerrSEQ]==SpinWeightTable || Length[KerrSEQ]==0,
 (*Print["Untested section of code! 5"];*)
-			Print["Starting KerrQNM[",l,",",m,",",n,"] sequence"];
+			Print[Style[StringForm[KerrModeSequence::startseq,l,m,n],{Medium,Darker[Green]}]];
 			a=0;
 			inversion=If[Head[n]==Integer,n,Null[],n[[1]]];
 			If[Head[modeastart]==List,
@@ -843,10 +863,10 @@ Print["Untested section of code! 2"];
 				   -1,Global`KerrQNMe[l,m,n]={},
 					0,Global`KerrQNMs[l,m,n]={}
 					],*)
-			Print["Error determining status of KerrQNM[",l,",",m,",",n,"] sequence: Abort"];
+			Message[KerrModeSequence::status,l,m,n];
 			Abort[],
-			Print["Error determining status of KerrQNM[",l,",",m,",",n,"] sequence: Abort"];
-			Abort[];
+			Message[KerrModeSequence::status,l,m,n];
+			Abort[],
 		];
 	];
 	While[0 <= a+dir*\[CapitalDelta]a <= maxmimuma,
@@ -863,7 +883,7 @@ Print["Untested section of code! 2"];
 (*Print["Untested section of code! 7"];*)
 			(* Solution found, save solution check sequence smoothness *)
 			a=a+dir*\[CapitalDelta]a;
-			Print["ModeSol a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision]," Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision]];
+			Print[Style[StringForm[KerrModeSequence::modesol,Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]],SetPrecision[ModeSol[[4,2,1]],MachinePrecision],SetPrecision[ModeSol[[4,3,1]],MachinePrecision]],{Medium,Darker[Green]}]];
 			(* Print["levelcount = ",levelcount]; *)
 			relax=Min[srelax,5/3ModeSol[[2]]];
 			Nm=ModeSol[[4,3,2]];
@@ -929,20 +949,20 @@ Print["Untested section of code! 2"];
 				If[\[CapitalDelta]aincflag,
 (*Print["Untested section of code! 9a"];*)
 					(* Do not reset \[CapitalDelta]aincflag, it is needed for next call to AdaptCheck3 *)
-					Print["Increasing \[CapitalDelta]a, blevel = ",blevel];
+					Print[Style[StringForm[KerrModeSequence::incblevel,blevel],{Medium,Darker[Green]}]];
 					If[forward,
 						\[Omega]=6\[Omega]p-8\[Omega]0+3\[Omega]m;Alm=6Almp-8Alm0+3Almm,
 						\[Omega]=6\[Omega]m-8\[Omega]0+3\[Omega]p;Alm=6Almm-8Alm0+3Almp
 					],
 (*Print["Untested section of code! 9b"];*)
-					If[blevel>blevelsave,Print["Decreasing \[CapitalDelta]a, blevel = ",blevel]];
+					If[blevel>blevelsave,Print[Style[StringForm[KerrModeSequence::decblevel,blevel],{Medium,Darker[Green]}]]];
 					If[forward,
 						\[Omega]=3(\[Omega]p-\[Omega]0)+\[Omega]m;Alm=3(Almp-Alm0)+Almm,
 						\[Omega]=3(\[Omega]m-\[Omega]0)+\[Omega]p;Alm=3(Almm-Alm0)+Almp
 					];
 					If[extraporder==Accumulate,
 						If[!forward,
-							Print["Cannot use Accumulation extrapolation with backward sequencing"];
+							Print[KerrModeSequence::missuse];
 							Abort[]
 						];
 						edat0=SetPrecision[Take[KerrSEQ,-10],Max[precision,$MinPrecision]];
@@ -969,12 +989,12 @@ Print["Untested section of code! 2"];
 (*Print["Untested section of code! 10"];*)
 			blevelsave= ++blevel;
 			If[blevel > Maxb,Return[]];
-			If[NKMode==0,Print["No solution found at a = ",Block[{$MinPrecision=0},N[a+dir*\[CapitalDelta]a,{Infinity,20}]]];Abort[]];
-			Print["No solution found at a = ",Block[{$MinPrecision=0},N[a+dir*\[CapitalDelta]a,{Infinity,20}]],", try decreasing \[CapitalDelta]a, blevel = ",blevel];
+			If[NKMode==0,Message[KerrModeSequence::nosol,Block[{$MinPrecision=0},N[a+dir*\[CapitalDelta]a,{Infinity,20}]]];Abort[]];
+			Print[Style[StringForm[KerrModeSequence::nosoltry,Block[{$MinPrecision=0},N[a+dir*\[CapitalDelta]a,{Infinity,20}]],blevel],{Medium,Darker[Red]}]];
 			If[NKMode>2,
 				index0p=If[forward,index0+1,index0+\[CapitalDelta]aincstep];
 				index0m=If[forward,index0-\[CapitalDelta]aincstep,index0-1],
-Print["NKMode <= 2 : index0 = ",index0];
+Print[Style[StringForm[KerrModeSequence::nkmodeindex,index0],{Medium,Darker[Green]}]];
 				If[NKMode==2,
 					index0=If[forward,1,2];
 					index0p=If[forward,2,1];
@@ -1019,9 +1039,9 @@ Print["NKMode <= 2 : index0 = ",index0];
 									SetPrecision[\[Omega],Max[precision,$MinPrecision]],
 									SetPrecision[Alm,Max[precision,$MinPrecision]],\[Epsilon],relax,
 									Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[ModeSolution]]];
-				If[Not[ModeSol[[1]]],Print["a+/- solution failed."];Abort[]];
+				If[Not[ModeSol[[1]]],Message[KerrModeSequence::solfail];Abort[]];
 (*Print["Untested section of code! 11"];*)
-				Print["ModeSol+/- a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision]," Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision]];
+				Print[Style[StringForm[KerrModeSequence::modesolpm,Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]],SetPrecision[ModeSol[[4,2,1]],MachinePrecision],SetPrecision[ModeSol[[4,3,1]],MachinePrecision]],{Medium,Darker[Green]}]];
 				If[forward,index0=index0+1];
 				modeName[l,m,n]=Insert[KerrSEQ,ModeSol[[4]],index0];
 				(*Switch[s,
@@ -1054,14 +1074,14 @@ Print["NKMode <= 2 : index0 = ",index0];
 				\[Omega]w=If[forward,\[Omega]p,\[Omega]m];
 				Almw=If[forward,Almp,Almm];
 				rl=solwinl;rt=solwint;
-				If[blevel>blevelsave,Print["Further decreasing \[CapitalDelta]a, blevel = ",blevel]];
+				If[blevel>blevelsave,Print[Style[StringForm[KerrModeSequence::decblevelmore,blevel],{Medium,Darker[Green]}]]];
 				If[forward,
 					\[Omega]=3(\[Omega]p-\[Omega]0)+\[Omega]m;Alm=3(Almp-Alm0)+Almm,
 					\[Omega]=3(\[Omega]m-\[Omega]0)+\[Omega]p;Alm=3(Almm-Alm0)+Almp
 				];
 				If[extraporder==Accumulate,
 					If[!forward,
-						Print["Cannot use Accumulation extrapolation with backward sequencing"];
+						Print[KerrModeSequence::missuse];
 						Abort[]
 					];
 					edat0=SetPrecision[Take[KerrSEQ,-10],Max[precision,$MinPrecision]];
@@ -1084,7 +1104,7 @@ Print["NKMode <= 2 : index0 = ",index0];
 				]
 			],
 			(* Unknown Failure *)
-				Print["Invalid call to ModeSolution"];Abort[];
+				Message[KerrModeSequence::invalidcall];Abort[];
 		];
 	];
 ]
@@ -1174,7 +1194,7 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 								Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[ModeSolution]]];
 			If[ModeSol[[1]],(* valid solution *)
 (*Print["Untested section of code! 15"];*)
-				Print["ModeSol+ a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision]," Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision]];
+				Print[Style[StringForm[KerrModeSequence::modesolpm,Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]],SetPrecision[ModeSol[[4,2,1]],MachinePrecision],SetPrecision[ModeSol[[4,3,1]],MachinePrecision]],{Medium,Darker[Green]}]];
 				index0p=index0+1;
 				blevelp=blevel+1;
 				KerrSEQ=Insert[KerrSEQ,ModeSol[[4]],index0p];
