@@ -143,7 +143,7 @@ PlotModeFunctionL::usage=
 "PolynomialMode will use SelectMode to replace Modefunction with Starobinsky.\n"
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Reserved Globals*)
 
 
@@ -641,7 +641,7 @@ Options[KerrModeSequence]=Union[{SpinWeight->Null[],QNMaStart->0,QNMGuess->0,
 KerrModeSequence[l_Integer,m_Integer,n_Integer|n_List,\[Epsilon]max_Integer,
 					opts:OptionsPattern[]]:=
 Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqStatus,context,
-		QNMguess,inversion,\[Omega],Alm,\[Omega]try,Almtry,ModeSol,a,index0=0,index0p,index0m,
+		ModeGuess,inversion,\[Omega],Alm,\[Omega]try,Almtry,ModeSol,a,index0=0,index0p,index0m,
 		\[Epsilon]=\[Epsilon]max,Nrcf,Nm=4,rl=0,rt=0,NKQNM=0,edat0,edat,ef,iv,afit,
 		maxmimuma=1,blevel=0,\[CapitalDelta]a=10^(-3),\[CapitalDelta]a2,\[CapitalDelta]a3,dir=1,\[CapitalDelta]aincflag=False,\[CapitalDelta]aincstep=0,blevelsave,
 		\[Omega]0,\[Omega]p,\[Omega]m,Alm0,Almp,Almm,\[Omega]w=0,Almw=0,precisionsave,precisioncount=0,
@@ -661,17 +661,20 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 					1,
 					Print["Invalide value for Maximala\[Epsilon]"];Abort[]
 				]];
-	SpinWeightTable:=Switch[s,
+	SpinWeightTable:=modeName;
+					];
+	(*SpinWeightTable:=Switch[s,
 						-2,Global`KerrQNM,
 						-1,Global`KerrQNMe,
 						 0,Global`KerrQNMs,
 						 _,Print["Invalid QNMSpinWeight"];Abort[]
-					];
-	KerrSEQ:=Switch[s,
+					];*)
+	KerrSEQ:=modeName[l,m,n];
+(*	KerrSEQ:=Switch[s,
 					-2,Global`KerrQNM[l,m,n],
 					-1,Global`KerrQNMe[l,m,n],
 					 0,Global`KerrQNMs[l,m,n]
-					];
+					];*)
 	SeqStatus=If[Head[KerrSEQ]==List,If[Length[KerrSEQ]>0,True,False,False],False,False];
 	dir=If[forward,1,-1];
 	relax=srelax;
@@ -819,12 +822,12 @@ Print["Untested section of code! 2"];
 				If[Length[qnmastart]==4,Nm=qnmastart[[4]]],
 				Null[],
 (*Print["Untested section of code! 6a"];*)
-				QNMguess=If[Head[n]==Integer,
-							SetPrecision[SchQNMguess[l,n],Max[precision,$MinPrecision]],
+				ModeGuess=If[Head[n]==Integer,
+							SetPrecision[SchModeGuess[l,n],Max[precision,$MinPrecision]],
 							Null[],
-							SetPrecision[SchQNMguess[l,n[[1]]],Max[precision,$MinPrecision]]
+							SetPrecision[SchModeGuess[l,n[[1]]],Max[precision,$MinPrecision]]
 							];
-				\[Omega]=SetPrecision[QNMguess[[1]],Max[precision,$MinPrecision]];
+				\[Omega]=SetPrecision[ModeGuess[[1]],Max[precision,$MinPrecision]];
 				Alm = l(l+1)-s(s+1);
 			];
 			a=a-dir*\[CapitalDelta]a; (* offset to "previous" a *)
@@ -863,7 +866,14 @@ Print["Untested section of code! 2"];
 			Nrcf=ModeSol[[3]];
 			Nrcf=Max[Nrcf,RCFmin];
 			(* Nrcf=Max[RCFmin,Nrcf 4/5]; speed up solution? *)
-			If[forward,
+			If[forward, 
+				modeName[l,m,n]; ModeSol
+				,
+				s,
+				modeName[l,m,n]; ModeSol[[4]] 
+					   
+			];
+			(*If[forward,
 				Switch[s,
 					   -2,AppendTo[Global`KerrQNM[l,m,n], ModeSol[[4]]],
 					   -1,AppendTo[Global`KerrQNMe[l,m,n], ModeSol[[4]]],
@@ -875,7 +885,7 @@ Print["Untested section of code! 2"];
 					   -1,PrependTo[Global`KerrQNMe[l,m,n], ModeSol[[4]]],
 						0,PrependTo[Global`KerrQNMs[l,m,n], ModeSol[[4]]]
 					  ];
-			];
+			];*)
 			NKQNM=Length[KerrSEQ];
 			If[NKQNM==1,\[Omega]=KerrSEQ[[1,2,1]];Alm=KerrSEQ[[1,3,1]]];
 			If[NKQNM>1,index0=If[forward,NKQNM-1,2]];
