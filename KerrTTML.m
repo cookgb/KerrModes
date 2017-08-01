@@ -90,7 +90,7 @@ Module[{C12tmp,C1,C2,C3,C4,C5,Rem,Err},
 If[!KerrTTMLDebug,Protect[RadialCFRemainder]];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Set SpinWeight, SelectMode, and Data-Variable Names*)
 
 
@@ -105,6 +105,7 @@ Module[{},
 			_,Message[SetSpinWeight::spinweight,s];Abort[]
 		  ];
 	SetOptions[KerrTTML`SchwarzschildTTML,SpinWeight->s];
+	SetOptions[KerrQNM`KerrTTMLSequence,SpinWeight->s];
 	Print[Style[StringForm[SetSpinWeight::confirm,s],{Medium,Darker[Green]}]];
 ]
 
@@ -137,8 +138,11 @@ If[!KerrModeDebug,Protect[SetSpinWeight]];
 End[] (* KerrModes`Private` *)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions in KerrTTML Namespace*)
+
+
+KerrTTMLSequence::usage=""
 
 
 SchwarzschildTTML::usage=
@@ -191,11 +195,11 @@ Protect[PlotSpinWeight];
 Begin["`Private`"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Kerr TTML methods*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Adaptive Bisection sequencer*)
 
 

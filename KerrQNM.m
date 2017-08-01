@@ -85,7 +85,7 @@ Module[{C12tmp,C1,C2,C3,C4,C5,Rem,Err},
 If[!KerrQNMDebug,Protect[RadialCFRemainder]];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Set SpinWeight, and Data-Variable Names*)
 
 
@@ -103,6 +103,7 @@ Module[{},
 			_,Message[SetSpinWeight::spinweight,s];Abort[]
 		  ];
 	SetOptions[KerrQNM`SchwarzschildQNM,SpinWeight->s];
+	SetOptions[KerrQNM`KerrQNMSequence,SpinWeight->s];
 	Print[Style[StringForm[SetSpinWeight::confirm,s],{Medium,Darker[Green]}]];
 ]
 
@@ -113,8 +114,11 @@ If[!KerrModeDebug,Protect[SetSpinWeight]];
 End[] (* KerrModes`Private` *)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions in KerrQNM Namespace*)
+
+
+KerrQNMSequence::usage=""
 
 
 SchwarzschildQNM::usage=
@@ -167,7 +171,39 @@ Protect[PlotSpinWeight];
 Begin["`Private`"]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
+(*Kerr QNM methods*)
+
+
+(* ::Subsection:: *)
+(*Adaptive Bisection sequencer*)
+
+
+Options[KerrQNMSequence]=Options[KerrModes`Private`KerrModeSequence];
+
+
+KerrQNMSequence[l_Integer,m_Integer,n_Integer|n_List,\[Epsilon]_Integer,
+				opts:OptionsPattern[]]:=
+Module[{ModeSavePrecision=$MinPrecision,saneopts},
+	KerrQNMSequence::spinweight="SpinWeight has not been set.  You must call SetSpinWeight[]";
+	KerrQNMSequence::argl="The order l is set to `1`, but must be \[GreaterEqual] |`2`|";
+	KerrQNMSequence::argm="The index m is set to `1`, but must be between -`2` and `2`";
+	KerrQNMSequence::argn="The overtone n is set to `1`, but must be \[GreaterEqual] 0";
+	If[OptionValue[SpinWeight]==Null[],Message[SchwarzschildQNM::spinweight];Abort[]];
+	If[l<Abs[OptionValue[SpinWeight]],
+			Message[SchwarzschildQNM::argl,l,OptionValue[SpinWeight]];Abort[]];
+	If[Abs[m]>l,
+			Message[SchwarzschildQNM::argm,m,l];Abort[]];
+	If[n<0,Message[SchwarzschildQNM::argn,n];Abort[]];
+	(* saneopts ensures options set via SetOptions[KerQNMSequenceB,...] are used *)
+	saneopts=Flatten[Union[{opts},FilterRules[Options[KerrQNMSequence],Except[Flatten[{opts}]]]]];
+	CheckAbort[Print["Debug 0"];KerrModes`Private`KerrModeSequence[l,m,n,\[Epsilon],FilterRules[saneopts,Options[KerrQNMSequence]]],
+				$MinPrecision=ModeSavePrecision;Abort[]];
+	$MinPrecision=ModeSavePrecision;
+]
+
+
+(* ::Section:: *)
 (*Initial Guesses*)
 
 

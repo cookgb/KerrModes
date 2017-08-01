@@ -105,6 +105,7 @@ Module[{},
 		   _,Message[SetSpinWeight::spinweight,s];Abort[]
 		  ];
 	SetOptions[KerrTTMR`SchwarzschildTTMR,SpinWeight->s];
+	SetOptions[KerrQNM`KerrTTMRSequence,SpinWeight->s];
 	Print[Style[StringForm[SetSpinWeight::confirm,s],{Medium,Darker[Green]}]];
 ]
 
@@ -137,8 +138,11 @@ If[!KerrModeDebug,Protect[SetSpinWeight]];
 End[] (* KerrModes`Private` *)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions in KerrTTMR Namespace*)
+
+
+KerrTTMRSequence::usage=""
 
 
 SchwarzschildTTMR::usage=
@@ -189,6 +193,28 @@ Protect[PlotSpinWeight];
 
 
 Begin["`Private`"]
+
+
+(* ::Section:: *)
+(*Kerr TTMR methods*)
+
+
+(* ::Subsection:: *)
+(*Adaptive Bisection sequencer*)
+
+
+Options[KerrTTMRSequence]=Options[KerrModes`Private`KerrModeSequence];
+
+
+KerrTTMRSequence[l_Integer,m_Integer,n_Integer|n_List,\[Epsilon]_Integer,
+				opts:OptionsPattern[]]:=
+Module[{ModeSavePrecision=$MinPrecision,saneopts},
+	(* saneopts ensures options set via SetOptions[KerQNMSequenceB,...] are used *)
+	saneopts=Flatten[Union[{opts},FilterRules[Options[KerrQNMSequence],Except[Flatten[{opts}]]]]];
+	CheckAbort[Print["Debug 0"];KerrModes`Private`KerrModeSequence[l,m,n,\[Epsilon],FilterRules[saneopts,Options[KerrQNMSequence]]],
+				$MinPrecision=ModeSavePrecision;Abort[]];
+	$MinPrecision=ModeSavePrecision;
+]
 
 
 (* ::Section::Closed:: *)
