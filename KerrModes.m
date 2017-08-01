@@ -4,7 +4,7 @@
 (*Modes of Kerr*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation *)
 
 
@@ -41,7 +41,7 @@ If[KerrModeDebug,Unprotect["KerrModes`*"];Unprotect["KerrModes`Private`*"]];
 Protect[KerrModeDebug];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions*)
 
 
@@ -143,7 +143,7 @@ PlotModeFunctionL::usage=
 "PolynomialMode will use SelectMode to replace Modefunction with Starobinsky.\n"
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Reserved Globals*)
 
 
@@ -155,7 +155,7 @@ Protect[SpinWeight,ModePrecision,RadialCFDepth,RadialCFMinDepth,RadialDebug,Radi
 
 
 Protect[SolutionDebug,NoNeg\[Omega],ModePrecision,SolutionSlow,SolutionOscillate,SolutionIter,
-		RadialCFDigits,RCFPower]
+		RadialCFDigits]
 
 
 Protect[Minblevel,Maxblevel,CurvatureRatio,Max\[CapitalDelta]\[Omega],ExtrapolationOrder]
@@ -442,7 +442,7 @@ Options[Set\[CapitalDelta]a]={Min\[CapitalDelta]alevel->1,Max\[CapitalDelta]alev
 
 Options[ModeSolution]=Union[{SolutionDebug->0,NoNeg\[Omega]->False,RadialCFMinDepth->300,ModePrecision->24,
 							SolutionSlow->10,SolutionOscillate->10,SolutionIter->50,
-							RadialCFDigits->8,RCFPower->Null[]},Options[RadialLentzRoot]];
+							RadialCFDigits->8},Options[RadialLentzRoot]];
 
 
 ModeSolution[n_Integer,s_Integer,l_Integer,m_Integer,
@@ -461,8 +461,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 		slowval=OptionValue[SolutionSlow],oscval=OptionValue[SolutionOscillate],
 		iterval=OptionValue[SolutionIter],jacobianstep=OptionValue[JacobianStep],
 		solutiondebug=OptionValue[SolutionDebug],RCFmin=OptionValue[RadialCFMinDepth],
-		precision=OptionValue[ModePrecision],RCFdigits=OptionValue[RadialCFDigits],
-		RCFpowoverride=OptionValue[RCFPower]},
+		precision=OptionValue[ModePrecision],RCFdigits=OptionValue[RadialCFDigits]},
 	ModeSolution::soldebug1="\[Omega]g = `1` Almg = `2`";
 	ModeSolution::soldebug2a="Initial Nradial : `1`";
 	ModeSolution::soldebug2b="\[CapitalDelta]\[Omega] = `1`";
@@ -543,7 +542,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 		];
 		old\[Omega]=radialsol[[2,1]];oldAlm=angularsol[[1]];
 		If[solutiondebug>2,Print[Style[StringForm[ModeSolution::soldebug3,a,old\[Omega],oldAlm],{Medium,Darker[Magenta,0.3]}]]];
-		If[solutiondebug>1||NumberQ[RCFpowoverride],Print[Style[StringForm[ModeSolution::soldebug2b,\[CapitalDelta]\[Omega]],{Medium,Darker[Blue,0.3]}]]];
+		If[solutiondebug>1,Print[Style[StringForm[ModeSolution::soldebug2b,\[CapitalDelta]\[Omega]],{Medium,Darker[Blue,0.3]}]]];
 		If[\[CapitalDelta]\[Omega]>0,
 			If[Abs[\[CapitalDelta]\[Omega]2]/Abs[\[CapitalDelta]\[Omega]]<1,
 				If[++slowcount2>slowval,
@@ -607,9 +606,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 			count=0
 		];
 	];
-	If[rl!=0 &&rt!=0,Options[ModeSolution]=Union[{SolutionDebug->0,NoNeg\[Omega]->False,RadialCFMinDepth->300,ModePrecision->24,
-							SolutionSlow->10,SolutionOscillate->10,SolutionIter->50,
-							RadialCFDigits->8,RCFPower->Null[]},Options[RadialLentzRoot]];
+	If[rl!=0 &&rt!=0,
 		If[Not[SolutionWindow[\[Omega]0,\[Omega]g,old\[Omega],rl,rt,True]],
 			Print[Style[StringForm[ModeSolution::solwindow1,old\[Omega]],{Medium,Darker[Red]}]];
 			Return[{False,\[Alpha],Nradialnew,{a,Join[radialsol[[2]],{Nradialnew,rcfpower,Det[jacobianmatrix]}],angularsol}}]
@@ -641,7 +638,7 @@ Options[KerrModeSequence]=Union[{SpinWeight->Null[],ModeaStart->0,ModeGuess->0,
 KerrModeSequence[l_Integer,m_Integer,n_Integer|n_List,\[Epsilon]max_Integer,
 					opts:OptionsPattern[]]:=
 Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqStatus,context,
-		ModeGuess,inversion,\[Omega],Alm,\[Omega]try,Almtry,ModeSol,a,index0=0,index0p,index0m,
+		\[Omega]Guess,inversion,\[Omega],Alm,\[Omega]try,Almtry,ModeSol,a,index0=0,index0p,index0m,
 		\[Epsilon]=\[Epsilon]max,Nrcf,Nm=4,rl=0,rt=0,NKMode=0,edat0,edat,ef,iv,afit,
 		maxmimuma=1,blevel=0,\[CapitalDelta]a=10^(-3),\[CapitalDelta]a2,\[CapitalDelta]a3,dir=1,\[CapitalDelta]aincflag=False,\[CapitalDelta]aincstep=0,blevelsave,
 		\[Omega]0,\[Omega]p,\[Omega]m,Alm0,Almp,Almm,\[Omega]w=0,Almw=0,precisionsave,precisioncount=0,
@@ -843,12 +840,12 @@ Print[KerrModeSequence::untested2];
 				If[Length[modeastart]==4,Nm=modeastart[[4]]],
 				Null[],
 (*Print["Untested section of code! 6a"];*)
-				ModeGuess=If[Head[n]==Integer,
+				\[Omega]Guess=If[Head[n]==Integer,
 							SetPrecision[SchGuess[l,n,FilterRules[{opts},Options[SchGuess]]],Max[precision,$MinPrecision]],
 							Null[],
 							SetPrecision[SchGuess[l,n[[1]],FilterRules[{opts},Options[SchGuess]]],Max[precision,$MinPrecision]]
 							];
-				\[Omega]=SetPrecision[ModeGuess[[1]],Max[precision,$MinPrecision]];
+				\[Omega]=SetPrecision[\[Omega]Guess[[1]],Max[precision,$MinPrecision]];
 				Alm = l(l+1)-s(s+1);
 			];
 			a=a-dir*\[CapitalDelta]a; (* offset to "previous" a *)
