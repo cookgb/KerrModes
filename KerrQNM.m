@@ -118,7 +118,55 @@ End[] (* KerrModes`Private` *)
 (*Documentation of External Functions in KerrQNM Namespace*)
 
 
-KerrQNMSequence::usage=""
+KerrQNMSequence::usage=
+	"KerrQNMSequence[l,m,n,\[Epsilon]] computes a sequence of Quasi-Normal Mode solutions "<>
+	"for overtone n of mode (l,m).  The solutions are computed to an absolute "<>
+	"accuracty of \!\(\*SuperscriptBox[\(10\), \(\[Epsilon]\)]\).  The sequence is "<>
+	"parameterized by increasing values of the dimensionless angular momentum "<>
+	"'a' starting at a=0 (or the largest value of 'a' already computed) up to "<>
+	"(but not including) a=1.\n\n"<>
+	"Overtone Multiplets: There are cases where more than one sequence is associated with "<>
+	"the same overtone n of mode (l,m).  Such sets are called overtone multiplets.  'n' "<>
+	"can be either an Integer or an overtone multiplet index.  An overtone multilplet index "<>
+	"is a 2 element list {n,mult}, where 'n' is the Integer overtone number, and 'mult' is "<>
+	"in the range 0,1,...,(Nmult-1), with 'Nmult' the number of sequences with the same overtone "<>
+	"index.\n\n"<>
+	"Options:\n"<>
+	"\t QNMSpinWeight\[Rule]Null : -2,-1,0\n"<>
+	"\t\t The spin weight must be set before any KerrQNM function call.\n"<>
+	"\t Min\[CapitalDelta]alevel\[Rule]1 : 1,2,3,4,5,6\n"<>
+	"\t Max\[CapitalDelta]alevel\[Rule]4 : 1,2,3,4,5,6\n"<>
+	"\t\t The step size \[CapitalDelta]a is set to \!\(\*SuperscriptBox[\(10\), \(-\((2 + \[CapitalDelta]alevel)\)\)]\)\n"<>
+	"\t QNMaStart\[Rule]0 : {a,\[Omega],\!\(\*SubscriptBox[\(A\), \(lm\)]\)}\n"<>
+	"\t\t This option is only used when starting a new sequence.\n"<>
+	"\t\t The List contains the initial value of 'a', and initial guesses for \[Omega] and \!\(\*SubscriptBox[\(A\), \(lm\)]\).\n"<>
+	"\t\t An option 4th argument, specifying the initial Integer size of the spectral\n"<>
+	"\t\t matrix used to solve the angular Teukolsky equation.\n"<>
+	"\t QNMPrecision\[Rule]24\n"<>
+	"\t JacobianStep\[Rule]-10\n"<>
+	"\t\t The radial solver make use of numerical derivatives.  The relative step size\n"<>
+	"\t\t is set to \!\(\*SuperscriptBox[\(10\), \(JacobianStep\)]\).\n"<>
+	"\t RadialCFDepth\[Rule]1\n"<>
+	"\t\t The initial Radial Continued Fraction Depth is usually taken from the prior \n"<>
+	"\t\t solution in the sequence.  Fractional values reduce this initial vaue by that\n"<>
+	"\t\t fraction.  Integer values larger than 300 are used as the new initial value.\n"<>
+	"\t RadialCFDigits\[Rule]8\n"<>
+	"\t\t Approximate number of digits of agreement when testing the continued fraction\n"<>
+	"\t\t pproximation.  The continued fraction is evaluated in the proximity of the \n"<>
+	"\t\t guessed root, then evaluated again with a depth half-again deeper.  The first\n"<>
+	"\t\t RadialCFDigits non-vanishing digits must agree for the solution to be accepted.\n"<>
+	"\t SolutionRelax\[Rule]1\n"<>
+	"\t\t Initial under-relaxation parameter used in Radial/Angular iterations.\n"<>
+	"\t RadialRelax\[Rule]1\n"<>
+	"\t\t Initial under-relaxation parameter used in Radial Newton iterations.\n"<>
+	"\t SolutionDebug\[Rule]0 : 0,1,2,3,...\n"<>
+	"\t\t 'Verbosity' level during the Radial/Angular iterations.\n"<>
+	"\t RadialDebug\[Rule]0 : 0,1,2,3,...\n"<>
+	"\t\t 'Verbosity' level during the Radial Newton iterations.\n"<>
+	"\t SolutionWindowl\[Rule]1/2\n"<>
+	"\t SolutionWindowt\[Rule]1/3\n"<>
+	"\t\t Set the size of the solution window.  Solutions must fall within this window\n"<>
+	"\t\t to be accepted.  Setting either to 0 causes all solutions to be accepted."
 
 
 SchwarzschildQNM::usage=
