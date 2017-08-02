@@ -4,7 +4,7 @@
 (*Right Total Transmission Modes of Kerr*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Begin KerrTTMR Package*)
 
 
@@ -17,7 +17,7 @@ If[KerrTTMRDebug,Unprotect["KerrTTMR`*"];Unprotect["KerrTTMR`Private`*"]];
 Protect[KerrTTMRDebug];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions in KerrModes Namespace*)
 
 
@@ -34,7 +34,7 @@ SelectMode::usage=
 	"Either PolynomialMode or ContinuedFractionMode"
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Definitions for KerrModes Namespace*)
 
 
@@ -90,7 +90,7 @@ Module[{C12tmp,C1,C2,C3,C4,C5,Rem,Err},
 If[!KerrTTMRDebug,Protect[RadialCFRemainder]];
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Set SpinWeight, SelectMode, and Data-Variable Names*)
 
 
@@ -105,7 +105,9 @@ Module[{},
 		   _,Message[SetSpinWeight::spinweight,s];Abort[]
 		  ];
 	SetOptions[KerrTTMR`SchwarzschildTTMR,SpinWeight->s];
-	SetOptions[KerrQNM`KerrTTMRSequence,SpinWeight->s];
+	SetOptions[KerrTTMR`KerrTTMRSequence,SpinWeight->s];
+	SetOptions[KerrModes`KerrOmegaList,SpinWeight->s];
+	SetOptions[KerrModes`KerrOmegaListS,SpinWeight->s];
 	Print[Style[StringForm[SetSpinWeight::confirm,s],{Medium,Darker[Green]}]];
 ]
 
@@ -138,7 +140,7 @@ If[!KerrModeDebug,Protect[SetSpinWeight]];
 End[] (* KerrModes`Private` *)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions in KerrTTMR Namespace*)
 
 

@@ -34,7 +34,7 @@ SelectMode::usage=
 	"Either PolynomialMode or ContinuedFractionMode"
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Definitions for KerrModes Namespace*)
 
 
@@ -105,7 +105,9 @@ Module[{},
 			_,Message[SetSpinWeight::spinweight,s];Abort[]
 		  ];
 	SetOptions[KerrTTML`SchwarzschildTTML,SpinWeight->s];
-	SetOptions[KerrQNM`KerrTTMLSequence,SpinWeight->s];
+	SetOptions[KerrTTML`KerrTTMLSequence,SpinWeight->s];
+	SetOptions[KerrModes`KerrOmegaList,SpinWeight->s];
+	SetOptions[KerrModes`KerrOmegaListS,SpinWeight->s];
 	Print[Style[StringForm[SetSpinWeight::confirm,s],{Medium,Darker[Green]}]];
 ]
 
@@ -195,15 +197,15 @@ Protect[PlotSpinWeight];
 Begin["`Private`"]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Kerr TTML methods*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Adaptive Bisection sequencer*)
 
 
-Options[KerrTTMLSequence]=Options[KerrModeSequence];
+Options[KerrTTMLSequence]=Options[KerrModes`Private`KerrModeSequence];
 
 
 KerrTTMLSequence[l_Integer,m_Integer,n_Integer|n_List,\[Epsilon]_Integer,
