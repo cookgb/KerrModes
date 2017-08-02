@@ -29,7 +29,7 @@ SetSpinWeight::usage=
 	"\t s= 0 : Scalar perturbations."
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Definitions for KerrModes Namespace*)
 
 
@@ -122,10 +122,9 @@ KerrQNMSequence::usage=
 	"KerrQNMSequence[l,m,n,\[Epsilon]] computes a sequence of Quasi-Normal Mode solutions "<>
 	"for overtone n of mode (l,m).  The solutions are computed to an absolute "<>
 	"accuracty of \!\(\*SuperscriptBox[\(10\), \(\[Epsilon]\)]\).  The sequence is "<>
-	"parameterized by increasing values of the dimensionless angular momentum "<>
-	"'a' starting at a=0 (or the largest value of 'a' already computed) up to "<>
-	"(but not including) a=1.\n\n"<>
-	"Steps \[CapitalDelta]a along sequence take steps of \!\(\*SuperscriptBox[\(2\), \(-b\)]\)/1000 where \!\(\*SubscriptBox[\(b\), \(min\)]\) \[LessEqual] b \[LessEqual] \!\(\*SubscriptBox[\(b\), \(max\)]\) \n\n"<>
+	"parameterized by the dimensionless angular momentum 'a', with 0\[LessEqual]a\[LessEqual]1.  "<>
+	"Steps along the sequence take sizes \[CapitalDelta]a=\!\(\*SuperscriptBox[\(2\), \(-b\)]\)/1000 "<>
+    "where \!\(\*SubscriptBox[\(b\),\(min\)]\)\[LessEqual]b\[LessEqual]\!\(\*SubscriptBox[\(b\),\(max\)]\).\n\n"<>
 	"Overtone Multiplets: There are cases where more than one sequence is associated with "<>
 	"the same overtone n of mode (l,m).  Such sets are called overtone multiplets.  'n' "<>
 	"can be either an Integer or an overtone multiplet index.  An overtone multilplet index "<>
@@ -133,72 +132,82 @@ KerrQNMSequence::usage=
 	"in the range 0,1,...,(Nmult-1), with 'Nmult' the number of sequences with the same overtone "<>
 	"index.\n\n"<>
 	"Options:\n"<>
-	"\t CurvatureRatio \[Rule] 1/2\n"<>
-	"\t\t In deciding to refine step size, the maximum local ratio of stepsize betweeen points in\n"<>
-	"\t\t omega space to the ratius of curvature. Smaller numbers give higher resolution. Default of 1/2 works well.\n"<>
-	"\t ExtrapolationOrder \[Rule] 2\n"<>
-	"\t\t Either a number or 'Accumulate'. If it is a number, use respective order of \n"<>
-	"\t\t polynomial extrapolation for the next point.\n"<> 
-	"\t\t Otherwise for sequences where \[Omega] \[Rule] m/2 as a\[Rule] 1, set extraporder to \"Accumulate\"\n"<> 
-	"\t\t to provide a more accurate extrapolation\n"<>
-	"\t QNMSpinWeight\[Rule]Null : -2,-1,0\n"<>
-	"\t\t The spin weight must be set before any KerrQNM function call.\n"<>
-	"\t\t The step size \[CapitalDelta]a is set to \!\(\*SuperscriptBox[\(10\), \(-\((2 + \[CapitalDelta]alevel)\)\)]\)\n"<>
+	"\t Root\[Epsilon] \[Rule] Null[ ]\n"<>
+	"\t\t Solutions are not considered valid until the value of the continued fraction\n"<>
+    "\t\t is less than \!\(\*SuperscriptBox[\(10\), \(Root\[Epsilon]\)]\).  "<>
+    " By default, Root\[Epsilon] is set to \[Epsilon].\n"<>
+	"\t SeqDirection \[Rule] Forward : Forward, Backward\n"<>
+	"\t\t Direction for new elements of the sequence.  With Forward, new elements \n"<>
+    "\t\t are added after the maximum value of 'a'.  With Backward, new elements \n"<>
+    "\t\t are added before the minimum value of 'a'.\n"<>
+	"\t Minblevel \[Rule] 0\n"<>
+	"\t\t Value for \!\(\*SubscriptBox[\(b\), \(min\)]\)\n"<>
+	"\t Maxblevel \[Rule] 20\n"<>
+	"\t\t Value for \!\(\*SubscriptBox[\(b\), \(max\)]\)\n"<>
+	"\t Maximala\[Epsilon] \[Rule] 10\n"<>
+	"\t\t Sequencer terminates at a=1 if Maximala\[Epsilon]=False.\n"<>
+    "\t\t If Maximala\[Epsilon] is an integer (n), it terminates at 1-\!\(\*SuperscriptBox[\(2\),\(-n\)]\)/1000.\n"<>
+	"\t Max\[CapitalDelta]\[Omega] \[Rule] 0.01\n"<>
+	"\t\t Maximum distance in \[Omega] space between solutions on a sequence\n"<>
 	"\t ModeaStart\[Rule]0 : {a,\[Omega],\!\(\*SubscriptBox[\(A\), \(lm\)]\)}\n"<>
 	"\t\t This option is only used when starting a new sequence.\n"<>
 	"\t\t The List contains the initial value of 'a', and initial guesses for \[Omega] and \!\(\*SubscriptBox[\(A\), \(lm\)]\).\n"<>
 	"\t\t An option 4th argument, specifying the initial Integer size of the spectral\n"<>
 	"\t\t matrix used to solve the angular Teukolsky equation.\n"<>
-	"\t ModePrecision\[Rule]24\n"<>
-	"\t Maximala\[Epsilon] \[Rule] 10\n"<>
-	"\t\t Sequencer terminates at max a = 1 if Maximala\[Epsilon] = false. If Maximala\[Epsilon] is an integer (N), it terminates at \!\(\*SuperscriptBox[\(2\), \(-N\)]\)/1000.\n"<>
-	"\t Max\[CapitalDelta]\[Omega] \[Rule] 0.01\n"<>
-	"\t\t Maximum distance in \[Omega] space between solutions on a sequence\n"<>
-	"\t ModeGuess \[Rule] 0\n"<>
-	"\t\t This option is used to override the initial guess to the first solution.\n"<>
+	"\t ModeGuess \[Rule] 0 : {a,\[Omega]}\n"<>
+	"\t\t This option is used to override the initial guess (only the first solution).\n"<>
 	"\t\t The list contains initial guesses for \[Omega] and \!\(\*SubscriptBox[\(A\), \(lm\)]\).\n"<>
 	"\t\t An option 3rd argument contains the initial depth of the continued fraction\n"<>
 	"\t\t An option 4th argument, specifying the initial Integer size of the spectral\n"<>
 	"\t\t matrix used to solve the angular Teukolsky equation.\n"<>
-	"\t NoNeg\[Omega] \[Rule] False\n"<>
-	"\t\t If true, solutions are forced to have a positive real part for \[Omega]\n"<>
-	"\t Root\[Epsilon] \[Rule] Null[ ]\n"<>
-	"\t\t By default set to \[Epsilon]. Otherwise, solutions are not considered valid until CF is less than \!\(\*SuperscriptBox[\(10\), \(Root\[Epsilon]\)]\).\n"<>
-	"\t SeqDirection \[Rule] Forward\n"<>
-	"\t\t Forward or Backward. Forward solutions have a increasing. Backward solutions have a decreasing\n"<>
-	"\t JacobianStep\[Rule]-10\n"<>
-	"\t\t The radial solver make use of numerical derivatives.  The relative step size\n"<>
-	"\t\t is set to \!\(\*SuperscriptBox[\(10\), \(JacobianStep\)]\).\n"<>
+	"\t NoNeg\[Omega] \[Rule] False : True, False\n"<>
+	"\t\t If True, solutions are forced to have a positive real part for \[Omega]\n"<>
+	"\t SolutionWindowl\[Rule]1/2\n"<>
+	"\t SolutionWindowt\[Rule]1/3\n"<>
+	"\t\t Set the size of the solution window.  Solutions must fall within this window\n"<>
+	"\t\t to be accepted.  Setting either to 0 causes any solutions to be accepted.\n"<>
+    "\t ExtrapolationOrder \[Rule] 2 : An integer or 'Accumulate\n"<>
+	"\t\t An integer specifies the  order of polynomial extrapolation for the next point.\n"<> 
+	"\t\t Otherwise for sequences where \[Omega]\[Rule]m/2 as a\[Rule]1, set extraporder to \n"<>
+    "\t\t 'Accumulate'to provide a more accurate extrapolation\n"<>
+	"\t CurvatureRatio \[Rule] 1/2\n"<>
+	"\t\t In deciding the size of \[CapitalDelta]a, the local ratio of stepsize \[CapitalDelta]\[Omega] betweeen points\n"<>
+	"\t\t to the ratius of curvature is compared to CurvatureRatio.\n"<>
+    "\t\t Smaller numbers give higher resolution.\n"<>
+	"\t RadialCFMinDepth \[Rule] 300\n"<>
+	"\t\t Minumum depth of the continued fraction\n"<>
 	"\t RadialCFDepth\[Rule]1\n"<>
 	"\t\t The initial Radial Continued Fraction Depth is usually taken from the prior \n"<>
 	"\t\t solution in the sequence.  Fractional values reduce this initial vaue by that\n"<>
-	"\t\t fraction.  Integer values larger than 300 are used as the new initial value.\n"<>
+	"\t\t fraction.  Integer values larger than RadialCFMinDepth specify the next value.\n"<>
 	"\t RadialCFDigits\[Rule]8\n"<>
 	"\t\t Approximate number of digits of agreement when testing the continued fraction\n"<>
-	"\t\t pproximation.  The continued fraction is evaluated in the proximity of the \n"<>
+	"\t\t approximation.  The continued fraction is evaluated in the proximity of the \n"<>
 	"\t\t guessed root, then evaluated again with a depth half-again deeper.  The first\n"<>
 	"\t\t RadialCFDigits non-vanishing digits must agree for the solution to be accepted.\n"<>
-	"\t RadialCFMinDepth \[Rule] 300\n"<>
-	"\t\t Minumum depth of the continued fraction\n"<>
+	"\t ModePrecision\[Rule]24\n"<>
+    "\t\t The minimum number of digits used in the computation.\n"<>
+	"\t JacobianStep\[Rule]-10\n"<>
+	"\t\t The radial solver make use of numerical derivatives.  The relative step size\n"<>
+	"\t\t is set to \!\(\*SuperscriptBox[\(10\), \(JacobianStep\)]\).\n"<>
 	"\t SolutionRelax\[Rule]1\n"<>
-	"\t\t Initial under-relaxation parameter used in Radial/Angular iterations.\n"<>
-	"\t RadialRelax\[Rule]1\n"<>
 	"\t\t Initial under-relaxation parameter used in Radial Newton iterations.\n"<>
-	"\t Min blevel \[Rule] 0\n"<>
-	"\t\t Value for \!\(\*SubscriptBox[\(b\), \(min\)]\)\n"<>
-	"\t Max blevel \[Rule] 20\n"<>
-	"\t\t Value for \!\(\*SubscriptBox[\(b\), \(max\)]\)\n"<>
+    "\t\t (Note this overrides RadialRelax).\n"<>
 	"\t SolutionIter \[Rule] 50\n"<>
+    "\t\t Controls number of 'solution' iterations before under-relaxation is tried,\n"<>
+    "\t\t and ultimately the total number of iterations allowed.\n"<>
 	"\t SolutionOscillate \[Rule] 10\n"<>
+    "\t\t Controls number of times the iteration is allowed to become non-convergent.\n"<>
+	"\t SolutionSlow \[Rule] 10\n"<>
+    "\t\t Controls number of slow Newton iterations are allowed before under-relaxation\n"<>
+    "\t\t is tried.\n"<>
 	"\t SolutionDebug\[Rule]0 : 0,1,2,3,...\n"<>
 	"\t\t 'Verbosity' level during the Radial/Angular iterations.\n"<>
 	"\t RadialDebug\[Rule]0 : 0,1,2,3,...\n"<>
 	"\t\t 'Verbosity' level during the Radial Newton iterations.\n"<>
-	"\t SolutionSlow \[Rule] 10\n"<>
-	"\t SolutionWindowl\[Rule]1/2\n"<>
-	"\t SolutionWindowt\[Rule]1/3\n"<>
-	"\t\t Set the size of the solution window.  Solutions must fall within this window\n"<>
-	"\t\t to be accepted.  Setting either to 0 causes all solutions to be accepted."
+	"\t SpinWeight\[Rule]Null : -2,-1,0\n"<>
+	"\t\t The spin weight is set by default by SetSpinWeight[]."
+	
 
 
 SchwarzschildQNM::usage=
