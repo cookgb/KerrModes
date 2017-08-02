@@ -4,7 +4,7 @@
 (*QuasiNormal Modes of Kerr*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Begin KerrQNM Package*)
 
 
@@ -17,7 +17,7 @@ If[KerrQNMDebug,Unprotect["KerrQNM`*"];Unprotect["KerrQNM`Private`*"]];
 Protect[KerrQNMDebug];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions in KerrModes Namespace*)
 
 
@@ -29,7 +29,7 @@ SetSpinWeight::usage=
 	"\t s= 0 : Scalar perturbations."
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Definitions for KerrModes Namespace*)
 
 
@@ -104,6 +104,8 @@ Module[{},
 		  ];
 	SetOptions[KerrQNM`SchwarzschildQNM,SpinWeight->s];
 	SetOptions[KerrQNM`KerrQNMSequence,SpinWeight->s];
+	SetOptions[KerrModes`KerrOmegaList,SpinWeight->s];
+	SetOptions[KerrModes`KerrOmegaListS,SpinWeight->s];
 	Print[Style[StringForm[SetSpinWeight::confirm,s],{Medium,Darker[Green]}]];
 ]
 
@@ -116,6 +118,9 @@ End[] (* KerrModes`Private` *)
 
 (* ::Section:: *)
 (*Documentation of External Functions in KerrQNM Namespace*)
+
+
+
 
 
 KerrQNMSequence::usage=
@@ -250,7 +255,7 @@ PlotSchQNM::usage=
 	"PlotSchQNM also take all of the options available to ListPlot.\n"
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Reserved Globals*)
 
 
@@ -286,7 +291,7 @@ Module[{ModeSavePrecision=$MinPrecision,saneopts},
 	If[n<0,Message[SchwarzschildQNM::argn,n];Abort[]];
 	(* saneopts ensures options set via SetOptions[KerQNMSequenceB,...] are used *)
 	saneopts=Flatten[Union[{opts},FilterRules[Options[KerrQNMSequence],Except[Flatten[{opts}]]]]];
-	CheckAbort[Print["Debug 0"];KerrModes`Private`KerrModeSequence[l,m,n,\[Epsilon],FilterRules[saneopts,Options[KerrQNMSequence]]],
+	CheckAbort[KerrModes`Private`KerrModeSequence[l,m,n,\[Epsilon],FilterRules[saneopts,Options[KerrQNMSequence]]],
 				$MinPrecision=ModeSavePrecision;Abort[]];
 	$MinPrecision=ModeSavePrecision;
 ]
@@ -317,7 +322,7 @@ Module[{SavePrecision=$MinPrecision,saneopts},
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Graphics*)
 
 

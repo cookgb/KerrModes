@@ -108,8 +108,17 @@ ModeSolution::usage=
 	"\t\t Jacobian in Newton's method."
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Plotting Routines*)
+
+
+ModePlotOmega::usage=""
+
+
+KerrOmegaListS::usage=""
+
+
+KerrOmegaList::usage=""
 
 
 PlotModeFunction::usage=
@@ -143,7 +152,7 @@ PlotModeFunctionL::usage=
 "PolynomialMode will use SelectMode to replace Modefunction with Starobinsky.\n"
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Reserved Globals*)
 
 
@@ -167,7 +176,7 @@ Protect[ModeaStart,ModeGuess,SeqDirection,Maximala\[Epsilon],SolutionRelax,Solut
 Begin["`Private`"]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Radial Equation : Modified Leaver' s Method*)
 
 
@@ -333,7 +342,7 @@ If[!modeDebug,Protect[RadialLentzStep,RadialLentzRoot]];
 (*Evaluate nth inversion of the Radial Equation' s continued fraction equation*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*"Bottom-up" evaluation at the Nmax element with remainder approximation*)
 
 
@@ -429,11 +438,11 @@ Module[{\[Lambda],starob},
 
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Kerr Modes methods*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Iterative simultaneous solution of radial & angular Teukolsky equations*)
 
 
@@ -621,7 +630,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Adaptive Bisection sequencer*)
 
 
@@ -1331,7 +1340,7 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Stepsize and solution validation routines*)
 
 
@@ -1380,7 +1389,7 @@ MyPrecision[x_?NumberQ]:=Module[{saveprecision,returnprecision},
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Initial Guesses*)
 
 
@@ -1495,7 +1504,7 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Graphics*)
 
 
@@ -1525,6 +1534,105 @@ Module[{ptable=OptionValue[PlotTable]},
 	plist=Table[{Re[ptable[l,n][[1]]],-Im[ptable[l,n][[1]]]},{n,0,ptable[l]-1}];
 	mlist=Table[{-Re[ptable[l,n][[1]]],-Im[ptable[l,n][[1]]]},{n,0,ptable[l]-1}];
 	ListLinePlot[{plist,mlist},PlotMarkers->Automatic,FilterRules[{opts},Options[ListLinePlot]]]
+]
+
+
+Options[KerrOmegaList]={Mode->Null[],SpinWeight->Null[]};
+
+
+KerrOmegaList[l_Integer,m_Integer,n_Integer|n_List,OptionsPattern[]]:= 
+Module[{s=OptionValue[SpinWeight],KerrSEQ,Na},
+	KerrSEQ:= modeName[l,m,n];
+			(*Switch[s,
+				   -2,Global`KerrQNM[l,m,n],
+				   -1,Global`KerrQNMe[l,m,n],
+					0,Global`KerrQNMs[l,m,n],
+				   _,Print["Invalid QNMSpinWeight"];Abort[]
+				  ];*)
+	Na = Length[KerrSEQ];
+	Table[{Re[KerrSEQ[[i,2,1]]],-Im[KerrSEQ[[i,2,1]]]},{i,1,Na}]
+]
+
+
+Options[KerrOmegaListS]={SpinWeight->Null[]};
+
+
+KerrOmegaListS[l_Integer,m_Integer,n_Integer|n_List,OptionsPattern[]]:= 
+Module[{s=OptionValue[SpinWeight],KerrSEQ,Na,Nend,i,Slist={}},
+	KerrSEQ=modeName[l,m,n];(*Switch[s,
+				   -2,Global`KerrQNM[l,m,n],
+				   -1,Global`KerrQNMe[l,m,n],
+					0,Global`KerrQNMs[l,m,n],
+				   _,Print["Invalid QNMSpinWeight"];Abort[]
+				  ];*)
+	Na = Length[KerrSEQ];
+	Nend = If[KerrSEQ[[Na,1]]<999999/1000000,Na,Na-1];
+	For[i=1,i<=Nend,++i,
+		If[Mod[KerrSEQ[[i,1]],1/20]==0,
+			AppendTo[Slist,{Re[KerrSEQ[[i,2,1]]],-Im[KerrSEQ[[i,2,1]]]}]
+		];
+	];
+	If[KerrSEQ[[Na,1]]>=999999/1000000,
+		Append[Slist,{Re[KerrSEQ[[Na,2,1]]],-Im[KerrSEQ[[Na,2,1]]]}],
+		Slist
+	]
+]
+
+
+Options[ModePlotOmega]=Union[{SpinWeight->Null[],OTmultiple->{}},
+							Options[ListLinePlot],Options[ListPlot]];
+
+
+ModePlotOmega[l_Integer,n_Integer,opts:OptionsPattern[]]:=
+Module[{s=OptionValue[SpinWeight],multiple=OptionValue[OTmultiple],
+		legend=OptionValue[PlotLegends],autolegend,
+		SpinWeightTable,KerrSEQ,
+		mmodes={},multints,i,pos,m,linelist,pointlist,mainplot},
+	SpinWeightTable:=modeName;(*Switch[s,
+				   -2,Global`KerrQNM,
+				   -1,Global`KerrQNMe,
+					0,Global`KerrQNMs,
+				   _,Print["Invalid QNMSpinWeight"];Abort[]
+				   ];*)
+	multints=Sort[DeleteDuplicates[Table[multiple[[i,1]],{i,Length[multiple]}]]];
+	For[m=-l,m<=l,++m,
+		If[MemberQ[multints,m],
+			(* m,n is a multplet *)
+			pos=Flatten[Position[multiple,{m,_}]][[1]];
+			For[i=0,i<multiple[[pos,2]],++i,
+				KerrSEQ:=SpinWeightTable[l,m,{n,i}];
+				If[Head[KerrSEQ]==List,AppendTo[mmodes,{m,{n,i}}]]
+			],
+			(* Not a multplet *)
+			KerrSEQ:=SpinWeightTable[l,m,n];
+			If[Head[KerrSEQ]==List,AppendTo[mmodes,{m,n}]]
+		]
+	];
+	autolegend=Table[If[Head[mmodes[[i,2]]]==List,Subscript[mmodes[[i,1]], mmodes[[i,2,2]]],Null,mmodes[[i,1]]],{i,1,Length[mmodes]}];
+	If[legend==Automatic,legend=autolegend];
+	If[Head[legend]==Placed,If[legend[[1]]==Automatic,legend=Placed[autolegend,legend[[2]]]]];
+	linelist=KerrOmegaList[l,#[[1]],#[[2]],FilterRules[{opts},Options[KerrOmegaList]]]&/@  mmodes;
+	pointlist=KerrOmegaListS[l,#[[1]],#[[2]],FilterRules[{opts},Options[KerrOmegaListS]]]&/@  mmodes;
+	mainplot=ListLinePlot[linelist,FilterRules[FilterRules[{opts},Options[ListLinePlot]],Except[{PlotLegends,PlotMarkers}]],PlotRange->All];
+	If[Length[pointlist[[1]]]>0,
+		Show[mainplot,
+			ListPlot[pointlist,PlotLegends->legend,FilterRules[{opts},Options[ListPlot]],PlotRange->All,PlotMarkers->Automatic]],
+		Show[mainplot]
+	]
+]
+
+
+ModePlotOmega[l_Integer,m_Integer,n_Integer|n_List,opts:OptionsPattern[]]:=
+Module[{mmodes={},linelist,pointlist,mainplot},
+	mmodes={m};
+	linelist=KerrOmegaList[l,#,n,FilterRules[{opts},Options[KerrOmegaList]]]&/@  mmodes;
+	pointlist=KerrOmegaListS[l,#,n,FilterRules[{opts},Options[KerrOmegaListS]]]&/@  mmodes;
+	mainplot=ListLinePlot[linelist,FilterRules[FilterRules[{opts},Options[ListLinePlot]],Except[{PlotLegends,PlotMarkers}]],PlotRange->All];
+	If[Length[pointlist[[1]]]>0,
+		Show[mainplot,
+			ListPlot[pointlist,FilterRules[{opts},Options[ListPlot]],PlotRange->All,PlotMarkers->Automatic]],
+		Show[mainplot]
+	]
 ]
 
 
