@@ -96,12 +96,8 @@ Module[{},
 	ModeFunction[n_,s1_,m_,a_,Alm_,\[Omega]_,Nrcf_]=RadialCFRem[n,s1,m,a,Alm,\[Omega],Nrcf];
 	SetSpinWeight::spinweight="Invalid QNM Spin Weight : `1`";
 	SetSpinWeight::confirm="All KerrMode routines (QNM) set for Spin-Weight s = `1`";
-	Switch[s,
-		   -2,modeName:=Global`KerrQNM; SchTable:=Global`SchQNMTable,
-		   -1,modeName:=Global`KerrQNMe; SchTable:=Global`SchQNMeTable,
-		    0,modeName:=Global`KerrQNMs; SchTable:=Global`SchQNMsTable,
-			_,Message[SetSpinWeight::spinweight,s];Abort[]
-		  ];
+	modeName:=GetKerrName[QNM,s];
+	SchTable:=GetSchName[QNM,s];
 	SetOptions[KerrQNM`SchwarzschildQNM,SpinWeight->s];
 	SetOptions[KerrQNM`KerrQNMSequence,SpinWeight->s];
 	SetOptions[KerrModes`KerrOmegaList,SpinWeight->s];
@@ -116,11 +112,8 @@ If[!KerrModeDebug,Protect[SetSpinWeight]];
 End[] (* KerrModes`Private` *)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions in KerrQNM Namespace*)
-
-
-
 
 
 KerrQNMSequence::usage=
@@ -269,7 +262,7 @@ Begin["`Private`"]
 (*Kerr QNM methods*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Adaptive Bisection sequencer*)
 
 
@@ -297,7 +290,7 @@ Module[{ModeSavePrecision=$MinPrecision,saneopts},
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Initial Guesses*)
 
 
@@ -332,12 +325,7 @@ Options[PlotSchQNM]=Union[{PlotSpinWeight->-2},Options[KerrModes`Private`PlotSch
 PlotSchQNM[l_Integer,opts:OptionsPattern[]]:=
 Module[{s=OptionValue[PlotSpinWeight],ptable},
 	PlotSchQNM::spinweight="Invalid QNM Spin Weight : `1`";
-	Switch[s,
-		   -2,ptable:=Global`SchQNMTable,
-		   -1,ptable:=Global`SchQNMeTable,
-		    0,ptable:=Global`SchQNMsTable,
-			_,Message[PlotSchQNM::spinweight,s];Abort[]
-		  ];
+	ptable:=GetSchName[QNM,s];
 	KerrModes`Private`PlotSchModes[l,PlotTable->ptable,
 									FilterRules[{opts},Options[KerrModes`Private`PlotSchModes]]]
 ]

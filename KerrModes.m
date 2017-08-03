@@ -112,6 +112,12 @@ ModeSolution::usage=
 (*Plotting Routines*)
 
 
+GetKerrName::usage=""
+
+
+GetSchName::usage=""
+
+
 ModePlotOmega::usage=""
 
 
@@ -152,8 +158,11 @@ PlotModeFunctionL::usage=
 "PolynomialMode will use SelectMode to replace Modefunction with Starobinsky.\n"
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Reserved Globals*)
+
+
+Protect[QNM,TTML,TTMR,ModeType];
 
 
 Protect[PolynomialMode,ContinuedFractionMode,RunCFConvergence];
@@ -176,7 +185,7 @@ Protect[ModeaStart,ModeGuess,SeqDirection,Maximala\[Epsilon],SolutionRelax,Solut
 Begin["`Private`"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Radial Equation : Modified Leaver' s Method*)
 
 
@@ -1508,6 +1517,68 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 (*Graphics*)
 
 
+GetKerrName[modeList_,s_Integer]:=
+Module[{},
+		Switch[modeList,
+			QNM,
+				Switch[s,
+					-2,Global`KerrQNM,
+					-1,Global`KerrQNMe,
+					 0,Global`KerrQNMs,
+					_,Message[SetSpinWeight::spinweight,s];Abort[]
+					],
+			TTML,
+				Switch[s,
+		             -2,Global`KerrTTML,
+		             -1,Global`KerrTTMLe,
+		              0,Global`KerrTTMLs,
+			         _,Message[SetSpinWeight::spinweight,s];Abort[]
+		            ],
+			TTMR,
+				Switch[s,
+		             2,Global`KerrTTMR,
+		             1,Global`KerrTTMRe,
+		              0,Global`KerrTTMRs,
+			         _,Message[SetSpinWeight::spinweight,s];Abort[]
+		            ],
+				_,
+					Print["Invalid Mode, select QNM, TTML, or TTMR"];
+					Abort[]
+			]
+	]
+
+
+GetSchName[modeList_,s_Integer]:=
+Module[{},
+		Switch[modeList,
+			QNM,
+				Switch[s,
+					-2,Global`SchQNMTable,
+					-1,Global`SchQNMeTable,
+					 0,Global`SchQNMsTable,
+					_,Message[SetSpinWeight::spinweight,s];Abort[]
+					],
+			TTML,
+				Switch[s,
+		             -2,Global`SchTTMLTable,
+		             -1,Global`SchTTMLeTable,
+		              0,Global`SchTTMLsTable,
+			         _,Message[SetSpinWeight::spinweight,s];Abort[]
+		            ],
+			TTMR,
+				Switch[s,
+		             2,Global`SchTTMRTable,
+		             1,Global`SchTTMReTable,
+		              0,Global`SchTTMRsTable,
+			         _,Message[SetSpinWeight::spinweight,s];Abort[]
+		            ],
+				_,
+					Print["Invalid Mode, select QNM, TTML, or TTMR"];
+					Abort[]
+			]
+	]
+
+
 PlotModeFunction[n_Integer,s_Integer,m_Integer,a_Rational|a_Integer,
 			Alm_?NumberQ,\[Omega]_?NumberQ,Nrcf_Integer,Nm_Integer]:= 
 Module[{Alm\[Omega]},
@@ -1537,34 +1608,25 @@ Module[{ptable=OptionValue[PlotTable]},
 ]
 
 
-Options[KerrOmegaList]={Mode->Null[],SpinWeight->Null[]};
+Options[KerrOmegaList]={ModeType->Null[],SpinWeight->Null[]};
 
 
 KerrOmegaList[l_Integer,m_Integer,n_Integer|n_List,OptionsPattern[]]:= 
-Module[{s=OptionValue[SpinWeight],KerrSEQ,Na},
+Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na},
+	If[modetype!==Null[], KerrSEQ:=GetKerrName[modeList,s][l,m,n]];
 	KerrSEQ:= modeName[l,m,n];
-			(*Switch[s,
-				   -2,Global`KerrQNM[l,m,n],
-				   -1,Global`KerrQNMe[l,m,n],
-					0,Global`KerrQNMs[l,m,n],
-				   _,Print["Invalid QNMSpinWeight"];Abort[]
-				  ];*)
 	Na = Length[KerrSEQ];
 	Table[{Re[KerrSEQ[[i,2,1]]],-Im[KerrSEQ[[i,2,1]]]},{i,1,Na}]
 ]
 
 
-Options[KerrOmegaListS]={SpinWeight->Null[]};
+Options[KerrOmegaListS]={ModeType->Null[],SpinWeight->Null[]};
 
 
 KerrOmegaListS[l_Integer,m_Integer,n_Integer|n_List,OptionsPattern[]]:= 
-Module[{s=OptionValue[SpinWeight],KerrSEQ,Na,Nend,i,Slist={}},
-	KerrSEQ=modeName[l,m,n];(*Switch[s,
-				   -2,Global`KerrQNM[l,m,n],
-				   -1,Global`KerrQNMe[l,m,n],
-					0,Global`KerrQNMs[l,m,n],
-				   _,Print["Invalid QNMSpinWeight"];Abort[]
-				  ];*)
+Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na,Nend,i,Slist={}},
+	KerrSEQ:= modeName[l,m,n];
+	If[modetype!==Null[], KerrSEQ:=GetKerrName[modeList,s][l,m,n]];
 	Na = Length[KerrSEQ];
 	Nend = If[KerrSEQ[[Na,1]]<999999/1000000,Na,Na-1];
 	For[i=1,i<=Nend,++i,
@@ -1579,21 +1641,17 @@ Module[{s=OptionValue[SpinWeight],KerrSEQ,Na,Nend,i,Slist={}},
 ]
 
 
-Options[ModePlotOmega]=Union[{SpinWeight->Null[],OTmultiple->{}},
+Options[ModePlotOmega]=Union[{ModeType->Null[],SpinWeight->Null[],OTmultiple->{}},
 							Options[ListLinePlot],Options[ListPlot]];
 
 
 ModePlotOmega[l_Integer,n_Integer,opts:OptionsPattern[]]:=
 Module[{s=OptionValue[SpinWeight],multiple=OptionValue[OTmultiple],
-		legend=OptionValue[PlotLegends],autolegend,
+		legend=OptionValue[PlotLegends],modetype=OptionValue[ModeType],autolegend,
 		SpinWeightTable,KerrSEQ,
 		mmodes={},multints,i,pos,m,linelist,pointlist,mainplot},
-	SpinWeightTable:=modeName;(*Switch[s,
-				   -2,Global`KerrQNM,
-				   -1,Global`KerrQNMe,
-					0,Global`KerrQNMs,
-				   _,Print["Invalid QNMSpinWeight"];Abort[]
-				   ];*)
+	SpinWeightTable:=modeName;
+	If[modetype!==Null[], SpinWeightTable:=GetKerrName[modeList,s]];
 	multints=Sort[DeleteDuplicates[Table[multiple[[i,1]],{i,Length[multiple]}]]];
 	For[m=-l,m<=l,++m,
 		If[MemberQ[multints,m],

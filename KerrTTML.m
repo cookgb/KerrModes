@@ -98,12 +98,8 @@ SetSpinWeight[s_Integer]:=
 Module[{},
 	SetSpinWeight::spinweight="Invalid TTML Spin Weight : `1`";
 	SetSpinWeight::confirm="All KerrMode routines (TTML) set for Spin-Weight s = `1`";
-	Switch[s,
-		   -2,modeName:=Global`KerrTTML; SchTable:=Global`SchTTMLTable,
-		   -1,modeName:=Global`KerrTTMLe; SchTable:=Global`SchTTMLeTable,
-		    0,modeName:=Global`KerrTTMLs; SchTable:=Global`SchTTMLsTable,
-			_,Message[SetSpinWeight::spinweight,s];Abort[]
-		  ];
+	modeName:=GetKerrName[TTML,s];
+	SchTable:=GetSchName[TTML,s];
 	SetOptions[KerrTTML`SchwarzschildTTML,SpinWeight->s];
 	SetOptions[KerrTTML`KerrTTMLSequence,SpinWeight->s];
 	SetOptions[KerrModes`KerrOmegaList,SpinWeight->s];
@@ -140,7 +136,7 @@ If[!KerrModeDebug,Protect[SetSpinWeight]];
 End[] (* KerrModes`Private` *)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions in KerrTTML Namespace*)
 
 
@@ -290,7 +286,7 @@ Begin["`Private`"]
 (*Kerr TTML methods*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Adaptive Bisection sequencer*)
 
 
@@ -343,7 +339,7 @@ Module[{SavePrecision=$MinPrecision,saneopts},
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Graphics*)
 
 
@@ -353,12 +349,7 @@ Options[PlotSchTTML]=Union[{PlotSpinWeight->-2},Options[KerrModes`Private`PlotSc
 PlotSchTTML[l_Integer,opts:OptionsPattern[]]:=
 Module[{s=OptionValue[PlotSpinWeight],ptable},
 	PlotSchTTML::spinweight="Invalid TTML Spin Weight : `1`";
-	Switch[s,
-		   -2,ptable:=Global`SchTTMLTable,
-		   -1,ptable:=Global`SchTTMLeTable,
-		    0,ptable:=Global`SchTTMLsTable,
-			_,Message[PlotSchTTML::spinweight,s];Abort[]
-		  ];
+	ptable:=GetSchName[TTML,s];
 	KerrModes`Private`PlotSchModes[l,PlotTable->ptable,
 									FilterRules[{opts},Options[KerrModes`Private`PlotSchModes]]]
 ]

@@ -17,7 +17,7 @@ If[KerrTTMRDebug,Unprotect["KerrTTMR`*"];Unprotect["KerrTTMR`Private`*"]];
 Protect[KerrTTMRDebug];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions in KerrModes Namespace*)
 
 
@@ -98,12 +98,14 @@ SetSpinWeight[s_Integer]:=
 Module[{},
 	SetSpinWeight::spinweight="Invalid TTMR Spin Weight : `1`";
 	SetSpinWeight::confirm="All KerrMode routines (TTMR) set for Spin-Weight s = `1`";
-	Switch[s,
+	(*Switch[s,
 		   2,modeName:=Global`KerrTTMR; SchTable:=Global`SchTTMRTable,
 		   1,modeName:=Global`KerrTTMRe; SchTable:=Global`SchTTMReTable,
 		   0,modeName:=Global`KerrTTMRs; SchTable:=Global`SchTTMRsTable,
 		   _,Message[SetSpinWeight::spinweight,s];Abort[]
-		  ];
+		  ];*)
+	modeName:=GetKerrName[TTMR,s];
+	SchTable:=GetSchName[TTMR,s];
 	SetOptions[KerrTTMR`SchwarzschildTTMR,SpinWeight->s];
 	SetOptions[KerrTTMR`KerrTTMRSequence,SpinWeight->s];
 	SetOptions[KerrModes`KerrOmegaList,SpinWeight->s];
@@ -140,7 +142,7 @@ If[!KerrModeDebug,Protect[SetSpinWeight]];
 End[] (* KerrModes`Private` *)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions in KerrTTMR Namespace*)
 
 
@@ -286,11 +288,11 @@ Protect[PlotSpinWeight];
 Begin["`Private`"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Kerr TTMR methods*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Adaptive Bisection sequencer*)
 
 
@@ -343,7 +345,7 @@ Module[{SavePrecision=$MinPrecision,saneopts},
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Graphics*)
 
 
@@ -353,12 +355,7 @@ Options[PlotSchTTMR]=Union[{PlotSpinWeight->2},Options[KerrModes`Private`PlotSch
 PlotSchTTMR[l_Integer,opts:OptionsPattern[]]:=
 Module[{s=OptionValue[PlotSpinWeight],ptable},
 	PlotSchTTMR::spinweight="Invalid TTMR Spin Weight : `1`";
-	Switch[s,
-		   2,ptable:=Global`SchTTMRTable,
-		   1,ptable:=Global`SchTTMReTable,
-		   0,ptable:=Global`SchTTMRsTable,
-		   _,Message[PlotSchTTMR::spinweight,s];Abort[]
-		  ];
+	ptable:=GetSchName[TTMR,s];
 	KerrModes`Private`PlotSchModes[l,PlotTable->ptable,
 									FilterRules[{opts},Options[KerrModes`Private`PlotSchModes]]]
 ]
