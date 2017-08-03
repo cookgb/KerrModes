@@ -200,7 +200,7 @@ RadialLentzStep[n_Integer,s_Integer,m_Integer,
 				a_Rational|a_Integer,Alm_?NumberQ,\[Omega]_?NumberQ,
 				\[Omega]step_Real|\[Omega]step_Rational|\[Omega]step_Integer,
 				Nrcf_Integer,Nm_Integer,\[Epsilon]_Integer,OptionsPattern[]]:= 
-Module[{\[Omega]r,\[Omega]i,Almr,sol,solpr,\[CapitalDelta]sol,pcount,pflag,\[CapitalDelta]\[Omega]r,\[CapitalDelta]\[Omega]i,RedRd\[Omega]r,RedRd\[Omega]i,ImdRd\[Omega]r,ImdRd\[Omega]i,\[Delta]\[Omega],WorkPrec,
+Module[{\[Omega]r,Almr,sol,solpr,\[CapitalDelta]sol,pcount,pflag,\[CapitalDelta]\[Omega]r,RedRd\[Omega]r,RedRd\[Omega]i,ImdRd\[Omega]r,ImdRd\[Omega]i,\[Delta]\[Omega],WorkPrec,
 		radialdebug=OptionValue[RadialDebug]},
 	RadialLentzStep::increase="Excessive increase in Precision, Abort";
 	RadialLentzStep::debug4="RadialLentzStep :`1` : `2`";
@@ -209,19 +209,27 @@ Module[{\[Omega]r,\[Omega]i,Almr,sol,solpr,\[CapitalDelta]sol,pcount,pflag,\[Cap
 	RadialLentzStep::debug6="Precision - \[Delta]\[Omega] : `1`, `2`";
 	RadialLentzStep::pflag="Set $MinPrecision =`1`";
 	sol=ModeFunction[n,s,m,a,Alm,\[Omega],Nrcf];
-	\[CapitalDelta]\[Omega]r=Re[\[Omega]]\[Omega]step;\[CapitalDelta]\[Omega]i=Im[\[Omega]]\[Omega]step;
-	\[Omega]r=Re[\[Omega]](1+\[Omega]step)+I Im[\[Omega]];
-	\[Omega]i=Re[\[Omega]]+I Im[\[Omega]](1+\[Omega]step);
+	\[CapitalDelta]\[Omega]r=If[Re[\[Omega]]==0,\[Omega]step,Re[\[Omega]]\[Omega]step,Re[\[Omega]]\[Omega]step];
+	\[Omega]r=Re[\[Omega]]+\[CapitalDelta]\[Omega]r+I Im[\[Omega]];
 	Almr=AngularSpectralRoot[s,m,a*\[Omega]r,Alm,Nm][[1]];
 	pcount=0;pflag=False;
 	While[True,
 		solpr=ModeFunction[n,s,m,a,Almr,\[Omega]r,Nrcf];
 		\[CapitalDelta]sol=solpr[[1]]-sol[[1]];
+		If[Abs[\[CapitalDelta]sol]==0,Break[]];
 		Off[Precision::mnprec,Accuracy::mnprec];
 		If[MyPrecision[\[CapitalDelta]sol]==Precision[\[CapitalDelta]sol],
 			On[Precision::mnprec,Accuracy::mnprec];Break[],
-			$MinPrecision+=4,
-			$MinPrecision+=4
+			If[Re[\[CapitalDelta]sol]==0 && Accuracy[Re[\[CapitalDelta]sol]]>=Precision[\[CapitalDelta]sol],
+				On[Precision::mnprec,Accuracy::mnprec];Break[],
+				$MinPrecision+=4,
+				$MinPrecision+=4
+			],
+			If[Re[\[CapitalDelta]sol]==0 && Accuracy[Re[\[CapitalDelta]sol]]>=Precision[\[CapitalDelta]sol],
+				On[Precision::mnprec,Accuracy::mnprec];Break[],
+				$MinPrecision+=4,
+				$MinPrecision+=4
+			]
 		];
 		On[Precision::mnprec,Accuracy::mnprec];
 		pflag=True;
@@ -347,7 +355,7 @@ If[!modeDebug,Protect[RadialLentzStep,RadialLentzRoot]];
 
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Evaluate nth inversion of the Radial Equation' s continued fraction equation*)
 
 
@@ -447,7 +455,7 @@ Module[{\[Lambda],starob},
 
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Kerr Modes methods*)
 
 
@@ -593,22 +601,24 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 		];
 		If[\[CapitalDelta]\[Omega]<10^\[Epsilon]2,
 			If[count==0,
-				rcfpower=0;
-				rcferr=TestRadialCFConvergence[inversion,s,m,a,oldAlm(1+10^(\[Epsilon]+4)),old\[Omega](1-10^(\[Epsilon]+4)),
-						Nradial,jacobianmatrix,\[Epsilon]2,RCFmin,Nmatrix,\[Alpha],FilterRules[{opts},Options[TestRadialCFConvergence]]];
-				Nradialnew=rcferr[[1]];rcfpower=rcferr[[5]];
-				If[solutiondebug>5,
-					Print[Style[StringForm[ModeSolution::soldebug6,jacobianmatrix,rcferr],{Medium,Darker[Cyan,0.7]}]];
-				];
-				If[solutiondebug>1,Print[Style[StringForm[ModeSolution::soldebug2c,Nradial,Nradialnew],{Medium,Darker[Blue,0.3]}]]];
-				If[Nradialnew>Nradial,
-					If[Nradialnew>(11/10)Nradial,
-						NradFlag=True;count=0;iteration/=2;slowcount2=0;oscillate=0;
-						If[solutiondebug>4,Print[Style[StringForm[ModeSolution::soldebug5b,Nradialnew],{Medium,Darker[Yellow,0.3]}]]];
+				If[RunCFConvergence,
+					rcfpower=0;
+					rcferr=TestRadialCFConvergence[inversion,s,m,a,oldAlm(1+10^(\[Epsilon]+4)),old\[Omega](1-10^(\[Epsilon]+4)),
+							Nradial,jacobianmatrix,\[Epsilon]2,RCFmin,Nmatrix,\[Alpha],FilterRules[{opts},Options[TestRadialCFConvergence]]];
+					Nradialnew=rcferr[[1]];rcfpower=rcferr[[5]];
+					If[solutiondebug>5,
+						Print[Style[StringForm[ModeSolution::soldebug6,jacobianmatrix,rcferr],{Medium,Darker[Cyan,0.7]}]];
 					];
-					Nradial=Nradialnew;
+					If[solutiondebug>1,Print[Style[StringForm[ModeSolution::soldebug2c,Nradial,Nradialnew],{Medium,Darker[Blue,0.3]}]]];
+					If[Nradialnew>Nradial,
+						If[Nradialnew>(11/10)Nradial,
+							NradFlag=True;count=0;iteration/=2;slowcount2=0;oscillate=0;
+							If[solutiondebug>4,Print[Style[StringForm[ModeSolution::soldebug5b,Nradialnew],{Medium,Darker[Yellow,0.3]}]]];
+						];
+						Nradial=Nradialnew;
 					,
-					If[solutiondebug>4 && Nradialnew<Nradial,Print[Style[StringForm[ModeSolution::soldebug5c,Nradialnew],{Medium,Darker[Yellow,0.3]}]]];
+						If[solutiondebug>4 && Nradialnew<Nradial,Print[Style[StringForm[ModeSolution::soldebug5c,Nradialnew],{Medium,Darker[Yellow,0.3]}]]];
+					];
 				];
 			];
 
@@ -639,7 +649,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Adaptive Bisection sequencer*)
 
 
@@ -673,7 +683,7 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 	KerrModeSequence::entries="`1`[`2`,`3`,`4`] sequence exists with `5` entries";
 	KerrModeSequence::untested1="Untested section of code! 1";
 	KerrModeSequence::untested2="Untested section of code! 2";
-	KerrModeSequence::guesses="Guesses set: `1`:`2`:`3`:`4`";
+	KerrModeSequence::guesses="Guesses set: `1` : `2` : `3` : `4`";
 	KerrModeSequence::unusualstepsize="Sequence has unusual stepsizes, Aborting";
 	KerrModeSequence::decblevel="Decreasing \[CapitalDelta]a, blevel = `1`";
 	KerrModeSequence::decblevelmore="Further decreasing \[CapitalDelta]a, blevel = `1`";
@@ -741,14 +751,14 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 		If[rcfdepth>RCFmin,Nrcf=IntegerPart[rcfdepth]];
 		If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
 		Nrcf=Max[Nrcf,RCFmin];
-		If[NKMode>1,
+		If[NKMode>=1,
 			If[Head[guess]==List,
-Print[Style[StringForm[KerrModeSequence::untested1],{Medium,Darker[Red]}]];
+Print[KerrModeSequence::untested1];
 				\[Omega]=guess[[1]];
 				Alm=guess[[2]];
 				If[Length[guess]>=3,Nrcf=guess[[3]]];
 				If[Length[guess]==4,Nm=guess[[4]]];
-				Print[KerrModeSequence::guesses,\[Omega],Alm,Nrcf,Nm];
+				Print[Style[StringForm[KerrModeSequence::guesses,\[Omega],Alm,Nrcf,Nm],{Medium,Darker[Red]}]];
 			];
 			If[NKMode==2,
 Print[KerrModeSequence::untested2];
@@ -1398,7 +1408,69 @@ MyPrecision[x_?NumberQ]:=Module[{saveprecision,returnprecision},
 ]
 
 
-(* ::Section::Closed:: *)
+GetKerrName[modeList_,s_Integer]:=
+Module[{},
+		Switch[modeList,
+			QNM,
+				Switch[s,
+					-2,Global`KerrQNM,
+					-1,Global`KerrQNMe,
+					 0,Global`KerrQNMs,
+					_,Message[SetSpinWeight::spinweight,s];Abort[]
+					],
+			TTML,
+				Switch[s,
+		             -2,Global`KerrTTML,
+		             -1,Global`KerrTTMLe,
+		              0,Global`KerrTTMLs,
+			         _,Message[SetSpinWeight::spinweight,s];Abort[]
+		            ],
+			TTMR,
+				Switch[s,
+		             2,Global`KerrTTMR,
+		             1,Global`KerrTTMRe,
+		              0,Global`KerrTTMRs,
+			         _,Message[SetSpinWeight::spinweight,s];Abort[]
+		            ],
+				_,
+					Print["Invalid Mode, select QNM, TTML, or TTMR"];
+					Abort[]
+			]
+	]
+
+
+GetSchName[modeList_,s_Integer]:=
+Module[{},
+		Switch[modeList,
+			QNM,
+				Switch[s,
+					-2,Global`SchQNMTable,
+					-1,Global`SchQNMeTable,
+					 0,Global`SchQNMsTable,
+					_,Message[SetSpinWeight::spinweight,s];Abort[]
+					],
+			TTML,
+				Switch[s,
+		             -2,Global`SchTTMLTable,
+		             -1,Global`SchTTMLeTable,
+		              0,Global`SchTTMLsTable,
+			         _,Message[SetSpinWeight::spinweight,s];Abort[]
+		            ],
+			TTMR,
+				Switch[s,
+		             2,Global`SchTTMRTable,
+		             1,Global`SchTTMReTable,
+		              0,Global`SchTTMRsTable,
+			         _,Message[SetSpinWeight::spinweight,s];Abort[]
+		            ],
+				_,
+					Print["Invalid Mode, select QNM, TTML, or TTMR"];
+					Abort[]
+			]
+	]
+
+
+(* ::Section:: *)
 (*Initial Guesses*)
 
 
@@ -1501,7 +1573,8 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 					If[debug>0,Print[Style[StringForm[SchwarzschildMode::debug0b,Nrcf],{Medium,Darker[Purple]}]]];
 					,
 					notconverged=False;
-				];
+				],
+				notconverged=False;
 			],
 			Message[SchwarzschildMode::convergence,l,n];
 			Abort[];
@@ -1515,68 +1588,6 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 
 (* ::Section:: *)
 (*Graphics*)
-
-
-GetKerrName[modeList_,s_Integer]:=
-Module[{},
-		Switch[modeList,
-			QNM,
-				Switch[s,
-					-2,Global`KerrQNM,
-					-1,Global`KerrQNMe,
-					 0,Global`KerrQNMs,
-					_,Message[SetSpinWeight::spinweight,s];Abort[]
-					],
-			TTML,
-				Switch[s,
-		             -2,Global`KerrTTML,
-		             -1,Global`KerrTTMLe,
-		              0,Global`KerrTTMLs,
-			         _,Message[SetSpinWeight::spinweight,s];Abort[]
-		            ],
-			TTMR,
-				Switch[s,
-		             2,Global`KerrTTMR,
-		             1,Global`KerrTTMRe,
-		              0,Global`KerrTTMRs,
-			         _,Message[SetSpinWeight::spinweight,s];Abort[]
-		            ],
-				_,
-					Print["Invalid Mode, select QNM, TTML, or TTMR"];
-					Abort[]
-			]
-	]
-
-
-GetSchName[modeList_,s_Integer]:=
-Module[{},
-		Switch[modeList,
-			QNM,
-				Switch[s,
-					-2,Global`SchQNMTable,
-					-1,Global`SchQNMeTable,
-					 0,Global`SchQNMsTable,
-					_,Message[SetSpinWeight::spinweight,s];Abort[]
-					],
-			TTML,
-				Switch[s,
-		             -2,Global`SchTTMLTable,
-		             -1,Global`SchTTMLeTable,
-		              0,Global`SchTTMLsTable,
-			         _,Message[SetSpinWeight::spinweight,s];Abort[]
-		            ],
-			TTMR,
-				Switch[s,
-		             2,Global`SchTTMRTable,
-		             1,Global`SchTTMReTable,
-		              0,Global`SchTTMRsTable,
-			         _,Message[SetSpinWeight::spinweight,s];Abort[]
-		            ],
-				_,
-					Print["Invalid Mode, select QNM, TTML, or TTMR"];
-					Abort[]
-			]
-	]
 
 
 PlotModeFunction[n_Integer,s_Integer,m_Integer,a_Rational|a_Integer,
