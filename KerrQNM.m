@@ -17,7 +17,7 @@ If[KerrQNMDebug,Unprotect["KerrQNM`*"];Unprotect["KerrQNM`Private`*"]];
 Protect[KerrQNMDebug];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions in KerrModes Namespace*)
 
 
@@ -29,7 +29,7 @@ SetSpinWeight::usage=
 	"\t s= 0 : Scalar perturbations."
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Definitions for KerrModes Namespace*)
 
 
@@ -85,7 +85,7 @@ Module[{C12tmp,C1,C2,C3,C4,C5,Rem,Err},
 If[!KerrQNMDebug,Protect[RadialCFRemainder]];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Set SpinWeight, and Data-Variable Names*)
 
 
@@ -112,7 +112,7 @@ If[!KerrModeDebug,Protect[SetSpinWeight]];
 End[] (* KerrModes`Private` *)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions in KerrQNM Namespace*)
 
 
@@ -208,6 +208,9 @@ KerrQNMSequence::usage=
 	
 
 
+KerrQNMRefineSequence::usage=""
+
+
 SchwarzschildQNM::usage=
 	"SchwarzschildQNM[l,n] computes the Quasi-Normal Mode solutions for overtone n of mode l.  "<>
 	"The mode is computed to an accuracy of \!\(\*SuperscriptBox[\(10\), \(-14\)]\).  For given 'l', if solutions with overtones "<>
@@ -262,7 +265,7 @@ Begin["`Private`"]
 (*Kerr QNM methods*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Adaptive Bisection sequencer*)
 
 
@@ -287,6 +290,20 @@ Module[{ModeSavePrecision=$MinPrecision,saneopts},
 	CheckAbort[KerrModes`Private`KerrModeSequence[l,m,n,\[Epsilon],FilterRules[saneopts,Options[KerrQNMSequence]]],
 				$MinPrecision=ModeSavePrecision;Abort[]];
 	$MinPrecision=ModeSavePrecision;
+]
+
+
+Options[KerrQNMRefineSequence]=Options[KerrModes`Private`KerrModeRefineSequence];
+
+
+KerrQNMRefineSequence[l_Integer,m_Integer,n_Integer|n_List,\[Epsilon]_Integer,
+				opts:OptionsPattern[]]:=
+Module[{QNMSavePrecision=$MinPrecision,saneopts},
+	(* saneopts ensures options set via SetOptions[KerQNMRefineSequenceB,...] are used *)
+	saneopts=Flatten[Union[{opts},FilterRules[Options[KerrQNMRefineSequence],Except[Flatten[{opts}]]]]];
+	CheckAbort[KerrModes`Private`KerrModeRefineSequence[l,m,n,\[Epsilon],saneopts],
+				$MinPrecision=QNMSavePrecision;Abort[]];
+	$MinPrecision=QNMSavePrecision;
 ]
 
 
