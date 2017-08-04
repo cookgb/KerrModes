@@ -112,7 +112,7 @@ If[!KerrModeDebug,Protect[SetSpinWeight]];
 End[] (* KerrModes`Private` *)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions in KerrQNM Namespace*)
 
 
@@ -298,12 +298,12 @@ Options[KerrQNMRefineSequence]=Options[KerrModes`Private`KerrModeRefineSequence]
 
 KerrQNMRefineSequence[l_Integer,m_Integer,n_Integer|n_List,\[Epsilon]_Integer,
 				opts:OptionsPattern[]]:=
-Module[{QNMSavePrecision=$MinPrecision,saneopts},
+Module[{SavePrecision=$MinPrecision,saneopts},
 	(* saneopts ensures options set via SetOptions[KerQNMRefineSequenceB,...] are used *)
 	saneopts=Flatten[Union[{opts},FilterRules[Options[KerrQNMRefineSequence],Except[Flatten[{opts}]]]]];
 	CheckAbort[KerrModes`Private`KerrModeRefineSequence[l,m,n,\[Epsilon],saneopts],
-				$MinPrecision=QNMSavePrecision;Abort[]];
-	$MinPrecision=QNMSavePrecision;
+				$MinPrecision=SavePrecision;Abort[]];
+	$MinPrecision=SavePrecision;
 ]
 
 

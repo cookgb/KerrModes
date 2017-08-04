@@ -282,11 +282,11 @@ Protect[PlotSpinWeight];
 Begin["`Private`"]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Kerr TTML methods*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Adaptive Bisection sequencer*)
 
 
@@ -311,6 +311,20 @@ Module[{ModeSavePrecision=$MinPrecision,saneopts},
 	CheckAbort[KerrModes`Private`KerrModeSequence[l,m,n,\[Epsilon],FilterRules[saneopts,Options[KerrTTMLSequence]]],
 				$MinPrecision=ModeSavePrecision;Abort[]];
 	$MinPrecision=ModeSavePrecision;
+]
+
+
+Options[KerrTTMLRefineSequence]=Options[KerrModes`Private`KerrModeRefineSequence];
+
+
+KerrTTMLRefineSequence[l_Integer,m_Integer,n_Integer|n_List,\[Epsilon]_Integer,
+				opts:OptionsPattern[]]:=
+Module[{SavePrecision=$MinPrecision,saneopts},
+	(* saneopts ensures options set via SetOptions[KerTTMLRefineSequenceB,...] are used *)
+	saneopts=Flatten[Union[{opts},FilterRules[Options[KerrTTMLRefineSequence],Except[Flatten[{opts}]]]]];
+	CheckAbort[KerrModes`Private`KerrModeRefineSequence[l,m,n,\[Epsilon],saneopts],
+				$MinPrecision=SavePrecision;Abort[]];
+	$MinPrecision=SavePrecision;
 ]
 
 
