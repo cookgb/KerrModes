@@ -1380,7 +1380,7 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 ]
 
 
-Options[KerrModeRefineSequence]=Union[{QNMSpinWeight->Null[],Index->False,
+Options[KerrModeRefineSequence]=Union[{SpinWeight->Null[],Index->False,
 								Refinement->All,RefinementAction->None,ForceRefinement->False,
 								RefinementPlot->SeqLevel,LimitRefinement->None,
 								SolutionRelax->1,RadialCFDepth->1,RadialCFMaxGuess->20000000},
@@ -1389,7 +1389,7 @@ Options[KerrModeRefineSequence]=Union[{QNMSpinWeight->Null[],Index->False,
 
 KerrModeRefineSequence[l_Integer,m_Integer,n_Integer|n_List,\[Epsilon]max_Integer,
 				opts:OptionsPattern[]]:=
-Module[{s=OptionValue[QNMSpinWeight],SpinWeightTable,KerrSEQ,
+Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,
 		NKMode,index0,index0m,index0p,alow,ahigh,refinechange=False,
 		i,plotdata,plotdata1,\[Omega]dat,d\[Omega],dd\[Omega],ind0,a0,\[CapitalDelta]ap,\[CapitalDelta]am,\[Omega]g,Almg,ModeSol,inversion,\[Epsilon]=\[Epsilon]max,Nrcf,Nm,
 		KerrSEQret,dummy,blevel,forward,incflag,limitlist={},ll,inc,dec,last,re\[Omega],width,
@@ -1413,8 +1413,7 @@ Module[{s=OptionValue[QNMSpinWeight],SpinWeightTable,KerrSEQ,
 	KerrModeRefineSequence::badaction="Invalid RefinementAction `1` given";
 	KerrModeRefineSequence::limits="Invalid LimitRefinement `1` given";
 
-	SpinWeightTable:=modeName
-					(*Switch[s,
+	SpinWeightTable:=Switch[s,
 						-2,Global`KerrQNM,
 						-1,Global`KerrQNMe,
 						 0,Global`KerrQNMs,
@@ -1425,9 +1424,9 @@ Module[{s=OptionValue[QNMSpinWeight],SpinWeightTable,KerrSEQ,
 					-2,Global`KerrQNM[l,m,n],
 					-1,Global`KerrQNMe[l,m,n],
 					 0,Global`KerrQNMs[l,m,n]
-					];*)
+					];
 	NKMode=Length[KerrSEQ];
-	If[NKMode<3,Message[KerrModeRefineSequence::sequence,NKMode];Return[]];
+	If[NKMode<3,Print[Style[StringForm[KerrModeRefineSequence::sequence,NKQNM],{Medium,Darker[Green]}]];Return[]];
 	If[action==RefineAccuracy || action==RefinePrecision || action==Update || action==None,
 		indexmin=1;indexmax=NKMode;offset=0
 		,Null[],
@@ -1443,7 +1442,7 @@ Module[{s=OptionValue[QNMSpinWeight],SpinWeightTable,KerrSEQ,
 					alow=KerrSEQ[[1,1]];
 					ahigh=KerrSEQ[[NKMode,1]];
 					index0=indexmax;
-				,_,Message[KerrModeRefineSequence::Refinement,refinement];Return[]
+				,_,Print[Style[StringForm[KerrQNMRefineSequenceB::Refinement,refinement],{Medium,Darker[Green]}]];Return[]
 			];
 		,_Integer,
 			index0=refinement;
@@ -1451,8 +1450,8 @@ Module[{s=OptionValue[QNMSpinWeight],SpinWeightTable,KerrSEQ,
 			If[index0<indexmin,refinechange=True;index0=indexmin];
 			If[index0>indexmax,refinechange=True;index0=indexmax];
 			If[refinechange,If[refinement>=0,
-				Message[KerrModeRefineSequence::index,index0,refinement],
-				Message[KerrModeRefineSequence::index,index0-NKMode-1,refinement]
+				Print[Style[StringForm[KerrQNMRefineSequenceB::index,index0,refinement],{Medium,Darker[Green]}]],
+				Print[Style[StringForm[KerrQNMRefineSequenceB::index,index0-NKQNM-1,refinement],{Medium,Darker[Green]}]]
 			]];
 			index0m=index0-offset;
 			index0p=index0+offset;
@@ -1468,33 +1467,35 @@ Module[{s=OptionValue[QNMSpinWeight],SpinWeightTable,KerrSEQ,
 					(Abs[KerrSEQ[[index0,1]]-refinement]>Abs[KerrSEQ[[index0+1,1]]-refinement]),
 						++index0];
 			];
-			If[refinechange,Message[KerrModeRefineSequence::value,Block[{$MinPrecision=0},N[KerrSEQ[[index0,1]],{Infinity,20}]],refinement]];
+			If[refinechange,Print[Style[StringForm[KerrQNMRefineSequenceB::value,Block[{$MinPrecision=0},N[KerrSEQ[[index0,1]],{Infinity,20}]],refinement]],{Medium,Darker[Green]}]];
 			index0m=index0-offset;
 			index0p=index0+offset;
 			alow=KerrSEQ[[index0m,1]];ahigh=KerrSEQ[[index0p,1]];
 		,_List,
-			If[Length[refinement]!=2,Message[KerrModeRefineSequence::list,refinement];Return[]];
+			If[Length[refinement]!=2,Print[Style[StringForm[KerrQNMRefineSequenceB::list,refinement],{Medium,Darker[Green]}]];Return[]];
 			Switch[refinement[[1]]
 				,_Integer,
 					index0m=refinement[[1]];index0p=refinement[[2]];
-					If[Head[index0p]==Integer,Null,Null,Message[KerrModeRefineSequence::list,refinement];Return[]];
-					If[index0m<0,index0m+=NKMode+1];
-					If[index0p<0,index0p+=NKMode+1];
-					If[index0m>index0p,Message[KerrModeRefineSequence::invalidlist,refinement];Return[]];
+					If[Head[index0p]==Integer,Null,Null,Print[Style[StringForm[KerrQNMRefineSequenceB::list,refinement],{Medium,Darker[Green]}]];Return[]];
+					If[index0m<0,index0m+=NKQNM+1];
+					If[index0p<0,index0p+=NKQNM+1];
+					If[index0m>index0p,Print[Style[StringForm[KerrQNMRefineSequenceB::invalidlist,refinement],{Medium,Darker[Green]}]];Return[]];
 					If[index0m<1,refinechange=True;index0m=1];
 					If[index0p>NKMode,refinechange=True;index0p=NKMode];
 					If[index0m>index0p-offset,refinechange=True;index0m=index0p-offset];
 					If[index0p<index0m+offset,refinechange=True;index0p=index0m+offset];
-					If[index0m==NKMode,index0m=indexmax-offset];
-					If[refinechange,Message[KerrModeRefineSequence::range,
-						{If[refinement[[1]]<0,index0m-NKMode-1,index0m],
-						 If[refinement[[2]]<0,index0p-NKMode-1,index0p]},refinement]];
+					If[index0m==NKQNM,index0m=indexmax-offset];
+					If[refinechange,Print[Style[StringForm[KerrQNMRefineSequenceB::range,
+						{If[refinement[[1]]<0,index0m-NKQNM-1,index0m],
+						 If[refinement[[2]]<0,index0p-NKQNM-1,index0p]},refinement]],{Medium,Darker[Green]}]];
+
 					alow=KerrSEQ[[index0m,1]];
 					ahigh=KerrSEQ[[index0p,1]];
 					index0=index0p-1;
 				,_Rational|_Real,
-					If[Head[refinement[[2]]]==Real||Head[refinement[[2]]]==Rational,Null,Null,Message[KerrModeRefineSequence::list,refinement];Return[]];
-					If[refinement[[1]]>refinement[[2]],Message[KerrModeRefineSequence::invalidlist,refinement];Return[]];
+					If[Head[refinement[[2]]]==Real||Head[refinement[[2]]]==Rational,Null,Null,Print[Style[StringForm[KerrQNMRefineSequenceB::list,refinement],{Medium,Darker[Green]}]];Return[]];
+					If[refinement[[1]]>refinement[[2]],Print[Style[StringForm[KerrQNMRefineSequenceB::invalidlist,refinement],{Medium,Darker[Red]}]];Return[]];
+
 					index0m=1;
 					While[KerrSEQ[[index0m,1]]<refinement[[1]] && index0m<NKMode,++index0m];
 					If[KerrSEQ[[index0m,1]]!=refinement[[1]],
@@ -1516,12 +1517,13 @@ Module[{s=OptionValue[QNMSpinWeight],SpinWeightTable,KerrSEQ,
 					If[index0p<index0m+1+offset,refinechange=True;index0p=index0m+1+offset;];
 					alow=KerrSEQ[[index0m,1]];
 					ahigh=KerrSEQ[[index0p,1]];
-					If[refinechange,Message[KerrModeRefineSequence::range,Block[{$MinPrecision=0},N[{alow,ahigh},{Infinity,20}]],refinement]];
+					If[refinechange,Print[Style[StringForm[KerrQNMRefineSequenceB::range,Block[{$MinPrecision=0},N[{alow,ahigh},{Infinity,20}]],refinement],{Medium,Darker[Green]}]]];
 					index0=index0p-1;
 				,_,
-					Message[KerrModeRefineSequence::list,refinement];Return[]
+					Print[Style[StringForm[KerrQNMRefineSequenceB::list,refinement],{Medium,Darker[Green]}]];Return[]
 			];
-		,_,Message[KerrModeRefineSequence::Refinement,refinement];Return[]
+		,_,Print[Style[StringForm[KerrQNMRefineSequenceB::Refinement,refinement],{Medium,Darker[Green]}]];Return[]
+
 	];
 	Switch[limitrefine
 		,None,
@@ -1546,7 +1548,8 @@ Module[{s=OptionValue[QNMSpinWeight],SpinWeightTable,KerrSEQ,
 						,_Integer,
 							width=limitrefine[[2]];
 						,_,
-							Message[KerrModeRefineSequence::limits,limitrefine];Return[]
+							Print[Style[StringForm[KerrQNMRefineSequenceB::limits,limitrefine],{Medium,Darker[Green]}]];Return[]
+
 					];
 					inc=False;dec=False;
 					last=Re[KerrSEQ[[index0m,2,1]]];
@@ -1578,7 +1581,8 @@ Module[{s=OptionValue[QNMSpinWeight],SpinWeightTable,KerrSEQ,
 						,_Integer,
 							rcfmin=limitrefine[[2]];
 						,_,
-							Message[KerrModeRefineSequence::limits,limitrefine];Return[]
+							Print[Style[StringForm[KerrQNMRefineSequenceB::limits,limitrefine],{Medium,Darker[Green]}]];Return[]
+
 					];
 					For[i=index0m,i<=index0p,++i,
 						If[Length[KerrSEQ[[i,2]]]>=6 && KerrSEQ[[i,2,6]]<=rcfmin,
@@ -1586,10 +1590,10 @@ Module[{s=OptionValue[QNMSpinWeight],SpinWeightTable,KerrSEQ,
 						];
 					];
 				,_,
-					Message[KerrModeRefineSequence::limits,limitrefine];Return[]
+					Print[Style[StringForm[KerrQNMRefineSequenceB::limits,limitrefine],{Medium,Darker[Green]}]];Return[]
 			];
 		,_,
-			Message[KerrModeRefineSequence::limits,limitrefine];Return[]
+			Print[Style[StringForm[KerrQNMRefineSequenceB::limits,limitrefine],{Medium,Darker[Green]}]];Return[]
 	];
 	Switch[plottype
 		,None,
@@ -1624,7 +1628,7 @@ Module[{s=OptionValue[QNMSpinWeight],SpinWeightTable,KerrSEQ,
 				plotdata[[i]]=4Sqrt[Abs[d\[Omega]]^2Abs[dd\[Omega]]^2-(Re[d\[Omega]]Re[dd\[Omega]]+Im[d\[Omega]]Im[dd\[Omega]])^2]/(Abs[d\[Omega]]^2);
 			];
 			plotdata=Table[{If[useindex,plotdata1[[i,2]],plotdata1[[i,1]]],plotdata[[i]]},{i,2,Length[plotdata1]-1}];
-		,_,Message[KerrModeRefineSequence::badplot,plottype];Return[]
+		,_,Print[Style[StringForm[KerrQNMRefineSequenceB::badplot,plottype],{Medium,Darker[Green]}]];Return[]
 	];
 	If[plottype==SeqLevel || plottype==RadialCFLevel || plottype==AccuracyLevel || plottype==PrecisionLevel || plottype==StepRatio || plottype==CurveRatio,
 		Print[ListLinePlot[plotdata,FilterRules[{opts},Options[ListLinePlot]]]];
@@ -1943,7 +1947,7 @@ Print["RefineAcc at : ",index0];
 					];
 				];
 			];
-		,_,Message[KerrModeRefineSequence::badaction,action];Return[]
+		,_,Print[Style[StringForm[KerrQNMRefineSequenceB::badaction,action],{Medium,Darker[Red]}]];Return[]
 	];
 ]
 
@@ -1986,7 +1990,7 @@ rt: Fraction of distance between F0 and Fg for width of error wedge (transverse 
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Utility routines*)
 
 
@@ -2001,30 +2005,32 @@ MyPrecision[x_?NumberQ]:=Module[{saveprecision,returnprecision},
 
 GetKerrName[modeList_,s_Integer]:=
 Module[{},
+	GetKerrName::spinweight="Invalid Spin Weight : `1`";
+	GetKerrName::invalid="Invalid Mode, select QNM, TTML, or TTMR";
 		Switch[modeList,
 			QNM,
 				Switch[s,
 					-2,Global`KerrQNM,
 					-1,Global`KerrQNMe,
 					 0,Global`KerrQNMs,
-					_,Message[SetSpinWeight::spinweight,s];Abort[]
+					_,Message[GetKerrName::spinweight,s];Abort[]
 					],
 			TTML,
 				Switch[s,
 		             -2,Global`KerrTTML,
 		             -1,Global`KerrTTMLe,
 		              0,Global`KerrTTMLs,
-			         _,Message[SetSpinWeight::spinweight,s];Abort[]
+			         _,Message[GetKerrName::spinweight,s];Abort[]
 		            ],
 			TTMR,
 				Switch[s,
 		             2,Global`KerrTTMR,
 		             1,Global`KerrTTMRe,
 		              0,Global`KerrTTMRs,
-			         _,Message[SetSpinWeight::spinweight,s];Abort[]
+			         _,Message[GetKerrName::spinweight,s];Abort[]
 		            ],
 				_,
-					Print["Invalid Mode, select QNM, TTML, or TTMR"];
+					Message[GetKerrName::invalid];
 					Abort[]
 			]
 	]
@@ -2032,30 +2038,32 @@ Module[{},
 
 GetSchName[modeList_,s_Integer]:=
 Module[{},
+	GetSchName::spinweight="Invalid Spin Weight : `1`";
+	GetSchName::invalid="Invalid Mode, select QNM, TTML, or TTMR";
 		Switch[modeList,
 			QNM,
 				Switch[s,
 					-2,Global`SchQNMTable,
 					-1,Global`SchQNMeTable,
 					 0,Global`SchQNMsTable,
-					_,Message[SetSpinWeight::spinweight,s];Abort[]
+					_,Message[GetSchName::spinweight,s];Abort[]
 					],
 			TTML,
 				Switch[s,
 		             -2,Global`SchTTMLTable,
 		             -1,Global`SchTTMLeTable,
 		              0,Global`SchTTMLsTable,
-			         _,Message[SetSpinWeight::spinweight,s];Abort[]
+			         _,Message[GetSchName::spinweight,s];Abort[]
 		            ],
 			TTMR,
 				Switch[s,
 		             2,Global`SchTTMRTable,
 		             1,Global`SchTTMReTable,
 		              0,Global`SchTTMRsTable,
-			         _,Message[SetSpinWeight::spinweight,s];Abort[]
+			         _,Message[GetSchName::spinweight,s];Abort[]
 		            ],
 				_,
-					Print["Invalid Mode, select QNM, TTML, or TTMR"];
+					Message[GetSchName::invalid];
 					Abort[]
 			]
 	]
@@ -2082,19 +2090,26 @@ Options[ShortenModeSequence]={ShortenBy->Drop};
 
 ShortenModeSequence[l_Integer,m_Integer,n_Integer|n_List,Ns_Integer,OptionsPattern[]]:=
 Module[{shorten=OptionValue[ShortenBy],KerrSEQ,SeqStatus,na},
+	ShortenModeSequence::seqstatus="`1`[,`2`,`3`,`4`,] does not exist.";	
+	ShortenModeSequence::origlength="Original Length of `1`[`2`,`3`,`4`] = `5`";
+	ShortenModeSequence::removelast="Removing last `1` elements";
+	ShortenModeSequence::removefirst="Removing first `1` elements";
+	ShortenModeSequence::takelast="Taking last `1` elements";
+	ShortenModeSequence::takefirst="Taking last `1` elements";
+	ShortenModeSequence::invalid="Invalid Shortening Procedure";
 	KerrSEQ:=modeName[l,m,n];
 	SeqStatus=If[Head[KerrSEQ]==List,If[Length[KerrSEQ]>0,True,False,False],False,False];
-	If[!SeqStatus,Print["KerrQNM[",l,",",m,",",n,"] does not exist."];Return[]];
+	If[!SeqStatus,Print[ShortenModeSequence::seqstatus[SpinWeightTable,l,m,n];Return[]];
 	na=Length[KerrSEQ];
-	Print["Original Length of KerrQNM[",l,",",m,",",n,"]=",na];
+	Print[ShortenModeSequence::origlength,SpinWeightTable,l,m,n,na];
 	Switch[shorten,
 		Drop,
-			If[Ns<0,Print["Removing last ",Ns," elements"],
-					Print["Removing first ",Ns," elements"]],
+			If[Ns<0,Print[Style[StringForm[ShortenModeSequence::removelast,Ns],{Medium,Darker[Green]}]],
+					Print[Style[StringForm[ShortenModeSequence::removefirst,Ns],{Medium,Darker[Green]}]]],
 		Take,
-			If[Ns<0,Print["Taking last ",Ns," elements"],
-					Print["Taking first ",Ns," elements"]],
-		_,Print["Invalid Shortening Proceedure"];Abort[];
+			If[Ns<0,Print[Style[StringForm[ShortenModeSequence::takelast,Ns],{Medium,Darker[Green]}]],
+					Print[Style[StringForm[ShortenModeSequence::takefirst,Ns],{Medium,Darker[Green]}]]],
+		_,Message[ShortenModeSequence::invalid];Abort[];
 	];
 	modeName[l,m,n]=shorten[KerrSEQ,Ns];
 ]
