@@ -41,11 +41,11 @@ If[KerrModeDebug,Unprotect["KerrModes`*"];Unprotect["KerrModes`Private`*"]];
 Protect[KerrModeDebug];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Eigenvalue Solvers*)
 
 
@@ -108,7 +108,7 @@ ModeSolution::usage=
 	"\t\t Jacobian in Newton's method."
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Utility Routines*)
 
 
@@ -135,7 +135,7 @@ ShortenModeSequence::usage=
 	"\t\t are kept if N<0.\n"
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Plotting Routines*)
 
 
@@ -179,7 +179,7 @@ PlotModeFunctionL::usage=
 "PolynomialMode will use SelectMode to replace Modefunction with Starobinsky.\n"
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Reserved Globals*)
 
 
@@ -1390,8 +1390,8 @@ Options[KerrModeRefineSequence]=Union[{QNMSpinWeight->Null[],Index->False,
 KerrModeRefineSequence[l_Integer,m_Integer,n_Integer|n_List,\[Epsilon]max_Integer,
 				opts:OptionsPattern[]]:=
 Module[{s=OptionValue[QNMSpinWeight],SpinWeightTable,KerrSEQ,
-		NKQNM,index0,index0m,index0p,alow,ahigh,refinechange=False,
-		i,plotdata,plotdata1,\[Omega]dat,d\[Omega],dd\[Omega],ind0,a0,\[CapitalDelta]ap,\[CapitalDelta]am,\[Omega]g,Almg,QNMsol,inversion,\[Epsilon]=\[Epsilon]max,Nrcf,Nm,
+		NKMode,index0,index0m,index0p,alow,ahigh,refinechange=False,
+		i,plotdata,plotdata1,\[Omega]dat,d\[Omega],dd\[Omega],ind0,a0,\[CapitalDelta]ap,\[CapitalDelta]am,\[Omega]g,Almg,ModeSol,inversion,\[Epsilon]=\[Epsilon]max,Nrcf,Nm,
 		KerrSEQret,dummy,blevel,forward,incflag,limitlist={},ll,inc,dec,last,re\[Omega],width,
 		indexmin,indexmax,offset,oldNrcf,newNrcf,oldCf,newCf,rcfmin,ref\[Epsilon],
 		useindex=OptionValue[Index],
@@ -1402,34 +1402,36 @@ Module[{s=OptionValue[QNMSpinWeight],SpinWeightTable,KerrSEQ,
 		relax=Rationalize[OptionValue[SolutionRelax]],
 		RCFmin=OptionValue[RadialCFMinDepth],RCFmax=OptionValue[RadialCFMaxGuess],
 		rcfdepth=OptionValue[RadialCFDepth]},
-	KerrQNMRefineSequenceB::Refinement="The value of Refinement (`1`) is not an integer index, real value for a, a list of either specifying a range, or ALL.";
-	KerrQNMRefineSequenceB::index="using index `1` instead of `2`";
-	KerrQNMRefineSequenceB::value="using a = `1` instead of `2`";
-	KerrQNMRefineSequenceB::range="using range `1` instead of `2`";
-	KerrQNMRefineSequenceB::list="`1` must be a 2 element list of either integers or reals";
-	KerrQNMRefineSequenceB::invalidlist="`1` is an invalid range of elements";
-	KerrQNMRefineSequenceB::sequence="Sequence has `1` elements; must have at least 3 to refine";
-	KerrQNMRefineSequenceB::badplot="Invalid RefinementPlot `1` given";
-	KerrQNMRefineSequenceB::badaction="Invalid RefinementAction `1` given";
-	KerrQNMRefineSequenceB::limits="Invalid LimitRefinement `1` given";
+	KerrModeRefineSequence::Refinement="The value of Refinement (`1`) is not an integer index, real value for a, a list of either specifying a range, or ALL.";
+	KerrModeRefineSequence::index="using index `1` instead of `2`";
+	KerrModeRefineSequence::value="using a = `1` instead of `2`";
+	KerrModeRefineSequence::range="using range `1` instead of `2`";
+	KerrModeRefineSequence::list="`1` must be a 2 element list of either integers or reals";
+	KerrModeRefineSequence::invalidlist="`1` is an invalid range of elements";
+	KerrModeRefineSequence::sequence="Sequence has `1` elements; must have at least 3 to refine";
+	KerrModeRefineSequence::badplot="Invalid RefinementPlot `1` given";
+	KerrModeRefineSequence::badaction="Invalid RefinementAction `1` given";
+	KerrModeRefineSequence::limits="Invalid LimitRefinement `1` given";
 
-	SpinWeightTable:=Switch[s,
+	SpinWeightTable:=modeName
+					(*Switch[s,
 						-2,Global`KerrQNM,
 						-1,Global`KerrQNMe,
 						 0,Global`KerrQNMs,
 						 _,Print["Invalid QNMSpinWeight"];Abort[]
-					];
-	KerrSEQ:=Switch[s,
+					];*)
+	KerrSEQ:=modeName[l,m,n]
+				(*Switch[s,
 					-2,Global`KerrQNM[l,m,n],
 					-1,Global`KerrQNMe[l,m,n],
 					 0,Global`KerrQNMs[l,m,n]
-					];
-	NKQNM=Length[KerrSEQ];
-	If[NKQNM<3,Message[KerrQNMRefineSequenceB::sequence,NKQNM];Return[]];
+					];*)
+	NKMode=Length[KerrSEQ];
+	If[NKMode<3,Message[KerrModeRefineSequence::sequence,NKMode];Return[]];
 	If[action==RefineAccuracy || action==RefinePrecision || action==Update || action==None,
-		indexmin=1;indexmax=NKQNM;offset=0
+		indexmin=1;indexmax=NKMode;offset=0
 		,Null[],
-		indexmin=2;indexmax=NKQNM-1;offset=1
+		indexmin=2;indexmax=NKMode-1;offset=1
 	];
 (* Parse Refinement option to set range of values to refine *)
 	Switch[refinement
@@ -1437,89 +1439,89 @@ Module[{s=OptionValue[QNMSpinWeight],SpinWeightTable,KerrSEQ,
 			Switch[refinement
 				,All,
 					index0m=1;
-					index0p=NKQNM;
+					index0p=NKMode;
 					alow=KerrSEQ[[1,1]];
-					ahigh=KerrSEQ[[NKQNM,1]];
+					ahigh=KerrSEQ[[NKMode,1]];
 					index0=indexmax;
-				,_,Message[KerrQNMRefineSequenceB::Refinement,refinement];Return[]
+				,_,Message[KerrModeRefineSequence::Refinement,refinement];Return[]
 			];
 		,_Integer,
 			index0=refinement;
-			If[index0<0,index0+=NKQNM+1];
+			If[index0<0,index0+=NKMode+1];
 			If[index0<indexmin,refinechange=True;index0=indexmin];
 			If[index0>indexmax,refinechange=True;index0=indexmax];
 			If[refinechange,If[refinement>=0,
-				Message[KerrQNMRefineSequenceB::index,index0,refinement],
-				Message[KerrQNMRefineSequenceB::index,index0-NKQNM-1,refinement]
+				Message[KerrModeRefineSequence::index,index0,refinement],
+				Message[KerrModeRefineSequence::index,index0-NKMode-1,refinement]
 			]];
 			index0m=index0-offset;
 			index0p=index0+offset;
 			alow=KerrSEQ[[index0m,1]];ahigh=KerrSEQ[[index0p,1]];
 		,_Rational|_Real,
 			index0=1;
-			While[KerrSEQ[[index0,1]]<refinement && index0<NKQNM,++index0];
+			While[KerrSEQ[[index0,1]]<refinement && index0<NKMode,++index0];
 			If[index0<indexmin,refinechange=True;index0=indexmin];
 			If[index0>indexmax,refinechange=True;index0=indexmax];
 			If[KerrSEQ[[index0,1]]!=refinement,
 				refinechange=True;
-				If[index0<NKQNM-1 &&
+				If[index0<NKMode-1 &&
 					(Abs[KerrSEQ[[index0,1]]-refinement]>Abs[KerrSEQ[[index0+1,1]]-refinement]),
 						++index0];
 			];
-			If[refinechange,Message[KerrQNMRefineSequenceB::value,Block[{$MinPrecision=0},N[KerrSEQ[[index0,1]],{Infinity,20}]],refinement]];
+			If[refinechange,Message[KerrModeRefineSequence::value,Block[{$MinPrecision=0},N[KerrSEQ[[index0,1]],{Infinity,20}]],refinement]];
 			index0m=index0-offset;
 			index0p=index0+offset;
 			alow=KerrSEQ[[index0m,1]];ahigh=KerrSEQ[[index0p,1]];
 		,_List,
-			If[Length[refinement]!=2,Message[KerrQNMRefineSequenceB::list,refinement];Return[]];
+			If[Length[refinement]!=2,Message[KerrModeRefineSequence::list,refinement];Return[]];
 			Switch[refinement[[1]]
 				,_Integer,
 					index0m=refinement[[1]];index0p=refinement[[2]];
-					If[Head[index0p]==Integer,Null,Null,Message[KerrQNMRefineSequenceB::list,refinement];Return[]];
-					If[index0m<0,index0m+=NKQNM+1];
-					If[index0p<0,index0p+=NKQNM+1];
-					If[index0m>index0p,Message[KerrQNMRefineSequenceB::invalidlist,refinement];Return[]];
+					If[Head[index0p]==Integer,Null,Null,Message[KerrModeRefineSequence::list,refinement];Return[]];
+					If[index0m<0,index0m+=NKMode+1];
+					If[index0p<0,index0p+=NKMode+1];
+					If[index0m>index0p,Message[KerrModeRefineSequence::invalidlist,refinement];Return[]];
 					If[index0m<1,refinechange=True;index0m=1];
-					If[index0p>NKQNM,refinechange=True;index0p=NKQNM];
+					If[index0p>NKMode,refinechange=True;index0p=NKMode];
 					If[index0m>index0p-offset,refinechange=True;index0m=index0p-offset];
 					If[index0p<index0m+offset,refinechange=True;index0p=index0m+offset];
-					If[index0m==NKQNM,index0m=indexmax-offset];
-					If[refinechange,Message[KerrQNMRefineSequenceB::range,
-						{If[refinement[[1]]<0,index0m-NKQNM-1,index0m],
-						 If[refinement[[2]]<0,index0p-NKQNM-1,index0p]},refinement]];
+					If[index0m==NKMode,index0m=indexmax-offset];
+					If[refinechange,Message[KerrModeRefineSequence::range,
+						{If[refinement[[1]]<0,index0m-NKMode-1,index0m],
+						 If[refinement[[2]]<0,index0p-NKMode-1,index0p]},refinement]];
 					alow=KerrSEQ[[index0m,1]];
 					ahigh=KerrSEQ[[index0p,1]];
 					index0=index0p-1;
 				,_Rational|_Real,
-					If[Head[refinement[[2]]]==Real||Head[refinement[[2]]]==Rational,Null,Null,Message[KerrQNMRefineSequenceB::list,refinement];Return[]];
-					If[refinement[[1]]>refinement[[2]],Message[KerrQNMRefineSequenceB::invalidlist,refinement];Return[]];
+					If[Head[refinement[[2]]]==Real||Head[refinement[[2]]]==Rational,Null,Null,Message[KerrModeRefineSequence::list,refinement];Return[]];
+					If[refinement[[1]]>refinement[[2]],Message[KerrModeRefineSequence::invalidlist,refinement];Return[]];
 					index0m=1;
-					While[KerrSEQ[[index0m,1]]<refinement[[1]] && index0m<NKQNM,++index0m];
+					While[KerrSEQ[[index0m,1]]<refinement[[1]] && index0m<NKMode,++index0m];
 					If[KerrSEQ[[index0m,1]]!=refinement[[1]],
 						refinechange=True;
-						If[index0m<NKQNM &&
+						If[index0m<NKMode &&
 							(Abs[KerrSEQ[[index0m,1]]-refinement[[1]]]>Abs[KerrSEQ[[index0m+1,1]]-refinement[[1]]]),
 								++index0m];
 					];
 					index0p=1;
-					While[KerrSEQ[[index0p,1]]<refinement[[2]] && index0p<NKQNM,++index0p];
+					While[KerrSEQ[[index0p,1]]<refinement[[2]] && index0p<NKMode,++index0p];
 					If[KerrSEQ[[index0p,1]]!=refinement[[2]],
 						refinechange=True;
-						If[index0p<NKQNM &&
+						If[index0p<NKMode &&
 							(Abs[KerrSEQ[[index0p,1]]-refinement[[2]]]>Abs[KerrSEQ[[index0p+1,1]]-refinement[[2]]]),
 								++index0p];
 					];
-					If[index0p>NKQNM,refinechange=True;index0p=NKQNM];
+					If[index0p>NKMode,refinechange=True;index0p=NKMode];
 					If[index0m>index0p-1-offset,refinechange=True;index0m=index0p-1-offset;];
 					If[index0p<index0m+1+offset,refinechange=True;index0p=index0m+1+offset;];
 					alow=KerrSEQ[[index0m,1]];
 					ahigh=KerrSEQ[[index0p,1]];
-					If[refinechange,Message[KerrQNMRefineSequenceB::range,Block[{$MinPrecision=0},N[{alow,ahigh},{Infinity,20}]],refinement]];
+					If[refinechange,Message[KerrModeRefineSequence::range,Block[{$MinPrecision=0},N[{alow,ahigh},{Infinity,20}]],refinement]];
 					index0=index0p-1;
 				,_,
-					Message[KerrQNMRefineSequenceB::list,refinement];Return[]
+					Message[KerrModeRefineSequence::list,refinement];Return[]
 			];
-		,_,Message[KerrQNMRefineSequenceB::Refinement,refinement];Return[]
+		,_,Message[KerrModeRefineSequence::Refinement,refinement];Return[]
 	];
 	Switch[limitrefine
 		,None,
@@ -1544,7 +1546,7 @@ Module[{s=OptionValue[QNMSpinWeight],SpinWeightTable,KerrSEQ,
 						,_Integer,
 							width=limitrefine[[2]];
 						,_,
-							Message[KerrQNMRefineSequenceB::limits,limitrefine];Return[]
+							Message[KerrModeRefineSequence::limits,limitrefine];Return[]
 					];
 					inc=False;dec=False;
 					last=Re[KerrSEQ[[index0m,2,1]]];
@@ -1576,7 +1578,7 @@ Module[{s=OptionValue[QNMSpinWeight],SpinWeightTable,KerrSEQ,
 						,_Integer,
 							rcfmin=limitrefine[[2]];
 						,_,
-							Message[KerrQNMRefineSequenceB::limits,limitrefine];Return[]
+							Message[KerrModeRefineSequence::limits,limitrefine];Return[]
 					];
 					For[i=index0m,i<=index0p,++i,
 						If[Length[KerrSEQ[[i,2]]]>=6 && KerrSEQ[[i,2,6]]<=rcfmin,
@@ -1584,22 +1586,22 @@ Module[{s=OptionValue[QNMSpinWeight],SpinWeightTable,KerrSEQ,
 						];
 					];
 				,_,
-					Message[KerrQNMRefineSequenceB::limits,limitrefine];Return[]
+					Message[KerrModeRefineSequence::limits,limitrefine];Return[]
 			];
 		,_,
-			Message[KerrQNMRefineSequenceB::limits,limitrefine];Return[]
+			Message[KerrModeRefineSequence::limits,limitrefine];Return[]
 	];
 	Switch[plottype
 		,None,
 			plotdata=None;
 		,SeqLevel,
-			plotdata=Table[{If[useindex,i,KerrSEQ[[i,1]]],Round[-(3+Log10[KerrSEQ[[i+1,1]]-KerrSEQ[[i,1]]])/Log10[2]]},{i,Min[NKQNM-1,index0m],Min[NKQNM-1,index0p]}];
+			plotdata=Table[{If[useindex,i,KerrSEQ[[i,1]]],Round[-(3+Log10[KerrSEQ[[i+1,1]]-KerrSEQ[[i,1]]])/Log10[2]]},{i,Min[NKMode-1,index0m],Min[NKMode-1,index0p]}];
 		,RadialCFLevel,
-			plotdata=Table[{If[useindex,i,KerrSEQ[[i,1]]],If[Length[KerrSEQ[[i,2]]]>=6,KerrSEQ[[i,2,6]],KerrSEQ[[i,2,3]],0]},{i,Min[NKQNM-1,index0m],Min[NKQNM-1,index0p]}];
+			plotdata=Table[{If[useindex,i,KerrSEQ[[i,1]]],If[Length[KerrSEQ[[i,2]]]>=6,KerrSEQ[[i,2,6]],KerrSEQ[[i,2,3]],0]},{i,Min[NKMode-1,index0m],Min[NKMode-1,index0p]}];
 		,AccuracyLevel,
-			plotdata=Table[{If[useindex,i,KerrSEQ[[i,1]]],KerrSEQ[[i,2,4]]},{i,Max[1,index0m],Min[NKQNM,index0p]}];
+			plotdata=Table[{If[useindex,i,KerrSEQ[[i,1]]],KerrSEQ[[i,2,4]]},{i,Max[1,index0m],Min[NKMode,index0p]}];
 		,PrecisionLevel,
-			plotdata=Table[{If[useindex,i,KerrSEQ[[i,1]]],MyPrecision[KerrSEQ[[i,2,1]]]},{i,Max[1,index0m],Min[NKQNM,index0p]}];
+			plotdata=Table[{If[useindex,i,KerrSEQ[[i,1]]],MyPrecision[KerrSEQ[[i,2,1]]]},{i,Max[1,index0m],Min[NKMode,index0p]}];
 		,StepRatio,
 			plotdata1=Table[{KerrSEQ[[i,1]],i},{i,index0m,index0p}];
 			plotdata=RotateLeft[plotdata1,1]-plotdata1;
@@ -1622,7 +1624,7 @@ Module[{s=OptionValue[QNMSpinWeight],SpinWeightTable,KerrSEQ,
 				plotdata[[i]]=4Sqrt[Abs[d\[Omega]]^2Abs[dd\[Omega]]^2-(Re[d\[Omega]]Re[dd\[Omega]]+Im[d\[Omega]]Im[dd\[Omega]])^2]/(Abs[d\[Omega]]^2);
 			];
 			plotdata=Table[{If[useindex,plotdata1[[i,2]],plotdata1[[i,1]]],plotdata[[i]]},{i,2,Length[plotdata1]-1}];
-		,_,Message[KerrQNMRefineSequenceB::badplot,plottype];Return[]
+		,_,Message[KerrModeRefineSequence::badplot,plottype];Return[]
 	];
 	If[plottype==SeqLevel || plottype==RadialCFLevel || plottype==AccuracyLevel || plottype==PrecisionLevel || plottype==StepRatio || plottype==CurveRatio,
 		Print[ListLinePlot[plotdata,FilterRules[{opts},Options[ListLinePlot]]]];
@@ -1665,25 +1667,26 @@ Print["RefineAcc at : ",index0];
 						$MinPrecision=Max[precision,
 							If[Length[KerrSEQ[[index0,2]]]>=9,KerrSEQ[[index0,2,9]],IntegerPart[MyPrecision[\[Omega]g]]]]
 					];
-					QNMsol=QNMSolution[inversion,s,l,m,a0,
+					ModeSol=ModeSolution[inversion,s,l,m,a0,
 										SetPrecision[\[Omega]g,Max[precision,$MinPrecision]],
 										SetPrecision[Almg,Max[precision,$MinPrecision]],\[Epsilon],relax,
-										Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[QNMSolution]]];
-					If[QNMsol[[1]],
-						Print["QNMsol a=",Block[{$MinPrecision=0},N[QNMsol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[QNMsol[[4,2,1]],MachinePrecision],
-							" Alm=",SetPrecision[QNMsol[[4,3,1]],MachinePrecision],
-							"  |\[CapitalDelta]\[Omega]| = ",SetPrecision[Abs[\[Omega]g-QNMsol[[4,2,1]]],MachinePrecision]];
+										Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[ModeSolution]]];
+					If[ModeSol[[1]],
+						Print["ModeSol a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision],
+							" Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision],
+							"  |\[CapitalDelta]\[Omega]| = ",SetPrecision[Abs[\[Omega]g-ModeSol[[4,2,1]]],MachinePrecision]];
 						(*
 						oldCf=RadialCFRem[inversion,s,m,a0,Almg,\[Omega]g,oldNrcf];
-						newNrcf=QNMsol[[4,2,3]];(* Must be the value used, not the "best" *)
+						newNrcf=ModeSol[[4,2,3]];(* Must be the value used, not the "best" *)
 						newCf=RadialCFRem[inversion,s,m,a0,Almg,\[Omega]g,newNrcf];
-						Print["Prior Accuracy : ",KerrSEQ[[index0,2,4]]," Pred|\[CapitalDelta]\[Omega]| = ",1/Sqrt[Det[QNMsol[[5]]]]Abs[newCf[[1]]-oldCf[[1]]] ];
+						Print["Prior Accuracy : ",KerrSEQ[[index0,2,4]]," Pred|\[CapitalDelta]\[Omega]| = ",1/Sqrt[Det[ModeSol[[5]]]]Abs[newCf[[1]]-oldCf[[1]]] ];
 						*)
-						Switch[s,
-							   -2,Global`KerrQNM[l,m,n]=ReplacePart[KerrSEQ,index0->QNMsol[[4]]],
-							   -1,Global`KerrQNMe[l,m,n]=ReplacePart[KerrSEQ,index0->QNMsol[[4]]],
-								0,Global`KerrQNMs[l,m,n]=ReplacePart[KerrSEQ,index0->QNMsol[[4]]]
-							  ];
+						modeName[l,m,n]=ReplacePart[KerrSEQ,index0->ModeSol[[4]]]
+						(*Switch[s,
+							   -2,Global`KerrQNM[l,m,n]=ReplacePart[KerrSEQ,index0\[Rule]ModeSol[[4]]],
+							   -1,Global`KerrQNMe[l,m,n]=ReplacePart[KerrSEQ,index0\[Rule]ModeSol[[4]]],
+								0,Global`KerrQNMs[l,m,n]=ReplacePart[KerrSEQ,index0\[Rule]ModeSol[[4]]]
+							  ];*)
 						,(* invalid solution *)
 						Print["Solution failed at index ",index0];
 					];
@@ -1723,19 +1726,20 @@ Print["RefineAcc at : ",index0];
 						$MinPrecision=Max[precision,
 							If[Length[KerrSEQ[[index0,2]]]>=9,KerrSEQ[[index0,2,9]],IntegerPart[MyPrecision[\[Omega]g]]]]
 					];
-					QNMsol=QNMSolution[inversion,s,l,m,a0,
+					ModeSol=ModeSolution[inversion,s,l,m,a0,
 										SetPrecision[\[Omega]g,Max[precision,$MinPrecision]],
 										SetPrecision[Almg,Max[precision,$MinPrecision]],ref\[Epsilon],relax,
-										Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[QNMSolution]]];
-					If[QNMsol[[1]],
-						Print["QNMsol a=",Block[{$MinPrecision=0},N[QNMsol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[QNMsol[[4,2,1]],MachinePrecision],
-							" Alm=",SetPrecision[QNMsol[[4,3,1]],MachinePrecision],
-							"  |\[CapitalDelta]\[Omega]| = ",SetPrecision[Abs[\[Omega]g-QNMsol[[4,2,1]]],MachinePrecision]];
-						Switch[s,
-							   -2,Global`KerrQNM[l,m,n]=ReplacePart[KerrSEQ,index0->QNMsol[[4]]],
-							   -1,Global`KerrQNMe[l,m,n]=ReplacePart[KerrSEQ,index0->QNMsol[[4]]],
-								0,Global`KerrQNMs[l,m,n]=ReplacePart[KerrSEQ,index0->QNMsol[[4]]]
-							  ];
+										Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[ModeSolution]]];
+					If[ModeSol[[1]],
+						Print["ModeSol a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision],
+							" Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision],
+							"  |\[CapitalDelta]\[Omega]| = ",SetPrecision[Abs[\[Omega]g-ModeSol[[4,2,1]]],MachinePrecision]];
+						modeName[l,m,n]ReplacePart[KerrSEQ,index0->ModeSol[[4]]]
+						(*Switch[s,
+							   -2,Global`KerrQNM[l,m,n]=ReplacePart[KerrSEQ,index0\[Rule]ModeSol[[4]]],
+							   -1,Global`KerrQNMe[l,m,n]=ReplacePart[KerrSEQ,index0\[Rule]ModeSol[[4]]],
+								0,Global`KerrQNMs[l,m,n]=ReplacePart[KerrSEQ,index0\[Rule]ModeSol[[4]]]
+							  ];*)
 						,(* invalid solution *)
 						Print["Solution failed at index ",index0];
 					];
@@ -1779,11 +1783,12 @@ Print["RefineAcc at : ",index0];
 (*Print["At a = ",N[KerrSEQ[[index0,1]]]," index0 = ",index0," forward : ",forward," incflag : ",incflag];*)
 				{KerrSEQret,blevel,dummy,dummy,\[Epsilon]}=
 					AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,forward,incflag,False,FilterRules[{opts},Options[AdaptCheck3]]];
-				Switch[s,
+				modeName[l,m,n]=KerrSEQret
+				(*Switch[s,
 					   -2,Global`KerrQNM[l,m,n]=KerrSEQret,
 					   -1,Global`KerrQNMe[l,m,n]=KerrSEQret,
 						0,Global`KerrQNMs[l,m,n]=KerrSEQret
-					  ];
+					  ];*)
 				incflag=True;
 				--index0;
 			];
@@ -1823,17 +1828,18 @@ Print["RefineAcc at : ",index0];
 							Almg = (KerrSEQ[[ind0+1,3,1]]+KerrSEQ[[ind0,3,1]])/2;
 							ref\[Epsilon]=If[forcerefine,\[Epsilon],Min[\[Epsilon],Max[KerrSEQ[[index0,2,4]],KerrSEQ[[index0+1,2,4]]]]];
 							$MinPrecision=If[Length[KerrSEQ[[ind0,2]]]>=9,KerrSEQ[[ind0,2,9]],IntegerPart[MyPrecision[KerrSEQ[[ind0,2,1]]]]];
-							QNMsol=QNMSolution[inversion,s,l,m,a0+\[CapitalDelta]ap/2,
+							ModeSol=ModeSolution[inversion,s,l,m,a0+\[CapitalDelta]ap/2,
 												SetPrecision[\[Omega]g,Max[precision,$MinPrecision]],
 												SetPrecision[Almg,Max[precision,$MinPrecision]],ref\[Epsilon],relax,
-											Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[QNMSolution]]];
-							If[QNMsol[[1]],
-								Print["QNMsol++ a=",Block[{$MinPrecision=0},N[QNMsol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[QNMsol[[4,2,1]],MachinePrecision]," Alm=",SetPrecision[QNMsol[[4,3,1]],MachinePrecision]];
-								Switch[s,
-								   -2,Global`KerrQNM[l,m,n] =Insert[KerrSEQ,QNMsol[[4]],ind0+1],
-								   -1,Global`KerrQNMe[l,m,n]=Insert[KerrSEQ,QNMsol[[4]],ind0+1],
-									0,Global`KerrQNMs[l,m,n]=Insert[KerrSEQ,QNMsol[[4]],ind0+1]
-								  ];
+											Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[ModeSolution]]];
+							If[ModeSol[[1]],
+								Print["ModeSol++ a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision]," Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision]];
+								modeName[l,m,n]=Insert[KerrSEQ,ModeSol[[4]],ind0+1]
+								(*Switch[s,
+								   -2,Global`KerrQNM[l,m,n] =Insert[KerrSEQ,ModeSol[[4]],ind0+1],
+								   -1,Global`KerrQNMe[l,m,n]=Insert[KerrSEQ,ModeSol[[4]],ind0+1],
+									0,Global`KerrQNMs[l,m,n]=Insert[KerrSEQ,ModeSol[[4]],ind0+1]
+								  ];*)
 								,(* invalid solution *)
 								Print["a++ solution failed."];
 								Abort[];
@@ -1843,17 +1849,18 @@ Print["RefineAcc at : ",index0];
 							Almg = (KerrSEQ[[ind0,3,1]]+KerrSEQ[[ind0-1,3,1]])/2;
 							ref\[Epsilon]=If[forcerefine,\[Epsilon],Min[\[Epsilon],Max[KerrSEQ[[index0,2,4]],KerrSEQ[[index0-1,2,4]]]]];
 							$MinPrecision=If[Length[KerrSEQ[[ind0,2]]]>=9,KerrSEQ[[ind0,2,9]],IntegerPart[MyPrecision[KerrSEQ[[ind0,2,1]]]]];
-							QNMsol=QNMSolution[inversion,s,l,m,a0-\[CapitalDelta]am/2,
+							ModeSol=ModeSolution[inversion,s,l,m,a0-\[CapitalDelta]am/2,
 												SetPrecision[\[Omega]g,Max[precision,$MinPrecision]],
 												SetPrecision[Almg,Max[precision,$MinPrecision]],ref\[Epsilon],relax,
-												Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[QNMSolution]]];
-							If[QNMsol[[1]],
-								Print["QNMsol-- a=",Block[{$MinPrecision=0},N[QNMsol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[QNMsol[[4,2,1]],MachinePrecision]," Alm=",SetPrecision[QNMsol[[4,3,1]],MachinePrecision]];
-								Switch[s,
-								   -2,Global`KerrQNM[l,m,n] =Insert[KerrSEQ,QNMsol[[4]],ind0],
-								   -1,Global`KerrQNMe[l,m,n]=Insert[KerrSEQ,QNMsol[[4]],ind0],
-									0,Global`KerrQNMs[l,m,n]=Insert[KerrSEQ,QNMsol[[4]],ind0]
-								  ];
+												Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[ModeSolution]]];
+							If[ModeSol[[1]],
+								Print["ModeSol-- a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision]," Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision]];
+								modeName[l,m,n]=Insert[KerrSEQ,ModeSol[[4]],ind0]
+								(*Switch[s,
+								   -2,Global`KerrQNM[l,m,n] =Insert[KerrSEQ,ModeSol[[4]],ind0],
+								   -1,Global`KerrQNMe[l,m,n]=Insert[KerrSEQ,ModeSol[[4]],ind0],
+									0,Global`KerrQNMs[l,m,n]=Insert[KerrSEQ,ModeSol[[4]],ind0]
+								  ];*)
 								++ind0; (* must increment to keep ind0 at same a *)
 								,(* invalid solution *)
 								Print["a-- solution failed."];
@@ -1874,11 +1881,12 @@ Print["RefineAcc at : ",index0];
 				If[Length[limitlist]==0,index0=index0m;Continue[]];
 				If[index0>limitlist[[1,2]],--index0;Continue[]];
 				If[Mod[1000KerrSEQ[[index0,1]],2^(-Maxb)]!=0,
-					Switch[s,
+					modeName[l,m,n]=Drop[KerrSEQ,{index0}]
+					(*Switch[s,
 					   -2,Global`KerrQNM[l,m,n] =Drop[KerrSEQ,{index0}],
 					   -1,Global`KerrQNMe[l,m,n]=Drop[KerrSEQ,{index0}],
 						0,Global`KerrQNMs[l,m,n]=Drop[KerrSEQ,{index0}]
-					  ];
+					  ];*)
 				];
 				--index0;
 			];
@@ -1916,25 +1924,26 @@ Print["RefineAcc at : ",index0];
 						$MinPrecision=Max[precision,
 							If[Length[KerrSEQ[[index0,2]]]>=9,KerrSEQ[[index0,2,9]],IntegerPart[MyPrecision[\[Omega]g]]]]
 					];
-					QNMsol=QNMSolution[inversion,s,l,m,a0,
+					ModeSol=ModeSolution[inversion,s,l,m,a0,
 										SetPrecision[\[Omega]g,Max[precision,$MinPrecision]],
 										SetPrecision[Almg,Max[precision,$MinPrecision]],ref\[Epsilon],relax,
-										Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[QNMSolution]]];
-					If[QNMsol[[1]],
-						Print["QNMsol a=",Block[{$MinPrecision=0},N[QNMsol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[QNMsol[[4,2,1]],MachinePrecision],
-							" Alm=",SetPrecision[QNMsol[[4,3,1]],MachinePrecision],
-							"  |\[CapitalDelta]\[Omega]| = ",SetPrecision[Abs[\[Omega]g-QNMsol[[4,2,1]]],MachinePrecision]];
-						Switch[s,
-							   -2,Global`KerrQNM[l,m,n]=ReplacePart[KerrSEQ,index0->QNMsol[[4]]],
-							   -1,Global`KerrQNMe[l,m,n]=ReplacePart[KerrSEQ,index0->QNMsol[[4]]],
-								0,Global`KerrQNMs[l,m,n]=ReplacePart[KerrSEQ,index0->QNMsol[[4]]]
-							  ];
+										Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[ModeSolution]]];
+					If[ModeSol[[1]],
+						Print["ModeSol a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision],
+							" Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision],
+							"  |\[CapitalDelta]\[Omega]| = ",SetPrecision[Abs[\[Omega]g-ModeSol[[4,2,1]]],MachinePrecision]];
+						modeName[l,m,n]=ReplacePart[KerrSEQ,index0->ModeSol[[4]]]
+						(*Switch[s,
+							   -2,Global`KerrQNM[l,m,n]=ReplacePart[KerrSEQ,index0->ModeSol[[4]]],
+							   -1,Global`KerrQNMe[l,m,n]=ReplacePart[KerrSEQ,index0->ModeSol[[4]]],
+								0,Global`KerrQNMs[l,m,n]=ReplacePart[KerrSEQ,index0->ModeSol[[4]]]
+							  ];*)
 						,(* invalid solution *)
 						Print["Solution failed at index ",index0];
 					];
 				];
 			];
-		,_,Message[KerrQNMRefineSequenceB::badaction,action];Return[]
+		,_,Message[KerrModeRefineSequence::badaction,action];Return[]
 	];
 ]
 
