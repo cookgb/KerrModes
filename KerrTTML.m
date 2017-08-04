@@ -34,7 +34,7 @@ SelectMode::usage=
 	"Either PolynomialMode or ContinuedFractionMode"
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Definitions for KerrModes Namespace*)
 
 
@@ -90,7 +90,7 @@ Module[{C12tmp,C1,C2,C3,C4,C5,Rem,Err},
 If[!KerrTTMLDebug,Protect[RadialCFRemainder]];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Set SpinWeight, SelectMode, and Data-Variable Names*)
 
 
@@ -282,7 +282,7 @@ Protect[PlotSpinWeight];
 Begin["`Private`"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Kerr TTML methods*)
 
 
@@ -339,7 +339,7 @@ Module[{SavePrecision=$MinPrecision,saneopts},
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Graphics*)
 
 

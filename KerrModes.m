@@ -45,7 +45,7 @@ Protect[KerrModeDebug];
 (*Documentation of External Functions*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Eigenvalue Solvers*)
 
 
@@ -109,13 +109,34 @@ ModeSolution::usage=
 
 
 (* ::Subsection:: *)
+(*Utility Routines*)
+
+
+KerrModeMakeMultiplet::usage=
+	"KerrModeMakeMultiplet[l,m,n] converts an Integer overtone index 'n' for the "<>
+	"existing Kerr QNM sequence with mode (l,m) into an overtone multiplet index.  "<>
+	"By default, the sequence number is set to 0.\n\n"<>
+	"Overtone Multiplets: There are cases where more than one sequence is associated with "<>
+	"the same overtone n of mode (l,m).  Such sets are called overtone multiplets.  An "<>
+	"overtone multiplet index is a 2 element list {n,mult}, where 'n' is the Integer "<>
+	"overtone number, and the sequence number 'mult' is in the range 0,1,...,(Nmult-1), "<>
+	"with 'Nmult' the number of sequences with the same overtone index.\n\n"<>
+	"Options:\n"<>
+	"\t OTmultiple\[Rule]0\n"<>
+	"\t\t Sequence number to be used in creating the overtone multiplet index."
+
+
+ShortenModeSequence::usage=
+	"ShortenModeSequence[l,m,n,N] removes the first N elements of the Mode sequence (l,m,n)\n"<>
+	"if N>0, and removes the last N elements if N<0.\n\n"<>
+	"Options:\n"<>
+	"\t ShortenBy\[Rule]Drop : Drop, Take\n"<>
+	"\t\t If 'Take' is chosen, the first N elemets are kept if N>0, and the last N elements\n"<>
+	"\t\t are kept if N<0.\n"
+
+
+(* ::Subsection:: *)
 (*Plotting Routines*)
-
-
-GetKerrName::usage=""
-
-
-GetSchName::usage=""
 
 
 ModePlotOmega::usage=""
@@ -162,7 +183,7 @@ PlotModeFunctionL::usage=
 (*Reserved Globals*)
 
 
-Protect[QNM,TTML,TTMR,ModeType];
+Protect[QNM,TTML,TTMR,ModeType,ShortenBy];
 
 
 Protect[PolynomialMode,ContinuedFractionMode,RunCFConvergence];
@@ -649,7 +670,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Adaptive Bisection sequencer*)
 
 
@@ -1395,7 +1416,7 @@ rt: Fraction of distance between F0 and Fg for width of error wedge (transverse 
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Utility routines*)
 
 
@@ -1470,7 +1491,46 @@ Module[{},
 	]
 
 
-(* ::Section:: *)
+Options[KerrModeMakeMultiplet]={OTmultiple->0};
+
+
+KerrModeMakeMultiplet[l_Integer,m_Integer,n_Integer|n_List,OptionsPattern[]]:=
+Module[{nm=OptionValue[OTmultiple],KerrSEQ},
+	KerrSEQ=modeName[l,m,n];
+	If[Head[n]==Integer,
+		modeName[l,m,{n,nm}]=KerrSEQ;modeName[l,m,n]=.,
+		Null[],
+		If[n[[2]]!=nm,
+			modeName[l,m,{n[[1]],nm}]=KerrSEQ;modeName[l,m,n]=.
+		]
+	];
+]
+
+
+Options[ShortenModeSequence]={ShortenBy->Drop};
+
+
+ShortenModeSequence[l_Integer,m_Integer,n_Integer|n_List,Ns_Integer,OptionsPattern[]]:=
+Module[{shorten=OptionValue[ShortenBy],KerrSEQ,SeqStatus,na},
+	KerrSEQ:=modeName[l,m,n];
+	SeqStatus=If[Head[KerrSEQ]==List,If[Length[KerrSEQ]>0,True,False,False],False,False];
+	If[!SeqStatus,Print["KerrQNM[",l,",",m,",",n,"] does not exist."];Return[]];
+	na=Length[KerrSEQ];
+	Print["Original Length of KerrQNM[",l,",",m,",",n,"]=",na];
+	Switch[shorten,
+		Drop,
+			If[Ns<0,Print["Removing last ",Ns," elements"],
+					Print["Removing first ",Ns," elements"]],
+		Take,
+			If[Ns<0,Print["Taking last ",Ns," elements"],
+					Print["Taking first ",Ns," elements"]],
+		_,Print["Invalid Shortening Proceedure"];Abort[];
+	];
+	modeName[l,m,n]=shorten[KerrSEQ,Ns];
+]
+
+
+(* ::Section::Closed:: *)
 (*Initial Guesses*)
 
 
@@ -1624,8 +1684,8 @@ Options[KerrOmegaList]={ModeType->Null[],SpinWeight->Null[]};
 
 KerrOmegaList[l_Integer,m_Integer,n_Integer|n_List,OptionsPattern[]]:= 
 Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na},
-	If[modetype!==Null[], KerrSEQ:=GetKerrName[modeList,s][l,m,n]];
 	KerrSEQ:= modeName[l,m,n];
+	If[modetype!=Null[],KerrSEQ:=GetKerrName[modetype,s][l,m,n]];
 	Na = Length[KerrSEQ];
 	Table[{Re[KerrSEQ[[i,2,1]]],-Im[KerrSEQ[[i,2,1]]]},{i,1,Na}]
 ]
@@ -1637,7 +1697,7 @@ Options[KerrOmegaListS]={ModeType->Null[],SpinWeight->Null[]};
 KerrOmegaListS[l_Integer,m_Integer,n_Integer|n_List,OptionsPattern[]]:= 
 Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na,Nend,i,Slist={}},
 	KerrSEQ:= modeName[l,m,n];
-	If[modetype!==Null[], KerrSEQ:=GetKerrName[modeList,s][l,m,n]];
+	If[modetype!=Null[], KerrSEQ:=GetKerrName[modetype,s][l,m,n]];
 	Na = Length[KerrSEQ];
 	Nend = If[KerrSEQ[[Na,1]]<999999/1000000,Na,Na-1];
 	For[i=1,i<=Nend,++i,
@@ -1662,7 +1722,7 @@ Module[{s=OptionValue[SpinWeight],multiple=OptionValue[OTmultiple],
 		SpinWeightTable,KerrSEQ,
 		mmodes={},multints,i,pos,m,linelist,pointlist,mainplot},
 	SpinWeightTable:=modeName;
-	If[modetype!==Null[], SpinWeightTable:=GetKerrName[modeList,s]];
+	If[modetype!=Null[], SpinWeightTable:=GetKerrName[modetype,s]];
 	multints=Sort[DeleteDuplicates[Table[multiple[[i,1]],{i,Length[multiple]}]]];
 	For[m=-l,m<=l,++m,
 		If[MemberQ[multints,m],
