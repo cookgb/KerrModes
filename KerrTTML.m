@@ -136,8 +136,11 @@ If[!KerrModeDebug,Protect[SetSpinWeight]];
 End[] (* KerrModes`Private` *)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions in KerrTTML Namespace*)
+
+
+KerrTTMLRefineSequence::usage=""
 
 
 KerrTTMLSequence::usage=

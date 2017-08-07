@@ -41,11 +41,11 @@ If[KerrModeDebug,Unprotect["KerrModes`*"];Unprotect["KerrModes`Private`*"]];
 Protect[KerrModeDebug];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Eigenvalue Solvers*)
 
 
@@ -108,7 +108,7 @@ ModeSolution::usage=
 	"\t\t Jacobian in Newton's method."
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Utility Routines*)
 
 
@@ -201,6 +201,9 @@ Protect[Minblevel,Maxblevel,CurvatureRatio,Max\[CapitalDelta]\[Omega],Extrapolat
 
 
 Protect[ModeaStart,ModeGuess,SeqDirection,Maximala\[Epsilon],SolutionRelax,SolutionWindowl,SolutionWindowt]
+
+
+Protect[Index,Refinement,RefinementAction,ForceRefinement,RefinementPlot,SeqLevel,LimitRefinement,RadialCFMaxGuess]
 
 
 Begin["`Private`"]
@@ -670,7 +673,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Adaptive Bisection sequencer*)
 
 
@@ -1395,7 +1398,7 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,
 		KerrSEQret,dummy,blevel,forward,incflag,limitlist={},ll,inc,dec,last,re\[Omega],width,
 		indexmin,indexmax,offset,oldNrcf,newNrcf,oldCf,newCf,rcfmin,ref\[Epsilon],
 		useindex=OptionValue[Index],
-		precision=OptionValue[QNMPrecision],refinement=OptionValue[Refinement],
+		precision=OptionValue[ModePrecision],refinement=OptionValue[Refinement],
 		action=OptionValue[RefinementAction],forcerefine=OptionValue[ForceRefinement],
 		plottype=OptionValue[RefinementPlot],limitrefine=OptionValue[LimitRefinement],
 		Minb=OptionValue[Minblevel],Maxb=OptionValue[Maxblevel],
@@ -1413,9 +1416,9 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,
 	KerrModeRefineSequence::badaction="Invalid RefinementAction `1` given";
 	KerrModeRefineSequence::limits="Invalid LimitRefinement `1` given";
 	KerrModeRefineSequence::precision="Set $MinPrecision = `1`";
-	KerrModeRefineSequence::largedepth="Warning: Computed radial CF depth too large."
-	KerrModeRefineSequence::setdepth="         Setting CF depth to `1`"
-	KerrModeRefineSequence::indexfail="Solution failed at index `1`"
+	KerrModeRefineSequence::largedepth="Warning: Computed radial CF depth too large.";
+	KerrModeRefineSequence::setdepth="         Setting CF depth to `1`";
+	KerrModeRefineSequence::indexfail="Solution failed at index `1`";
 	SpinWeightTable:=modeName;(*Switch[s,
 						-2,Global`KerrQNM,
 						-1,Global`KerrQNMe,
@@ -2242,7 +2245,7 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Graphics*)
 
 
