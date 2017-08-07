@@ -203,7 +203,7 @@ Protect[Minblevel,Maxblevel,CurvatureRatio,Max\[CapitalDelta]\[Omega],Extrapolat
 Protect[ModeaStart,ModeGuess,SeqDirection,Maximala\[Epsilon],SolutionRelax,SolutionWindowl,SolutionWindowt]
 
 
-Protect[Index,Refinement,RefinementAction,ForceRefinement,RefinementPlot,SeqLevel,LimitRefinement,RadialCFMaxGuess]
+Protect[Index,Refinement,RefinementAction,RefineAccuracy,RefinePrecision,RefineAdapt,FixAdapt,Update,RemoveLevels,ForceRefinement,RefinementPlot,SeqLevel,RadialCFLevel,AccuracyLevel,PrecisionLevel,StepRatio,CurveRatio,LimitRefinement,RadialCFMaxGuess]
 
 
 Begin["`Private`"]
@@ -1998,7 +1998,7 @@ rt: Fraction of distance between F0 and Fg for width of error wedge (transverse 
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Utility routines*)
 
 
@@ -2245,7 +2245,7 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Graphics*)
 
 
