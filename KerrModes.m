@@ -1642,7 +1642,7 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,
 	Switch[action
 		,None,Null
 		,RefineAccuracy,
-			If[forcerefine && precision!=$MinPrecision,Print[Style[StringForm[K errModeRefineSequence::precision,precision],{Medium,Darker[Red]}]]];
+			If[forcerefine && precision!=$MinPrecision,Print[Style[StringForm[KerrModeRefineSequence::precision,precision],{Medium,Darker[Red]}]]];
 			$MinPrecision=precision;
 			For[index0=index0m,index0<=index0p,++index0,
 				While[index0>limitlist[[-1,2]],
@@ -1665,8 +1665,8 @@ Print["RefineAcc at : ",index0];
 					If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
 					Nrcf=Max[Nrcf,RCFmin];
 					If[Nrcf>RCFmax,
-						Print[Style[StringForm[K errModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
-						Print[Style[StringForm[K errModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
+						Print[Style[StringForm[KerrModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
+						Print[Style[StringForm[KerrModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
 						Nrcf=RCFmax;
 					];
 					Nm=KerrSEQ[[index0,3,2]];
@@ -1698,12 +1698,12 @@ Print["RefineAcc at : ",index0];
 								0,Global`KerrQNMs[l,m,n]=ReplacePart[KerrSEQ,index0\[Rule]ModeSol[[4]]]
 							  ];*)
 						,(* invalid solution *)
-						Print[Style[StringForm[K errModeRefineSequence::indexfail,index0],{Medium,Darker[Red]}]];
+						Print[Style[StringForm[KerrModeRefineSequence::indexfail,index0],{Medium,Darker[Red]}]];
 					];
 				];
 			];
 		,RefinePrecision,
-			If[precision!=$MinPrecision,Print[Style[StringForm[K errModeRefineSequence::precision,precision],{Medium,Darker[Red]}]]];
+			If[precision!=$MinPrecision,Print[Style[StringForm[KerrModeRefineSequence::precision,precision],{Medium,Darker[Red]}]]];
 			$MinPrecision=precision;
 			For[index0=index0m,index0<=index0p,++index0,
 				While[index0>limitlist[[-1,2]],
@@ -1723,8 +1723,8 @@ Print["RefineAcc at : ",index0];
 					If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
 					Nrcf=Max[Nrcf,RCFmin];
 					If[Nrcf>RCFmax,
-						Print[Style[StringForm[K errModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
-						Print[Style[StringForm[K errModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
+						Print[Style[StringForm[KerrModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
+						Print[Style[StringForm[KerrModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
 						Nrcf=RCFmax;
 					];
 					Nm=KerrSEQ[[index0,3,2]];
@@ -1751,12 +1751,12 @@ Print["RefineAcc at : ",index0];
 								0,Global`KerrQNMs[l,m,n]=ReplacePart[KerrSEQ,index0\[Rule]ModeSol[[4]]]
 							  ];*)
 						,(* invalid solution *)
-						Print[Style[StringForm[K errModeRefineSequence::indexfail,index0],{Medium,Darker[Red]}]];
+						Print[Style[StringForm[KerrModeRefineSequence::indexfail,index0],{Medium,Darker[Red]}]];
 					];
 				];
 			];
 		,RefineAdapt,
-			If[precision!=$MinPrecision,Print[Style[StringForm[K errModeRefineSequence::precision,precision],{Medium,Darker[Red]}]]];
+			If[precision!=$MinPrecision,Print[Style[StringForm[KerrModeRefineSequence::precision,precision],{Medium,Darker[Red]}]]];
 			$MinPrecision=precision;
 			incflag=False;
 			While[index0>index0m,
@@ -1772,8 +1772,8 @@ Print["RefineAcc at : ",index0];
 				If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
 				Nrcf=Max[Nrcf,RCFmin];
 				If[Nrcf>RCFmax,
-					Print[Style[StringForm[K errModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
-					Print[Style[StringForm[K errModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
+					Print[Style[StringForm[KerrModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
+					Print[Style[StringForm[KerrModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
 					Nrcf=RCFmax;
 				];
 				Nm=KerrSEQ[[index0,3,2]];
@@ -1803,7 +1803,7 @@ Print["RefineAcc at : ",index0];
 				--index0;
 			];
 		,FixAdapt,
-			If[precision!=$MinPrecision,Print[Style[StringForm[K errModeRefineSequence::precision,precision],{Medium,Darker[Red]}]]];
+			If[precision!=$MinPrecision,Print[Style[StringForm[KerrModeRefineSequence::precision,precision],{Medium,Darker[Red]}]]];
 			$MinPrecision=precision;
 			plotdata1=Table[KerrSEQ[[i,1]],{i,index0m,index0p}];
 			plotdata=RotateLeft[plotdata1,1]-plotdata1;
@@ -1824,8 +1824,8 @@ Print["RefineAcc at : ",index0];
 					If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
 					Nrcf=Max[Nrcf,RCFmin];
 					If[Nrcf>RCFmax,
-						Print[Style[StringForm[K errModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
-						Print[Style[StringForm[K errModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
+						Print[Style[StringForm[KerrModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
+						Print[Style[StringForm[KerrModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
 						Nrcf=RCFmax;
 					];
 					Nm=KerrSEQ[[ind0,3,2]];
@@ -1901,7 +1901,7 @@ Print["RefineAcc at : ",index0];
 				--index0;
 			];
 		,Update,
-			If[precision!=$MinPrecision,Print[Style[StringForm[K errModeRefineSequence::precision,precision],{Medium,Darker[Red]}]]];
+			If[precision!=$MinPrecision,Print[Style[StringForm[KerrModeRefineSequence::precision,precision],{Medium,Darker[Red]}]]];
 			$MinPrecision=precision;
 			For[index0=index0m,index0<=index0p,++index0,
 				While[index0>limitlist[[-1,2]],
@@ -1921,8 +1921,8 @@ Print["RefineAcc at : ",index0];
 					If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
 					Nrcf=Max[Nrcf,RCFmin];
 					If[Nrcf>RCFmax,
-						Print[Style[StringForm[K errModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
-						Print[Style[StringForm[K errModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
+						Print[Style[StringForm[KerrModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
+						Print[Style[StringForm[KerrModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
 						Nrcf=RCFmax;
 					];
 					Nm=KerrSEQ[[index0,3,2]];
@@ -1949,7 +1949,7 @@ Print["RefineAcc at : ",index0];
 								0,Global`KerrQNMs[l,m,n]=ReplacePart[KerrSEQ,index0->ModeSol[[4]]]
 							  ];*)
 						,(* invalid solution *)
-						Print[Style[StringForm[K errModeRefineSequence::indexfail,index0],{Medium,Darker[Red]}]];
+						Print[Style[StringForm[KerrModeRefineSequence::indexfail,index0],{Medium,Darker[Red]}]];
 					];
 				];
 			];
