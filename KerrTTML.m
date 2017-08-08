@@ -102,6 +102,7 @@ Module[{},
 	SchTable:=GetSchName[TTML,s];
 	SetOptions[KerrTTML`SchwarzschildTTML,SpinWeight->s];
 	SetOptions[KerrTTML`KerrTTMLSequence,SpinWeight->s];
+	SetOptions[KerrTTML`KerrTTMLRefineSequence,SpinWeight->s];
 	SetOptions[KerrModes`KerrOmegaList,SpinWeight->s];
 	SetOptions[KerrModes`KerrOmegaListS,SpinWeight->s];
 	Print[Style[StringForm[SetSpinWeight::confirm,s],{Medium,Darker[Green]}]];
@@ -136,7 +137,7 @@ If[!KerrModeDebug,Protect[SetSpinWeight]];
 End[] (* KerrModes`Private` *)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions in KerrTTML Namespace*)
 
 
@@ -285,7 +286,7 @@ Protect[PlotSpinWeight];
 Begin["`Private`"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Kerr TTML methods*)
 
 

@@ -4,7 +4,7 @@
 (*QuasiNormal Modes of Kerr*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Begin KerrQNM Package*)
 
 
@@ -100,6 +100,7 @@ Module[{},
 	SchTable:=GetSchName[QNM,s];
 	SetOptions[KerrQNM`SchwarzschildQNM,SpinWeight->s];
 	SetOptions[KerrQNM`KerrQNMSequence,SpinWeight->s];
+	SetOptions[KerrQNM`KerrQNMRefineSequence,SpinWeight->s];
 	SetOptions[KerrModes`KerrOmegaList,SpinWeight->s];
 	SetOptions[KerrModes`KerrOmegaListS,SpinWeight->s];
 	Print[Style[StringForm[SetSpinWeight::confirm,s],{Medium,Darker[Green]}]];
@@ -261,11 +262,11 @@ Protect[PlotSpinWeight];
 Begin["`Private`"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Kerr QNM methods*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Adaptive Bisection sequencer*)
 
 
@@ -332,7 +333,7 @@ Module[{SavePrecision=$MinPrecision,saneopts},
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Graphics*)
 
 

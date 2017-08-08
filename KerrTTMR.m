@@ -90,7 +90,7 @@ Module[{C12tmp,C1,C2,C3,C4,C5,Rem,Err},
 If[!KerrTTMRDebug,Protect[RadialCFRemainder]];
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Set SpinWeight, SelectMode, and Data-Variable Names*)
 
 
@@ -108,6 +108,7 @@ Module[{},
 	SchTable:=GetSchName[TTMR,s];
 	SetOptions[KerrTTMR`SchwarzschildTTMR,SpinWeight->s];
 	SetOptions[KerrTTMR`KerrTTMRSequence,SpinWeight->s];
+	SetOptions[KerrTTMR`KerrTTMRRefineSequence,SpinWeight->s];
 	SetOptions[KerrModes`KerrOmegaList,SpinWeight->s];
 	SetOptions[KerrModes`KerrOmegaListS,SpinWeight->s];
 	Print[Style[StringForm[SetSpinWeight::confirm,s],{Medium,Darker[Green]}]];
@@ -142,7 +143,7 @@ If[!KerrModeDebug,Protect[SetSpinWeight]];
 End[] (* KerrModes`Private` *)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions in KerrTTMR Namespace*)
 
 
@@ -291,11 +292,11 @@ Protect[PlotSpinWeight];
 Begin["`Private`"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Kerr TTMR methods*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Adaptive Bisection sequencer*)
 
 
@@ -362,7 +363,7 @@ Module[{SavePrecision=$MinPrecision,saneopts},
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Graphics*)
 
 

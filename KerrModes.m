@@ -41,7 +41,7 @@ If[KerrModeDebug,Unprotect["KerrModes`*"];Unprotect["KerrModes`Private`*"]];
 Protect[KerrModeDebug];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions*)
 
 
@@ -179,7 +179,7 @@ PlotModeFunctionL::usage=
 "PolynomialMode will use SelectMode to replace Modefunction with Starobinsky.\n"
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Reserved Globals*)
 
 
@@ -233,7 +233,7 @@ Module[{\[Omega]r,Almr,sol,solpr,\[CapitalDelta]sol,pcount,pflag,\[CapitalDelta]
 	RadialLentzStep::debug6="Precision - \[Delta]\[Omega] : `1`, `2`";
 	RadialLentzStep::pflag="Set $MinPrecision =`1`";
 	sol=ModeFunction[n,s,m,a,Alm,\[Omega],Nrcf];
-	\[CapitalDelta]\[Omega]r=If[Re[\[Omega]]==0,\[Omega]step,Re[\[Omega]]\[Omega]step,Re[\[Omega]]\[Omega]step];
+	\[CapitalDelta]\[Omega]r=If[Chop[Re[\[Omega]]]==0,\[Omega]step,Re[\[Omega]]\[Omega]step,Re[\[Omega]]\[Omega]step];
 	\[Omega]r=Re[\[Omega]]+\[CapitalDelta]\[Omega]r+I Im[\[Omega]];
 	Almr=AngularSpectralRoot[s,m,a*\[Omega]r,Alm,Nm][[1]];
 	pcount=0;pflag=False;
@@ -406,7 +406,7 @@ Options[TestRadialCFConvergence]=Options[RadialLentzRoot];
 TestRadialCFConvergence[n_Integer,s_Integer,m_Integer,a_Rational|a_Integer,
 						Alm_?NumberQ,\[Omega]_?NumberQ,Nrcf_Integer,jacobian_,\[Epsilon]_Integer,Nrcfmin_Integer,
 						Nm_Integer,\[Alpha]_Real|\[Alpha]_Rational|\[Alpha]_Integer,opts:OptionsPattern[]]:= 
-Module[{N1,N2,Rem,CFval,CFval1,CFval2,cfpow,newNrcf,saveNrcf,diff,diffh,diffl,sol,cfpowcut=-2},
+Module[{N1,N2,Rem,CFval,CFval1,CFval2,cfpow,newNrcf,saveNrcf,diff,diffh,diffl,sol,cfpowcut=-2,NewtonRadius=10^(-3)},
 	TestRadialCFConvergence::notset="WARNING: Jacobian not set when Nradialnew needs computation!";
 	TestRadialCFConvergence::accuracyceiling="WARNING: \[CapitalDelta]CF=0 testing RCF Depth with Acc : 10^(-`1`) ";
 	TestRadialCFConvergence::diff="WARNING: cfpow>-1/2 (diff =`1` , diffh =`2` )";
@@ -442,7 +442,7 @@ Module[{N1,N2,Rem,CFval,CFval1,CFval2,cfpow,newNrcf,saveNrcf,diff,diffh,diffl,so
 		Return[{newNrcf,diff,CFval,Rem,cfpow}]
 	];
 	newNrcf=Max[Nrcfmin,N1];
-	sol=RadialLentzRoot[n,s,m,a,Alm,\[Omega],newNrcf,Nm,\[Epsilon],10^(-3),
+	sol=RadialLentzRoot[n,s,m,a,Alm,\[Omega],newNrcf,Nm,\[Epsilon],NewtonRadius,
 							RadialRelax->\[Alpha],FilterRules[{opts},Options[RadialLentzRoot]]];
 	If[sol[[1,1]] && !sol[[1,2]],
 		If[Log10[Abs[\[Omega]-sol[[2,1]]]]<\[Epsilon],newNrcf=Max[Nrcfmin,N1],newNrcf=Nrcf,newNrcf=Nrcf],
@@ -507,6 +507,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 		\[CapitalDelta]\[Omega],\[CapitalDelta]\[Omega]2,iteration=0,nrpow,rcfpow,NradFlag=False,jacobianmatrix=Null,invJacobian,
 		converged=False,count,expconv,rcferr,\[Alpha],inversion,i,invcount,slowcount,
 		radialfail=0,slowcount2=0,oscillate=0,\[Epsilon]2=\[Epsilon],Nradialnew,rcfpower=0,testNrcf,
+		NewtonRadius=10^(-3),
 		nonegfreq=OptionValue[NoNeg\[Omega]],
 		slowval=OptionValue[SolutionSlow],oscval=OptionValue[SolutionOscillate],
 		iterval=OptionValue[SolutionIter],jacobianstep=OptionValue[JacobianStep],
@@ -561,7 +562,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 				Return[{False}];
 			];
 		];
-		radialsol = RadialLentzRoot[inversion,s,m,a,oldAlm,old\[Omega],Nradial,Nmatrix,\[Epsilon]2,10^(-3),
+		radialsol = RadialLentzRoot[inversion,s,m,a,oldAlm,old\[Omega],Nradial,Nmatrix,\[Epsilon]2,NewtonRadius,
 										RadialRelax->\[Alpha],FilterRules[{opts},Options[RadialLentzRoot]]];
 		If[Not[radialsol[[1,1]]] && Length[radialsol]==1, (* Re[\[Omega]] flipping sign, solution fails *)
 			Return[{False,\[Alpha],Nradialnew,{a,Null[],Null[]}}]
@@ -573,7 +574,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 			(* Radial solution not converged, but convergence not slow *)
 			If[++slowcount>=20,Break[]];
 			(* Print["Looping with non-slow radial convergence"]; *)
-			radialsol = RadialLentzRoot[inversion,s,m,a,oldAlm,radialsol[[2,1]],Nradial,Nmatrix,\[Epsilon]2,10^(-3),
+			radialsol = RadialLentzRoot[inversion,s,m,a,oldAlm,radialsol[[2,1]],Nradial,Nmatrix,\[Epsilon]2,NewtonRadius,
 											RadialRelax->\[Alpha],FilterRules[{opts}, Options[RadialLentzRoot]]];
 			If[Not[radialsol[[1,1]]] && Length[radialsol]==1, (* Re[\[Omega]] flipping sign, solution fails *)
 				Return[{False,\[Alpha],Nradialnew,{a,Null[],Null[]}}]
@@ -2129,7 +2130,7 @@ Module[{shorten=OptionValue[ShortenBy],KerrSEQ,SeqStatus,na},
 
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Initial Guesses*)
 
 
@@ -2196,6 +2197,7 @@ SchwarzschildMode[l_Integer,n_Integer,opts:OptionsPattern[]] :=
 Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 		rcfdepth=OptionValue[RadialCFDepth],
 		Nrcf=300,testinv0,testinv1,Ninv,rcferr,rcfpow,nrpow,jacobianmatrix,Nradialnew,
+		NewtonRadius=10^(-3),
 		notconverged,guess,sol0,sol1,\[Epsilon]=-14,
 		RCFmin=OptionValue[RadialCFMinDepth],
 		precision=OptionValue[ModePrecision]},
@@ -2219,7 +2221,7 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 	Nrcf=Max[Nrcf,RCFmin];
 	notconverged = True;
 	While[notconverged,
-		sol1=RadialLentzRoot[Ninv,s,0,0,l(l+1)-s(s+1),SetPrecision[sol1[[1]],precision],Nrcf,l+2,\[Epsilon],10^(-3),FilterRules[{opts},Options[RadialLentzRoot]]];
+		sol1=RadialLentzRoot[Ninv,s,0,0,l(l+1)-s(s+1),SetPrecision[sol1[[1]],precision],Nrcf,l+2,\[Epsilon],NewtonRadius,FilterRules[{opts},Options[RadialLentzRoot]]];
 		If[sol1[[1, 1]],
 			jacobianmatrix=sol1[[1,3]];
 			sol1=sol1[[2]];
