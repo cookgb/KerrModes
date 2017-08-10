@@ -779,14 +779,6 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 		If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
 		Nrcf=Max[Nrcf,RCFmin];
 		If[NKMode>=1,
-			If[Head[guess]==List,
-Print[KerrModeSequence::untested1];
-				\[Omega]=guess[[1]];
-				Alm=guess[[2]];
-				If[Length[guess]>=3,Nrcf=guess[[3]]];
-				If[Length[guess]==4,Nm=guess[[4]]];
-				Print[Style[StringForm[KerrModeSequence::guesses,\[Omega],Alm,Nrcf,Nm],{Medium,Darker[Red]}]];
-			];
 			If[NKMode==2,
 (*Print[KerrModeSequence::untested2];*)
 				\[CapitalDelta]a=KerrSEQ[[2,1]]-KerrSEQ[[1,1]];
@@ -880,6 +872,14 @@ Print[KerrModeSequence::untested1];
 						];
 					];
 				];
+			];
+			If[Head[guess]==List,
+Print[KerrModeSequence::untested1];
+				\[Omega]=guess[[1]];
+				Alm=guess[[2]];
+				If[Length[guess]>=3,Nrcf=guess[[3]]];
+				If[Length[guess]==4,Nm=guess[[4]]];
+				Print[Style[StringForm[KerrModeSequence::guesses,\[Omega],Alm,Nrcf,Nm],{Medium,Darker[Red]}]];
 			];
 		],
 		(* Sequence does not exist, start it *)
