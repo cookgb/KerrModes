@@ -137,11 +137,27 @@ If[!KerrModeDebug,Protect[SetSpinWeight]];
 End[] (* KerrModes`Private` *)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions in KerrTTML Namespace*)
 
 
-KerrTTMLRefineSequence::usage=""
+KerrTTMLRefineSequence::usage=
+"KerrTTMLRefineSequence[l,m,n,\[Epsilon]] refines an already generated sequence and includes"<>
+"a set of options for further refinement\n"<>
+"Options:\n"<>
+"\t Refinement\[Rule] All: integer,[0,1],{nstart,nend},{astart,aend}\n"<>
+"\t\t Select a range of a sequence to refine\n"<>
+"\t LimitRefinement\[Rule] None: Minima,{Minima,Nwidth},{RadialCFMinDepth,rcfmin}\n"<>
+"\t\t Puts an additional limitation on a refinement range\n"<>
+"\t ForceRefinement\[Rule] False: True, False\n"<>
+"\t\t Forces refinement even if refinement criteria are already met\n"<>
+"\t RefinementAction\[Rule] None: RefineAccuracy, RefinePrecision, Update, RefineAdapt, FixAdapt, RemoveLevels\n"<>
+"\t\t RefineAccuracy: baseed on \[Epsilon]\n"<>
+"\t\t RefinePrecision: based on ModePrecision\n"<>
+"\t\t RefineAdapt: based on CurvatureRatio, Minblevel, Maxblevel\n"<>
+"\t\t FixAdapt: ensures that ratio of \[CapitalDelta]a at adjacent points is 1/2, 1, or 2\n"<>
+"\t\t RemoveLevels: based on Maxblevel\n"<>
+"\t\t Update: Calls ModeSolution with current settings\n"
 
 
 KerrTTMLSequence::usage=
@@ -180,7 +196,7 @@ KerrTTMLSequence::usage=
 	"\t\t The List contains the initial value of 'a', and initial guesses for \[Omega] and \!\(\*SubscriptBox[\(A\), \(lm\)]\).\n"<>
 	"\t\t An option 4th argument, specifying the initial Integer size of the spectral\n"<>
 	"\t\t matrix used to solve the angular Teukolsky equation.\n"<>
-	"\t ModeGuess \[Rule] 0 : {a,\[Omega]}\n"<>
+	"\t ModeGuess \[Rule] 0 : {\[Omega],Alm}\n"<>
 	"\t\t This option is used to override the initial guess (only the first solution).\n"<>
 	"\t\t The list contains initial guesses for \[Omega] and \!\(\*SubscriptBox[\(A\), \(lm\)]\).\n"<>
 	"\t\t An option 3rd argument contains the initial depth of the continued fraction\n"<>
