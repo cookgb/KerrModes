@@ -41,7 +41,7 @@ If[KerrModeDebug,Unprotect["KerrModes`*"];Unprotect["KerrModes`Private`*"]];
 Protect[KerrModeDebug];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions*)
 
 
@@ -145,7 +145,8 @@ ModePlotOmega::usage=""
 KerrOmegaListS::usage=""
 
 
-KerrOmegaList::usage=""
+KerrOmegaList::usage=
+"KerrOmegaList[l,m,n] creates a list of the \[Omega] values after generating a sequence."
 
 
 PlotModeFunction::usage=
@@ -155,6 +156,7 @@ PlotModeFunction::usage=
 "\t m -> Azimuthal index (integer).\n"<>
 "\t a -> Dimensionless spin parameter(rational or integer).\n"<>
 "\t Alm -> Angular separation constant (integer).\n"<>
+"\t \[Omega] -> Frequency (integer).\n"<>
 "\t Nrcf -> How deep into the continued fraction (integer).\n"<>
 "\t Nm -> Number of azimuthal indecies(integer).\n\n"<>
 "When in ContinuedFractionMode, package will require input for all the arguments and will use SelectMode\n"<> 
@@ -479,7 +481,7 @@ Module[{\[Lambda],starob},
 
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Kerr Modes methods*)
 
 
@@ -2108,9 +2110,9 @@ Module[{shorten=OptionValue[ShortenBy],KerrSEQ,SeqStatus,na},
 	ShortenModeSequence::invalid="Invalid Shortening Procedure";
 	KerrSEQ:=modeName[l,m,n];
 	SeqStatus=If[Head[KerrSEQ]==List,If[Length[KerrSEQ]>0,True,False,False],False,False];
-	If[!SeqStatus,Print[ShortenModeSequence::seqstatus[SpinWeightTable,l,m,n];Return[]]];
+	If[!SeqStatus,Print[ShortenModeSequence::seqstatus[modeName,l,m,n];Return[]]];
 	na=Length[KerrSEQ];
-	Print[ShortenModeSequence::origlength,SpinWeightTable,l,m,n,na];
+	Print[ShortenModeSequence::origlength,modeName,l,m,n,na];
 	Switch[shorten,
 		Drop,
 			If[Ns<0,Print[Style[StringForm[ShortenModeSequence::removelast,Ns],{Medium,Darker[Green]}]],
@@ -2130,7 +2132,7 @@ Module[{shorten=OptionValue[ShortenBy],KerrSEQ,SeqStatus,na},
 
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Initial Guesses*)
 
 
