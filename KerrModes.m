@@ -28,7 +28,7 @@
 (*This package is intended to be included in a "wrapper" package that supplies the definitions necessary to compute a specific type of mode: QNM, Subscript[TTM, L], Subscript[TTM, R]*)
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Begin KerrModes Package*)
 
 
@@ -41,11 +41,11 @@ If[KerrModeDebug,Unprotect["KerrModes`*"];Unprotect["KerrModes`Private`*"]];
 Protect[KerrModeDebug];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Eigenvalue Solvers*)
 
 
@@ -181,7 +181,7 @@ PlotModeFunctionL::usage=
 "PolynomialMode will use SelectMode to replace Modefunction with Starobinsky.\n"
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Reserved Globals*)
 
 
@@ -211,11 +211,11 @@ Protect[Index,Refinement,RefinementAction,RefineAccuracy,RefinePrecision,RefineA
 Begin["`Private`"]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Radial Equation : Modified Leaver' s Method*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Newton' s Method for finding roots of Radial Equation*)
 
 
@@ -381,11 +381,11 @@ If[!modeDebug,Protect[RadialLentzStep,RadialLentzRoot]];
 
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Evaluate nth inversion of the Radial Equation' s continued fraction equation*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*"Bottom-up" evaluation at the Nmax element with remainder approximation*)
 
 
@@ -485,7 +485,7 @@ Module[{\[Lambda],starob},
 (*Kerr Modes methods*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Iterative simultaneous solution of radial & angular Teukolsky equations*)
 
 
@@ -961,7 +961,7 @@ Print[KerrModeSequence::untested1];
 					  ];
 			];*)
 			NKMode=Length[KerrSEQ];
-			If[NKMode==1,\[Omega]=KerrSEQ[[1,2,1]];Alm=KerrSEQ[[1,3,1]];Print["Debug 1"]];
+			If[NKMode==1,\[Omega]=KerrSEQ[[1,2,1]];Alm=KerrSEQ[[1,3,1]]];
 			If[NKMode>1,index0=If[forward,NKMode-1,2]];
 			If[NKMode==2,
 (*Print["Untested section of code! 8"];*)
@@ -2144,7 +2144,7 @@ Module[{shorten=OptionValue[ShortenBy],KerrSEQ,SeqStatus,na},
 
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Initial Guesses*)
 
 
