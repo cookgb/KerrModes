@@ -41,7 +41,7 @@ If[KerrModeDebug,Unprotect["KerrModes`*"];Unprotect["KerrModes`Private`*"]];
 Protect[KerrModeDebug];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions*)
 
 
@@ -135,7 +135,7 @@ ShortenModeSequence::usage=
 	"\t\t are kept if N<0.\n"
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Plotting Routines*)
 
 
@@ -195,7 +195,7 @@ PlotModeFunctionL::usage=
 (*Reserved Globals*)
 
 
-Protect[QNM,TTML,TTMR,ModeType,ShortenBy];
+Protect[OTmultiple,QNM,TTML,TTMR,ModeType,ShortenBy];
 
 
 Protect[PolynomialMode,ContinuedFractionMode,RunCFConvergence];
@@ -491,11 +491,11 @@ Module[{\[Lambda],starob},
 
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Kerr Modes methods*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Iterative simultaneous solution of radial & angular Teukolsky equations*)
 
 
@@ -2271,7 +2271,7 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Graphics*)
 
 
