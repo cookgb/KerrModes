@@ -142,8 +142,8 @@ End[] (* KerrModes`Private` *)
 
 
 KerrTTMLRefineSequence::usage=
-"KerrTTMLRefineSequence[l,m,n,\[Epsilon]] refines an already generated sequence and includes"<>
-"a set of options for further refinement\n"<>
+"KerrTTMLRefineSequence[l,m,n,\[Epsilon]] refines an already generated sequence and includes "<>
+" a set of options for further refinement\n"<>
 "Options:\n"<>
 "\t Refinement\[Rule] All: integer,[0,1],{nstart,nend},{astart,aend}\n"<>
 "\t\t Select a range of a sequence to refine\n"<>
@@ -157,7 +157,19 @@ KerrTTMLRefineSequence::usage=
 "\t\t RefineAdapt: based on CurvatureRatio, Minblevel, Maxblevel\n"<>
 "\t\t FixAdapt: ensures that ratio of \[CapitalDelta]a at adjacent points is 1/2, 1, or 2\n"<>
 "\t\t RemoveLevels: based on Maxblevel\n"<>
-"\t\t Update: Calls ModeSolution with current settings\n"
+"\t\t Update: Calls ModeSolution with current settings\n"<>
+"\t RefinementPlot\[Rule] SeqLevel: None, RadialCFLevel, AccuracyLevel, PrecisionLevel, StepRatio, CurveRatio\n"<>
+"\t\t SeqLevel: b along sequence\n"<>
+"\t\t RadialCFLevel: RCF depth of solution along sequence\n"<>
+"\t\t AccuracyLevel: \[Epsilon] along the sequence\n"<>
+"\t\t PrecisionLevel: Precision of solution along sequence\n"<>
+"\t\t StepRatio: \[CapitalDelta]a(i)/\[CapitalDelta]a(i+1) along sequence\n"<>
+"\t\t CurveRatio: Curvature ratio along sequence\n"<>
+"\t Index\[Rule] False: True\n"<>
+"\t\t True: parameterize sequence by integer index\n"<>
+"\t\t False: paraneterize sequence by a[i]\n"<>
+"\t RadialCFMaxGuess->20,000,000\n"<>
+"\t\t limits guessed value for RCF when refining"
 
 
 KerrTTMLSequence::usage=

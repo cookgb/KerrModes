@@ -139,10 +139,12 @@ ShortenModeSequence::usage=
 (*Plotting Routines*)
 
 
-ModePlotOmega::usage=""
+ModePlotOmega::usage=
+"Plots sequenced values of \[Omega]"
 
 
-KerrOmegaListS::usage=""
+KerrOmegaListS::usage=
+"KerrOmegaList[l,m,n] creates a short list of the \[Omega] values after generating a sequence."
 
 
 KerrOmegaList::usage=
