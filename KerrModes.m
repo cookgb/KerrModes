@@ -28,7 +28,7 @@
 (*This package is intended to be included in a "wrapper" package that supplies the definitions necessary to compute a specific type of mode: QNM, Subscript[TTM, L], Subscript[TTM, R]*)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Begin KerrModes Package*)
 
 
@@ -45,7 +45,7 @@ Protect[KerrModeDebug];
 (*Documentation of External Functions*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Eigenvalue Solvers*)
 
 
@@ -135,7 +135,7 @@ ShortenModeSequence::usage=
 	"\t\t are kept if N<0.\n"
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Plotting Routines*)
 
 
@@ -149,6 +149,14 @@ KerrOmegaListS::usage=
 
 KerrOmegaList::usage=
 "KerrOmegaList[l,m,n] creates a list of the \[Omega] values after generating a sequence."
+
+
+KerraOmegaListS::usage=
+"KerrOmegaList[l,m,n,ReIM] creates a short list of a vs \[Omega]."
+
+
+KerraOmegaList::usage=
+"KerraOmegaList[l,m,n,ReIM] creates a list of a vs \[Omega]."
 
 
 PlotModeFunction::usage=
@@ -183,7 +191,7 @@ PlotModeFunctionL::usage=
 "PolynomialMode will use SelectMode to replace Modefunction with Starobinsky.\n"
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Reserved Globals*)
 
 
@@ -213,11 +221,11 @@ Protect[Index,Refinement,RefinementAction,RefineAccuracy,RefinePrecision,RefineA
 Begin["`Private`"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Radial Equation : Modified Leaver' s Method*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Newton' s Method for finding roots of Radial Equation*)
 
 
@@ -383,11 +391,11 @@ If[!modeDebug,Protect[RadialLentzStep,RadialLentzRoot]];
 
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Evaluate nth inversion of the Radial Equation' s continued fraction equation*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*"Bottom-up" evaluation at the Nmax element with remainder approximation*)
 
 
@@ -678,7 +686,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Adaptive Bisection sequencer*)
 
 
@@ -2146,7 +2154,7 @@ Module[{shorten=OptionValue[ShortenBy],KerrSEQ,SeqStatus,na},
 
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Initial Guesses*)
 
 
@@ -2263,7 +2271,7 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Graphics*)
 
 
@@ -2324,6 +2332,43 @@ Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na,Nend
 	];
 	If[KerrSEQ[[Na,1]]>=999999/1000000,
 		Append[Slist,{Re[KerrSEQ[[Na,2,1]]],-Im[KerrSEQ[[Na,2,1]]]}],
+		Slist
+	]
+]
+
+
+Options[KerraOmegaList]={ModeType->Null[],SpinWeight->Null[]};
+
+
+KerraOmegaList[l_Integer,m_Integer,n_Integer|n_List,ReIm_Symbol,OptionsPattern[]]:= 
+Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na},
+	KerraOmegaList::ReIm="ReIm must be Re or Im, set to `1`";
+	KerrSEQ:= modeName[l,m,n];
+	If[ReIm==Re || ReIm==Im,Null[],Null[],Message[KerraOmegaList::ReIm,ReIm];Abort[]];
+	If[MemberQ[{QNM,TTML,TTMR},modetype],KerrSEQ:=GetKerrName[modetype,s][l,m,n]];
+	Na = Length[KerrSEQ];
+	Table[{KerrSEQ[[i,1]],If[ReIm==Im,-1,1,1]ReIm[KerrSEQ[[i,2,1]]]},{i,1,Na}]
+]
+
+
+Options[KerraOmegaListS]={ModeType->Null[],SpinWeight->Null[]};
+
+
+KerraOmegaListS[l_Integer,m_Integer,n_Integer|n_List,ReIm_Symbol,OptionsPattern[]]:= 
+Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na,Nend,i,Slist={}},
+	KerraOmegaListS::ReIm="ReIm must be Re or Im, set to `1`";
+	KerrSEQ:= modeName[l,m,n];
+	If[ReIm==Re || ReIm==Im,Null[],Null[],Message[KerraOmegaListS::ReIm,ReIm];Abort[]];
+	If[MemberQ[{QNM,TTML,TTMR},modetype],KerrSEQ:=GetKerrName[modetype,s][l,m,n]];
+	Na = Length[KerrSEQ];
+	Nend = If[KerrSEQ[[Na,1]]<999999/1000000,Na,Na-1];
+	For[i=1,i<=Nend,++i,
+		If[Mod[KerrSEQ[[i,1]],1/20]==0,
+			AppendTo[Slist,{KerrSEQ[[i,1]],If[ReIm==Im,-1,1,1]ReIm[KerrSEQ[[i,2,1]]]}]
+		];
+	];
+	If[KerrSEQ[[Na,1]]>=999999/1000000,
+		Append[Slist,{KerrSEQ[[Na,1]],If[ReIm==Im,-1,1,1]ReIm[KerrSEQ[[Na,2,1]]]}],
 		Slist
 	]
 ]
