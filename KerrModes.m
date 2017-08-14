@@ -491,7 +491,7 @@ Module[{\[Lambda],starob},
 
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Kerr Modes methods*)
 
 
@@ -1680,19 +1680,22 @@ Print["RefineAcc at : ",index0];
 					inversion=KerrSEQ[[index0,2,2]];
 					oldNrcf=If[Length[KerrSEQ[[index0,2]]]>=6,KerrSEQ[[index0,2,6]],KerrSEQ[[index0,2,3]]];
 (*Print["Old Nrcf : ",oldNrcf];*)
-					Nrcf=If[Length[KerrSEQ[[index0,2]]]>=8,
-						If[NumberQ[KerrSEQ[[index0,2,7]]],
-							IntegerPart[oldNrcf 10^((\[Epsilon]-KerrSEQ[[index0,2,4]])/KerrSEQ[[index0,2,7]])],
-							oldNrcf],
-						IntegerPart[oldNrcf 10^((\[Epsilon]-KerrSEQ[[index0,2,4]])/3)]];
+					If[RunCFConvergence, (* only extrapolate Nrcf is using CF *)
+						Nrcf=If[Length[KerrSEQ[[index0,2]]]>=8,
+							If[NumberQ[KerrSEQ[[index0,2,7]]],
+								IntegerPart[oldNrcf 10^((\[Epsilon]-KerrSEQ[[index0,2,4]])/KerrSEQ[[index0,2,7]])],
+								oldNrcf],
+							IntegerPart[oldNrcf 10^((\[Epsilon]-KerrSEQ[[index0,2,4]])/3)]];
 (*Print["New Nrcf : ",Nrcf];*)
-					If[rcfdepth>RCFmin,Nrcf=IntegerPart[rcfdepth]];
-					If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
-					Nrcf=Max[Nrcf,RCFmin];
-					If[Nrcf>RCFmax,
-						Print[Style[StringForm[KerrModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
-						Print[Style[StringForm[KerrModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
-						Nrcf=RCFmax;
+						If[rcfdepth>RCFmin,Nrcf=IntegerPart[rcfdepth]];
+						If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
+						Nrcf=Max[Nrcf,RCFmin];
+						If[Nrcf>RCFmax,
+							Print[Style[StringForm[KerrModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
+							Print[Style[StringForm[KerrModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
+							Nrcf=RCFmax;
+						],
+						Nrcf=oldNrcf;
 					];
 					Nm=KerrSEQ[[index0,3,2]];
 					a0=KerrSEQ[[index0,1]];
@@ -1739,18 +1742,21 @@ Print["RefineAcc at : ",index0];
 				If[(precision>MyPrecision[KerrSEQ[[index0,2,1]]] || forcerefine) && (limitlist[[-1,1]]<=index0<=limitlist[[-1,2]]),
 					inversion=KerrSEQ[[index0,2,2]];
 					oldNrcf=If[Length[KerrSEQ[[index0,2]]]>=6,KerrSEQ[[index0,2,6]],KerrSEQ[[index0,2,3]]];
-					Nrcf=If[Length[KerrSEQ[[index0,2]]]>=8,
-						If[NumberQ[KerrSEQ[[index0,2,7]]],
-							IntegerPart[oldNrcf 10^((\[Epsilon]-KerrSEQ[[index0,2,4]])/KerrSEQ[[index0,2,7]])],
-							oldNrcf],
-						IntegerPart[oldNrcf 10^((\[Epsilon]-KerrSEQ[[index0,2,4]])/3)]];
-					If[rcfdepth>RCFmin,Nrcf=IntegerPart[rcfdepth]];
-					If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
-					Nrcf=Max[Nrcf,RCFmin];
-					If[Nrcf>RCFmax,
-						Print[Style[StringForm[KerrModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
-						Print[Style[StringForm[KerrModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
-						Nrcf=RCFmax;
+					If[RunCFConvergence, (* only extrapolate Nrcf is using CF *)
+						Nrcf=If[Length[KerrSEQ[[index0,2]]]>=8,
+							If[NumberQ[KerrSEQ[[index0,2,7]]],
+								IntegerPart[oldNrcf 10^((\[Epsilon]-KerrSEQ[[index0,2,4]])/KerrSEQ[[index0,2,7]])],
+								oldNrcf],
+							IntegerPart[oldNrcf 10^((\[Epsilon]-KerrSEQ[[index0,2,4]])/3)]];
+						If[rcfdepth>RCFmin,Nrcf=IntegerPart[rcfdepth]];
+						If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
+						Nrcf=Max[Nrcf,RCFmin];
+						If[Nrcf>RCFmax,
+							Print[Style[StringForm[KerrModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
+							Print[Style[StringForm[KerrModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
+							Nrcf=RCFmax;
+						],
+						Nrcf=oldNrcf;
 					];
 					Nm=KerrSEQ[[index0,3,2]];
 					a0=KerrSEQ[[index0,1]];
@@ -1793,13 +1799,15 @@ Print["RefineAcc at : ",index0];
 				If[index0>limitlist[[1,2]],--index0;Continue[]];
 				inversion=KerrSEQ[[index0,2,2]];
 				Nrcf=If[Length[KerrSEQ[[index0,2]]]>=6,KerrSEQ[[index0,2,6]],KerrSEQ[[index0,2,3]]];
-				If[rcfdepth>RCFmin,Nrcf=IntegerPart[rcfdepth]];
-				If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
-				Nrcf=Max[Nrcf,RCFmin];
-				If[Nrcf>RCFmax,
-					Print[Style[StringForm[KerrModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
-					Print[Style[StringForm[KerrModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
-					Nrcf=RCFmax;
+				If[RunCFConvergence, (* only update Nrcf is using CF *)
+					If[rcfdepth>RCFmin,Nrcf=IntegerPart[rcfdepth]];
+					If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
+					Nrcf=Max[Nrcf,RCFmin];
+					If[Nrcf>RCFmax,
+						Print[Style[StringForm[KerrModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
+						Print[Style[StringForm[KerrModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
+						Nrcf=RCFmax;
+					];
 				];
 				Nm=KerrSEQ[[index0,3,2]];
 				blevel=Round[-(3+Log10[KerrSEQ[[index0+1,1]]-KerrSEQ[[index0,1]]])/Log10[2]];
@@ -1845,13 +1853,15 @@ Print["RefineAcc at : ",index0];
 					a0=plotdata1[[i]];
 					inversion=KerrSEQ[[ind0,2,2]];
 					Nrcf=If[Length[KerrSEQ[[ind0,2]]]>=6,KerrSEQ[[ind0,2,6]],KerrSEQ[[ind0,2,3]]];
-					If[rcfdepth>RCFmin,Nrcf=IntegerPart[rcfdepth]];
-					If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
-					Nrcf=Max[Nrcf,RCFmin];
-					If[Nrcf>RCFmax,
-						Print[Style[StringForm[KerrModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
-						Print[Style[StringForm[KerrModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
-						Nrcf=RCFmax;
+					If[RunCFConvergence, (* only update Nrcf is using CF *)
+						If[rcfdepth>RCFmin,Nrcf=IntegerPart[rcfdepth]];
+						If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
+						Nrcf=Max[Nrcf,RCFmin];
+						If[Nrcf>RCFmax,
+							Print[Style[StringForm[KerrModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
+							Print[Style[StringForm[KerrModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
+							Nrcf=RCFmax;
+						];
 					];
 					Nm=KerrSEQ[[ind0,3,2]];
 					Print["Adaptation error at a = ",N[plotdata1[[i]]]," : ratio = ",plotdata[[i]]];
@@ -1937,18 +1947,21 @@ Print["RefineAcc at : ",index0];
 				If[(Length[KerrSEQ[[index0,2]]]<9 || forcerefine) && (limitlist[[-1,1]]<=index0<=limitlist[[-1,2]]),
 					inversion=KerrSEQ[[index0,2,2]];
 					oldNrcf=If[Length[KerrSEQ[[index0,2]]]>=6,KerrSEQ[[index0,2,6]],KerrSEQ[[index0,2,3]]];
-					Nrcf=If[Length[KerrSEQ[[index0,2]]]>=8,
-						If[NumberQ[KerrSEQ[[index0,2,7]]],
-							IntegerPart[oldNrcf 10^((\[Epsilon]-KerrSEQ[[index0,2,4]])/KerrSEQ[[index0,2,7]])],
-							oldNrcf],
-						IntegerPart[oldNrcf 10^((\[Epsilon]-KerrSEQ[[index0,2,4]])/3)]];
-					If[rcfdepth>RCFmin,Nrcf=IntegerPart[rcfdepth]];
-					If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
-					Nrcf=Max[Nrcf,RCFmin];
-					If[Nrcf>RCFmax,
-						Print[Style[StringForm[KerrModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
-						Print[Style[StringForm[KerrModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
-						Nrcf=RCFmax;
+					If[RunCFConvergence, (* only extrapolate Nrcf is using CF *)
+						Nrcf=If[Length[KerrSEQ[[index0,2]]]>=8,
+							If[NumberQ[KerrSEQ[[index0,2,7]]],
+								IntegerPart[oldNrcf 10^((\[Epsilon]-KerrSEQ[[index0,2,4]])/KerrSEQ[[index0,2,7]])],
+								oldNrcf],
+							IntegerPart[oldNrcf 10^((\[Epsilon]-KerrSEQ[[index0,2,4]])/3)]];
+						If[rcfdepth>RCFmin,Nrcf=IntegerPart[rcfdepth]];
+						If[rcfdepth<1 && rcfdepth>0,Nrcf=IntegerPart[Nrcf*Rationalize[rcfdepth]]];
+						Nrcf=Max[Nrcf,RCFmin];
+						If[Nrcf>RCFmax,
+							Print[Style[StringForm[KerrModeRefineSequence::largedepth,Nrcf],{Medium,Darker[Red]}]];
+							Print[Style[StringForm[KerrModeRefineSequence::setdepth,RCFmax],{Medium,Darker[Red]}]];
+							Nrcf=RCFmax;
+						],
+						Nrcf=oldNrcf;
 					];
 					Nm=KerrSEQ[[index0,3,2]];
 					a0=KerrSEQ[[index0,1]];
@@ -2023,7 +2036,7 @@ rt: Fraction of distance between F0 and Fg for width of error wedge (transverse 
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Utility routines*)
 
 
@@ -2123,7 +2136,7 @@ Options[ShortenModeSequence]={ShortenBy->Drop};
 
 ShortenModeSequence[l_Integer,m_Integer,n_Integer|n_List,Ns_Integer,OptionsPattern[]]:=
 Module[{shorten=OptionValue[ShortenBy],KerrSEQ,SeqStatus,na},
-	ShortenModeSequence::seqstatus="`1`[,`2`,`3`,`4`,] does not exist.";	
+	ShortenModeSequence::seqstatus="`1`[`2`,`3`,`4`] does not exist.";	
 	ShortenModeSequence::origlength="Original Length of `1`[`2`,`3`,`4`] = `5`";
 	ShortenModeSequence::removelast="Removing last `1` elements";
 	ShortenModeSequence::removefirst="Removing first `1` elements";
@@ -2132,9 +2145,9 @@ Module[{shorten=OptionValue[ShortenBy],KerrSEQ,SeqStatus,na},
 	ShortenModeSequence::invalid="Invalid Shortening Procedure";
 	KerrSEQ:=modeName[l,m,n];
 	SeqStatus=If[Head[KerrSEQ]==List,If[Length[KerrSEQ]>0,True,False,False],False,False];
-	If[!SeqStatus,Print[ShortenModeSequence::seqstatus[modeName,l,m,n];Return[]]];
+	If[!SeqStatus,Print[Style[StringForm[ShortenModeSequence::seqstatus,modeName,l,m,n],{Medium,Darker[Red]}]];Return[]];
 	na=Length[KerrSEQ];
-	Print[ShortenModeSequence::origlength,modeName,l,m,n,na];
+	Print[StringForm[ShortenModeSequence::origlength,modeName,l,m,n,na]];
 	Switch[shorten,
 		Drop,
 			If[Ns<0,Print[Style[StringForm[ShortenModeSequence::removelast,Ns],{Medium,Darker[Green]}]],
@@ -2154,7 +2167,7 @@ Module[{shorten=OptionValue[ShortenBy],KerrSEQ,SeqStatus,na},
 
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Initial Guesses*)
 
 
