@@ -41,7 +41,7 @@ If[KerrModeDebug,Unprotect["KerrModes`*"];Unprotect["KerrModes`Private`*"]];
 Protect[KerrModeDebug];
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Documentation of External Functions*)
 
 
@@ -135,7 +135,7 @@ ShortenModeSequence::usage=
 	"\t\t are kept if N<0.\n"
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Plotting Routines*)
 
 
@@ -160,35 +160,37 @@ KerraOmegaList::usage=
 
 
 PlotModeFunction::usage=
-"Arguments: n,s,m,a,Alm,\[Omega],Nrcf,Nm\n"<>
-"\t n -> Overtone level (integer).\n"<>
-"\t s -> SpinWeight (integer).\n"<>
-"\t m -> Azimuthal index (integer).\n"<>
-"\t a -> Dimensionless spin parameter(rational or integer).\n"<>
-"\t Alm -> Angular separation constant (integer).\n"<>
-"\t \[Omega] -> Frequency (integer).\n"<>
-"\t Nrcf -> How deep into the continued fraction (integer).\n"<>
-"\t Nm -> Number of azimuthal indecies(integer).\n\n"<>
-"When in ContinuedFractionMode, package will require input for all the arguments and will use SelectMode\n"<> 
-"\t to replace ModeFunction with RadialCFRem.\n"<>
-"When in PolynomialMode, n and Nrcf are not used in this plot function. Put dummy value in place.\n"<>
-"PolynomialMode will use SelectMode to replace Modefunction with Starobinsky.\n"
+"PlotModeFunction[n,s,m,a,Alm,\[Omega],Nrcf,Nm]\n"<>
+"\t n : Overtone level (integer).\n"<>
+"\t s : SpinWeight (integer).\n"<>
+"\t m : Azimuthal index (integer).\n"<>
+"\t a : Dimensionless spin parameter(rational or integer).\n"<>
+"\t Alm : Approximate angular separation constant (complex number).\n"<>
+"\t \[Omega] : Angular Frequency (complex number).\n"<>
+"\t Nrcf : Deepth into the continued fraction (integer).\n"<>
+"\t Nm : Size of the angular spectral matrix (integer).\n\n"<>
+"Returns the complex value of the mode function for the specified value of \[Omega].  "<>
+"The angular equation is solved based on the specified values of 'a' and \[Omega], "<>
+"and the eigenvalue closest to Alm will be used.  This function is "<>
+"useful for locating initial guesses for roots of the mode function.\n"<>
+"When PolynomialMode (see SelectMode) is selected, values of n and Nrcf are ignored."
 
 
 PlotModeFunctionL::usage=
-"Arguments: n,s,m,a,Alm,\[Omega],Nrcf,Nm\n"<>
-"\t n -> Overtone level (integer).\n"<>
-"\t s -> SpinWeight (integer).\n"<>
-"\t m -> Azimuthal index (integer).\n"<>
-"\t a -> Dimensionless spin parameter(rational or integer).\n"<>
-"\t Alm -> Angular separation constant (integer).\n"<>
-"\t L index -> Index into the Angular separation constants (integer).\n"<>
-"\t Nrcf -> How deep into the continued fraction (integer).\n"<>
-"\t Nm -> Number of azimuthal indecies(integer).\n\n"<>
-"When in ContinuedFractionMode, package will require input for all the arguments and will use SelectMode\n"<> 
-"\t to replace ModeFunction with RadialCFRem.\n"<>
-"When in PolynomialMode, n and Nrcf are not used in this plot function. Put dummy value in place.\n"<>
-"PolynomialMode will use SelectMode to replace Modefunction with Starobinsky.\n"
+"PlotModeFunctionL[n,s,m,a,L,\[Omega],Nrcf,Nm]\n"<>
+"\t n : Overtone level (integer).\n"<>
+"\t s : SpinWeight (integer).\n"<>
+"\t m : Azimuthal index (integer).\n"<>
+"\t a : Dimensionless spin parameter(rational or integer).\n"<>
+"\t L : Index of the Angular separation constant to choose (integer).\n"<>
+"\t \[Omega] : Angular Frequency (complex number).\n"<>
+"\t Nrcf : Deepth into the continued fraction (integer).\n"<>
+"\t Nm : Size of the angular spectral matrix (integer).\n\n"<>
+"Returns the complex value of the mode function for the specified value of \[Omega].  "<>
+"The angular equation is solved based on the specified values of 'a' and \[Omega], "<>
+"and the \!\(\*SuperscriptBox[\(L\), \(th\)]\) eigenvalue will be used.  This function is "<>
+"useful for locating initial guesses for roots of the mode function.\n"<>
+"When PolynomialMode (see SelectMode) is selected, values of n and Nrcf are ignored."
 
 
 (* ::Subsection::Closed:: *)
@@ -686,7 +688,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Adaptive Bisection sequencer*)
 
 
@@ -705,7 +707,7 @@ KerrModeSequence[l_Integer,m_Integer,n_Integer|n_List,\[Epsilon]max_Integer,
 Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqStatus,context,
 		\[Omega]Guess,inversion,\[Omega],Alm,\[Omega]try,Almtry,ModeSol,a,index0=0,index0p,index0m,
 		\[Epsilon]=\[Epsilon]max,Nrcf,Nm=4,rl=0,rt=0,NKMode=0,edat0,edat,ef,iv,afit,
-		maxmimuma=1,blevel=0,\[CapitalDelta]a=10^(-3),\[CapitalDelta]a2,\[CapitalDelta]a3,dir=1,\[CapitalDelta]aincflag=False,\[CapitalDelta]aincstep=0,blevelsave,
+		maximuma=1,blevel=0,\[CapitalDelta]a=10^(-3),\[CapitalDelta]a2,\[CapitalDelta]a3,dir=1,\[CapitalDelta]aincflag=False,\[CapitalDelta]aincstep=0,blevelsave,
 		\[Omega]0,\[Omega]p,\[Omega]m,Alm0,Almp,Almm,\[Omega]w=0,Almw=0,precisionsave,precisioncount=0,
 		Minb=OptionValue[Minblevel],Maxb=OptionValue[Maxblevel],
 		forward=If[OptionValue[SeqDirection]==Backward,False,True,True],
@@ -734,37 +736,24 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 	KerrModeSequence::solfail="a+/- solution failed.";
 	KerrModeSequence::invalidcall="Invalid call to ModeSolution"; 
 
-	If[precision!=$MinPrecision,Print[Style[StringForm[KerrModeSequence::minprecision,precision],{Medium,Darker[Red]}]];
+	If[precision!=$MinPrecision,Print[Style[StringForm[KerrModeSequence::minprecision,precision],{Medium,Darker[Red]}]]];
 	$MinPrecision=precisionsave=precision; (* Sets the minimum precision for entire calculation *)
-	maxmimuma=If[OptionValue[Maximala\[Epsilon]] \[Element] Integers,
-				1-(2^-OptionValue[Maximala\[Epsilon]])/1000,
-				If[OptionValue[Maximala\[Epsilon]] \[Element] Booleans && OptionValue[Maximala\[Epsilon]]==False,
-					1,
-					Message[KerrModeSequence::invalidmax];Abort[]
-				]];
+	maximuma=If[OptionValue[Maximala\[Epsilon]] \[Element] Integers,
+					1-(2^-OptionValue[Maximala\[Epsilon]])/1000,
+					If[OptionValue[Maximala\[Epsilon]] \[Element] Booleans && OptionValue[Maximala\[Epsilon]]==False,
+						1,
+						Message[KerrModeSequence::invalidmax];Abort[]
+					]
+				];
 	SpinWeightTable:=modeName;
-					];
-	(*SpinWeightTable:=Switch[s,
-						-2,Global`KerrQNM,
-						-1,Global`KerrQNMe,
-						 0,Global`KerrQNMs,
-						 _,Print["Invalid QNMSpinWeight"];Abort[]
-					];*)
 	KerrSEQ:=modeName[l,m,n];
-(*	KerrSEQ:=Switch[s,
-					-2,Global`KerrQNM[l,m,n],
-					-1,Global`KerrQNMe[l,m,n],
-					 0,Global`KerrQNMs[l,m,n]
-					];*)
 	SeqStatus=If[Head[KerrSEQ]==List,If[Length[KerrSEQ]>0,True,False,False],False,False];
 	dir=If[forward,1,-1];
 	relax=srelax;
 	blevel=Minb;
 	If[SeqStatus,
-(*Print["Untested section of code! 0"];*)
 		(* Sequence exists, extend *)
 		NKMode=Length[KerrSEQ];
-		(*Print["KerrQNM[",l,",",m,",",n,"] sequence exists with ",NKMode," entries"];*)
 		Print[Style[StringForm[KerrModeSequence::entries,SpinWeightTable,l,m,n,NKMode],{Medium,Darker[Green]}]];
 		If[forward,
 			\[Epsilon]=Min[\[Epsilon]max,KerrSEQ[[NKMode,2,4]]];
@@ -790,7 +779,6 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 		Nrcf=Max[Nrcf,RCFmin];
 		If[NKMode>=1,
 			If[NKMode==2,
-(*Print[KerrModeSequence::untested2];*)
 				\[CapitalDelta]a=KerrSEQ[[2,1]]-KerrSEQ[[1,1]];
 				blevelsave=blevel=Round[-(3+Log10[\[CapitalDelta]a])/Log10[2]];
 				If[forward,
@@ -799,7 +787,6 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 				]
 			];
 			If[NKMode>2,
-(*Print["Untested section of code! 3"];*)
 				index0=If[forward,NKMode-1,2];
 				\[CapitalDelta]a=If[forward,KerrSEQ[[NKMode,1]]-KerrSEQ[[index0,1]],KerrSEQ[[index0,1]]-KerrSEQ[[1,1]]];
 				blevelsave=blevel=Round[-(3+Log10[\[CapitalDelta]a])/Log10[2]];
@@ -807,29 +794,16 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 
 				If[\[CapitalDelta]a > 2\[CapitalDelta]a2,Message[KerrModeSequence::unusualstepsize];Abort[]];
 				\[CapitalDelta]a3=2^(-Maxb)/1000;
-				If[a+dir*\[CapitalDelta]a3>maxmimuma,Return[]];
+				If[a+dir*\[CapitalDelta]a3>maximuma,Return[]];
 				If[\[CapitalDelta]a>=\[CapitalDelta]a2,
 					If[\[CapitalDelta]a==2\[CapitalDelta]a2,
 						{KerrSEQret,blevel,\[CapitalDelta]aincflag,\[CapitalDelta]aincstep,\[Epsilon]}=
-						AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,forward,True,False,FilterRules[{opts},Options[AdaptCheck3]]],
+						AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,maximuma,forward,True,False,FilterRules[{opts},Options[AdaptCheck3]]],
 						{KerrSEQret,blevel,\[CapitalDelta]aincflag,\[CapitalDelta]aincstep,\[Epsilon]}=
-						AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,forward,False,False,FilterRules[{opts},Options[AdaptCheck3]]]
+						AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,maximuma,forward,False,False,FilterRules[{opts},Options[AdaptCheck3]]]
 					];
 					modeName[l,m,n]=KerrSEQret;
-					(*Switch[s,
-						   -2,Global`KerrQNM[l,m,n]=KerrSEQret,
-						   -1,Global`KerrQNMe[l,m,n]=KerrSEQret,
-							0,Global`KerrQNMs[l,m,n]=KerrSEQret
-						  ];*)
 				];
-				(*If[\[CapitalDelta]a==2\[CapitalDelta]a2,\[CapitalDelta]aincflag=True];
-				{KerrSEQret,blevel,\[CapitalDelta]aincflag,\[CapitalDelta]aincstep,\[Epsilon]}=
-					AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,forward,\[CapitalDelta]aincflag,False,FilterRules[{opts},Options[AdaptCheck3]]];
-				Switch[s,
-					   -2,Global`KerrQNM[l,m,n]=KerrSEQret,
-					   -1,Global`KerrQNMe[l,m,n]=KerrSEQret,
-						0,Global`KerrQNMs[l,m,n]=KerrSEQret
-					  ];*)
 				NKMode=Length[KerrSEQ];
 				index0=If[forward,NKMode-1,2];
 				\[CapitalDelta]a=2^(-blevel)/1000;
@@ -847,13 +821,11 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 				Almw=If[forward,Almp,Almm];
 				rl=solwinl;rt=solwint;
 				If[\[CapitalDelta]aincflag,
-(*Print["Untested section of code! 4"];*)
 					(* Do not reset \[CapitalDelta]aincflag, it is needed for next call to AdaptCheck3 *)
 					If[forward,
 						\[Omega]=6\[Omega]p-8\[Omega]0+3\[Omega]m;Alm=6Almp-8Alm0+3Almm,
 						\[Omega]=6\[Omega]m-8\[Omega]0+3\[Omega]p;Alm=6Almm-8Alm0+3Almp
 					],
-(*Print["Untested section of code! 4a"];*)
 					If[forward,
 						\[Omega]=3(\[Omega]p-\[Omega]0)+\[Omega]m;Alm=3(Almp-Alm0)+Almm,
 						\[Omega]=3(\[Omega]m-\[Omega]0)+\[Omega]p;Alm=3(Almm-Alm0)+Almp
@@ -894,19 +866,16 @@ Print[KerrModeSequence::untested1];
 		],
 		(* Sequence does not exist, start it *)
 		If[Head[KerrSEQ]==SpinWeightTable || Length[KerrSEQ]==0,
-(*Print["Untested section of code! 5"];*)
 			Print[Style[StringForm[KerrModeSequence::startseq,SpinWeightTable,l,m,n],{Medium,Darker[Green]}]];
 			a=0;
 			inversion=If[Head[n]==Integer,n,Null[],n[[1]]];
 			If[Head[modeastart]==List,
-(*Print["Untested section of code! 6"];*)
 			(* For cases that cannot start at a=0 *)
 				a=modeastart[[1]];
 				\[Omega]=SetPrecision[modeastart[[2]],Max[precision,$MinPrecision]];
 				Alm=SetPrecision[modeastart[[3]],Max[precision,$MinPrecision]];
 				If[Length[modeastart]==4,Nm=modeastart[[4]]],
 				Null[],
-(*Print["Untested section of code! 6a"];*)
 				\[Omega]Guess=If[Head[n]==Integer,
 							SetPrecision[SchGuess[l,n,FilterRules[{opts},Options[SchGuess]]],Max[precision,$MinPrecision]],
 							Null[],
@@ -918,20 +887,14 @@ Print[KerrModeSequence::untested1];
 			a=a-dir*\[CapitalDelta]a; (* offset to "previous" a *)
 			Nrcf=RCFmin;
 			If[rcfdepth>RCFmin,Nrcf=IntegerPart[rcfdepth]];
-(*Print["Starting with ",\[Omega]," : ",Alm," | a : ",a+dir*\[CapitalDelta]a," | Nrcf : ",Nrcf];*)
 			modeName[l,m,n]={},
-			(*Switch[s,
-				   -2,Global`KerrQNM[l,m,n]={},
-				   -1,Global`KerrQNMe[l,m,n]={},
-					0,Global`KerrQNMs[l,m,n]={}
-					],*)
 			Message[KerrModeSequence::status,SpinWeightTable,l,m,n];
 			Abort[],
 			Message[KerrModeSequence::status,SpinWeightTable,l,m,n];
 			Abort[]
 		];
 	];
-	While[0 <= a+dir*\[CapitalDelta]a <= maxmimuma,
+	While[0 <= a+dir*\[CapitalDelta]a <= maximuma,
 		(* Try lowering precision every so often *)
 		If[$MinPrecision<precisionsave,precisionsave=$MinPrecision;precisioncount=0];
 		If[$MinPrecision>precisionsave,
@@ -942,7 +905,6 @@ Print[KerrModeSequence::untested1];
 		(* Print["lasta = ",Block[{$MinPrecision=0},N[a,{Infinity,20}]]," \[CapitalDelta]a = ",Block[{$MinPrecision=0},N[dir*\[CapitalDelta]a,{Infinity,20}]]]; *)
 		ModeSol = ModeSolution[inversion,s,l,m,a+dir*\[CapitalDelta]a,SetPrecision[\[Omega],Max[precision,$MinPrecision]],SetPrecision[Alm,Max[precision,$MinPrecision]],\[Epsilon],relax,Nrcf,Nm,\[Omega]w,Almw,rl,rt,FilterRules[{opts},Options[ModeSolution]]];
 		If[ModeSol[[1]],
-(*Print["Untested section of code! 7"];*)
 			(* Solution found, save solution check sequence smoothness *)
 			a=a+dir*\[CapitalDelta]a;
 			Print["ModeSol a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision]," Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision]];
@@ -957,43 +919,22 @@ Print[KerrModeSequence::untested1];
 				PrependTo[modeName[l,m,n],ModeSol[[4]]];
 					   
 			];
-			(*If[forward,
-				Switch[s,
-					   -2,AppendTo[Global`KerrQNM[l,m,n], ModeSol[[4]]],
-					   -1,AppendTo[Global`KerrQNMe[l,m,n], ModeSol[[4]]],
-						0,AppendTo[Global`KerrQNMs[l,m,n], ModeSol[[4]]]
-					  ];
-				,
-				Switch[s,
-					   -2,PrependTo[Global`KerrQNM[l,m,n], ModeSol[[4]]],
-					   -1,PrependTo[Global`KerrQNMe[l,m,n], ModeSol[[4]]],
-						0,PrependTo[Global`KerrQNMs[l,m,n], ModeSol[[4]]]
-					  ];
-			];*)
 			NKMode=Length[KerrSEQ];
 			If[NKMode==1,\[Omega]=KerrSEQ[[1,2,1]];Alm=KerrSEQ[[1,3,1]]];
 			If[NKMode>1,index0=If[forward,NKMode-1,2]];
 			If[NKMode==2,
-(*Print["Untested section of code! 8"];*)
 				If[forward,
 					\[Omega]=2KerrSEQ[[2,2,1]]-KerrSEQ[[1,2,1]];Alm=2KerrSEQ[[2,3,1]]-KerrSEQ[[1,3,1]],
 					\[Omega]=2KerrSEQ[[1,2,1]]-KerrSEQ[[2,2,1]];Alm=2KerrSEQ[[1,3,1]]-KerrSEQ[[2,3,1]]
 				]
 			];
 			If[NKMode>2,
-(*Print["Untested section of code! 9"];*)
 				blevelsave=blevel;
 				{KerrSEQret,blevel,\[CapitalDelta]aincflag,\[CapitalDelta]aincstep,\[Epsilon]}=
-					AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,forward,\[CapitalDelta]aincflag,False,FilterRules[{opts},Options[AdaptCheck3]]];
+					AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,maximuma,forward,\[CapitalDelta]aincflag,False,FilterRules[{opts},Options[AdaptCheck3]]];
 				modeName[l,m,n]=KerrSEQret;
-				(*Switch[s,
-					   -2,Global`KerrQNM[l,m,n]=KerrSEQret,
-					   -1,Global`KerrQNMe[l,m,n]=KerrSEQret,
-						0,Global`KerrQNMs[l,m,n]=KerrSEQret
-					  ];*)
 				NKMode=Length[KerrSEQ];
 				index0=If[forward,NKMode-1,2];
-(*Print["Ret from AC3: blevel = ",blevel," \[CapitalDelta]aincflag = ",\[CapitalDelta]aincflag];*)
 				\[CapitalDelta]a=2^(-blevel)/1000;
 				index0p=If[forward,index0+1,index0+\[CapitalDelta]aincstep];
 				index0m=If[forward,index0-\[CapitalDelta]aincstep,index0-1];
@@ -1007,14 +948,12 @@ Print[KerrModeSequence::untested1];
 				Almw=If[forward,Almp,Almm];
 				rl=solwinl;rt=solwint;
 				If[\[CapitalDelta]aincflag,
-(*Print["Untested section of code! 9a"];*)
 					(* Do not reset \[CapitalDelta]aincflag, it is needed for next call to AdaptCheck3 *)
 					Print[Style[StringForm[KerrModeSequence::incblevel,blevel],{Medium,Darker[Green]}]];
 					If[forward,
 						\[Omega]=6\[Omega]p-8\[Omega]0+3\[Omega]m;Alm=6Almp-8Alm0+3Almm,
 						\[Omega]=6\[Omega]m-8\[Omega]0+3\[Omega]p;Alm=6Almm-8Alm0+3Almp
 					],
-(*Print["Untested section of code! 9b"];*)
 					If[blevel>blevelsave,Print[Style[StringForm[KerrModeSequence::decblevel,blevel],{Medium,Darker[Green]}]]];
 					If[forward,
 						\[Omega]=3(\[Omega]p-\[Omega]0)+\[Omega]m;Alm=3(Almp-Alm0)+Almm,
@@ -1046,7 +985,6 @@ Print[KerrModeSequence::untested1];
 				];
 			],
 			(* No solution found, try decreasing a *)
-(*Print["Untested section of code! 10"];*)
 			blevelsave= ++blevel;
 			If[blevel > Maxb,Return[]];
 			If[NKMode==0,Message[KerrModeSequence::nosol,Block[{$MinPrecision=0},N[a+dir*\[CapitalDelta]a,{Infinity,20}]]];Abort[]];
@@ -1054,7 +992,7 @@ Print[KerrModeSequence::untested1];
 			If[NKMode>2,
 				index0p=If[forward,index0+1,index0+\[CapitalDelta]aincstep];
 				index0m=If[forward,index0-\[CapitalDelta]aincstep,index0-1],
-Print[Style[StringForm[KerrModeSequence::nkmodeindex,index0],{Medium,Darker[Green]}]];
+				Print[Style[StringForm[KerrModeSequence::nkmodeindex,index0],{Medium,Darker[Green]}]];
 				If[NKMode==2,
 					index0=If[forward,1,2];
 					index0p=If[forward,2,1];
@@ -1073,7 +1011,6 @@ Print[Style[StringForm[KerrModeSequence::nkmodeindex,index0],{Medium,Darker[Gree
 			rl=solwinl;rt=solwint;
 			If[\[CapitalDelta]aincflag,
 			(* \[CapitalDelta]a increase caused failure, reset and try again *)
-(*Print["Untested section of code! 10a"];*)
 				\[CapitalDelta]a=2^(-blevel)/1000;
 				\[CapitalDelta]aincflag=False; (* \[CapitalDelta]a caused failure, reset and try again *)
 				If[forward,
@@ -1100,26 +1037,15 @@ Print[Style[StringForm[KerrModeSequence::nkmodeindex,index0],{Medium,Darker[Gree
 									SetPrecision[Alm,Max[precision,$MinPrecision]],\[Epsilon],relax,
 									Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[ModeSolution]]];
 				If[Not[ModeSol[[1]]],Message[KerrModeSequence::solfail];Abort[]];
-(*Print["Untested section of code! 11"];*)
 			    Print["ModeSol+/- a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision]," Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision]];
 				If[forward,index0=index0+1];
 				modeName[l,m,n]=Insert[KerrSEQ,ModeSol[[4]],index0];
-				(*Switch[s,
-					   -2,Global`KerrQNM[l,m,n] =Insert[KerrSEQ,ModeSol[[4]],index0],
-					   -1,Global`KerrQNMe[l,m,n]=Insert[KerrSEQ,ModeSol[[4]],index0],
-						0,Global`KerrQNMs[l,m,n]=Insert[KerrSEQ,ModeSol[[4]],index0]
-					  ];*)
 				NKMode=Length[KerrSEQ];
 				blevelsave=blevel;
 				If[NKMode>2,
 					{KerrSEQret,blevel,\[CapitalDelta]aincflag,\[CapitalDelta]aincstep,\[Epsilon]}=
-						AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,forward,False,False,Minblevel->Max[blevel,OptionValue[Minblevel]],FilterRules[{opts},Options[AdaptCheck3]]];
+						AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,maximuma,forward,False,False,Minblevel->Max[blevel,OptionValue[Minblevel]],FilterRules[{opts},Options[AdaptCheck3]]];
 					modeName[l,m,n]=KerrSEQret;
-				(*Switch[s,
-					   -2,Global`KerrQNM[l,m,n]=KerrSEQret,
-					   -1,Global`KerrQNMe[l,m,n]=KerrSEQret,
-						0,Global`KerrQNMs[l,m,n]=KerrSEQret
-					  ];*)
 					NKMode=Length[KerrSEQ];
 					index0=If[forward,NKMode-1,2];
 					\[CapitalDelta]a=2^(-blevel)/1000;
@@ -1182,7 +1108,7 @@ Print[Style[StringForm[KerrModeSequence::nkmodeindex,index0],{Medium,Darker[Gree
 
 AdaptCheck3[KerrTMP_List,inversion_Integer,s_Integer,l_Integer,m_Integer,\[Epsilon]max_Integer,
 			relax_Real|relax_Rational|relax_Integer,
-			index0_Integer,blevel_Integer,
+			index0_Integer,blevel_Integer,maximuma_Rational|maximuma_Integer,
 			forward_/;forward \[Element] Booleans,
 			incflag_/;incflag \[Element] Booleans,
 			recursflag_/;recursflag \[Element] Booleans,
@@ -1207,7 +1133,6 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 	If[Not[forward] && a0==\[CapitalDelta]a,Return[{KerrSEQ,blevel,incres,incstep,\[Epsilon]}]]; (* Don't step past a=0 *)
 	Nm=KerrSEQ[[index0,3,2]];
 	If[incflag,
-(*Print["Untested section of code! 12"];*)
 		If[forward,
 			While[KerrSEQ[[index0,1]]-KerrSEQ[[index0m,1]]<\[CapitalDelta]a,--index0m;++incstep],
 			While[KerrSEQ[[index0p,1]]-KerrSEQ[[index0,1]]<\[CapitalDelta]a,++index0p;++incstep]
@@ -1230,12 +1155,10 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 	\[Epsilon]2=Max[Min[\[Epsilon]max,Floor[Log10[Abs[\[CapitalDelta]\[Omega]/2]]-2.5]],\[Epsilon]min];
 	If[blevel < Minb || 
 		(Maxb > blevel && (curvrat > maxcurvrat || \[CapitalDelta]\[Omega] > max\[CapitalDelta]\[Omega] || 
-		(forward && a0+2\[CapitalDelta]a>=1) || (Not[forward] && a0-2\[CapitalDelta]a<0))),
-(*Print["Untested section of code! 13"];*)
+		(forward && a0+\[CapitalDelta]a<maximuma && a0+2\[CapitalDelta]a>maximuma) || (Not[forward] && a0-\[CapitalDelta]a>0 && a0-2\[CapitalDelta]a<0))),
 		If[incflag,incstep=1]; (* shouldn't have increased step size *)
 		(* Increase resolution *)
 		If[forward || (!forward && !incflag),
-(*Print["Untested section of code! 14"];*)
 			(* Compute solution at a+ *)
 			\[Omega]g = (6\[Omega]0+3\[Omega]p-\[Omega]m)/8;
 			Almg = (6Alm0+3Almp-Almm)/8;
@@ -1271,12 +1194,11 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 								SetPrecision[Almg,Max[precision,$MinPrecision]],\[Epsilon]2,relax,
 								Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[ModeSolution]]];
 			If[ModeSol[[1]],(* valid solution *)
-(*Print["Untested section of code! 15"];*)
 				Print["ModeSol+ a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision]," Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision]];
 				index0p=index0+1;
 				blevelp=blevel+1;
 				KerrSEQ=Insert[KerrSEQ,ModeSol[[4]],index0p];
-				AC3ret=AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon]2,relax,index0p,blevelp,forward,False,True,FilterRules[{opts},Options[AdaptCheck3]]];
+				AC3ret=AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon]2,relax,index0p,blevelp,maximuma,forward,False,True,FilterRules[{opts},Options[AdaptCheck3]]];
 				KerrSEQ=AC3ret[[1]];
 				blevelp=AC3ret[[2]];
 				\[Epsilon]p=AC3ret[[5]];
@@ -1286,7 +1208,6 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 			];
 		];
 		If[!forward || (forward && !incflag),
-(*Print["Untested section of code! 16"];*)
 			(* Compute solution at a- *)
 			\[Omega]g = (6\[Omega]0+3\[Omega]m-\[Omega]p)/8;
 			Almg = (6Alm0+3Almm-Almp)/8;
@@ -1322,11 +1243,10 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 								SetPrecision[Almg,Max[precision,$MinPrecision]],\[Epsilon]2,relax,
 								Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[ModeSolution]]];
 			If[ModeSol[[1]],(* valid solution *)
-(*Print["Untested section of code! 17"];*)
 				Print["ModeSol- a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision]," Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision]];
 				blevelm=blevel+1;
 				KerrSEQ=Insert[KerrSEQ,ModeSol[[4]],index0];
-				AC3ret=AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon]2,relax,index0m,blevelm,forward,False,True,FilterRules[{opts},Options[AdaptCheck3]]];
+				AC3ret=AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon]2,relax,index0m,blevelm,maximuma,forward,False,True,FilterRules[{opts},Options[AdaptCheck3]]];
 				KerrSEQ=AC3ret[[1]];
 				blevelm=AC3ret[[2]];
 				\[Epsilon]m=AC3ret[[5]];
@@ -1385,8 +1305,7 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 		,
 		If[Not[recursflag] && 
 			(blevel > Maxb || (Minb < blevel && curvrat < maxcurvrat/2 && \[CapitalDelta]\[Omega] < max\[CapitalDelta]\[Omega]/2
-								&& ((forward && a0+3\[CapitalDelta]a<1) || (Not[forward] && a0-3\[CapitalDelta]a>=0)))),
-(*Print["Untested section of code! 18"];*)
+								&& ((forward && a0+3\[CapitalDelta]a<=maximuma) || (Not[forward] && a0-3\[CapitalDelta]a>=0)))),
 			(* Reduce resoltuion *)
 			If[Mod[1000(a0+\[CapitalDelta]a),2000\[CapitalDelta]a]==0, (* Make sure we can end up one sensible values of a *)
 				blevelm=blevelp=blevel-1;
@@ -1400,7 +1319,6 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 	incres: true if next step will have larger step size
 	incstep: for a successful increas in step size, offset to [+/-] data
 *)
-(*Print["Untested section of code! 19"];*)
 	If[forward,
 		{KerrSEQ,blevelp,incres,incstep,\[Epsilon]p},
 		{KerrSEQ,blevelm,incres,incstep,\[Epsilon]m}
@@ -1444,18 +1362,8 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,
 	KerrModeRefineSequence::largedepth="Warning: Computed radial CF depth too large.";
 	KerrModeRefineSequence::setdepth="         Setting CF depth to `1`";
 	KerrModeRefineSequence::indexfail="Solution failed at index `1`";
-	SpinWeightTable:=modeName;(*Switch[s,
-						-2,Global`KerrQNM,
-						-1,Global`KerrQNMe,
-						 0,Global`KerrQNMs,
-						 _,Print["Invalid QNMSpinWeight"];Abort[]
-					];*)
+	SpinWeightTable:=modeName;
 	KerrSEQ:=modeName[l,m,n];
-				(*Switch[s,
-					-2,Global`KerrQNM[l,m,n],
-					-1,Global`KerrQNMe[l,m,n],
-					 0,Global`KerrQNMs[l,m,n]
-					];*)
 	NKMode=Length[KerrSEQ];
 	If[NKMode<3,Message[KerrModeRefineSequence::sequence,NKMode];Return[]];
 	If[action==RefineAccuracy || action==RefinePrecision || action==Update || action==None,
@@ -1825,7 +1733,7 @@ Print["RefineAcc at : ",index0];
 				$MinPrecision=If[Length[KerrSEQ[[index0,2]]]>=9,KerrSEQ[[index0,2,9]],IntegerPart[MyPrecision[KerrSEQ[[index0,2,1]]]]];
 (*Print["At a = ",N[KerrSEQ[[index0,1]]]," index0 = ",index0," forward : ",forward," incflag : ",incflag];*)
 				{KerrSEQret,blevel,dummy,dummy,\[Epsilon]}=
-					AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,forward,incflag,False,FilterRules[{opts},Options[AdaptCheck3]]];
+					AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,1,forward,incflag,False,FilterRules[{opts},Options[AdaptCheck3]]];
 				modeName[l,m,n]=KerrSEQret;
 				(*Switch[s,
 					   -2,Global`KerrQNM[l,m,n]=KerrSEQret,
@@ -2036,7 +1944,7 @@ rt: Fraction of distance between F0 and Fg for width of error wedge (transverse 
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Utility routines*)
 
 
@@ -2150,10 +2058,10 @@ Module[{shorten=OptionValue[ShortenBy],KerrSEQ,SeqStatus,na},
 	Print[StringForm[ShortenModeSequence::origlength,modeName,l,m,n,na]];
 	Switch[shorten,
 		Drop,
-			If[Ns<0,Print[Style[StringForm[ShortenModeSequence::removelast,Ns],{Medium,Darker[Green]}]],
+			If[Ns<0,Print[Style[StringForm[ShortenModeSequence::removelast,-Ns],{Medium,Darker[Green]}]],
 					Print[Style[StringForm[ShortenModeSequence::removefirst,Ns],{Medium,Darker[Green]}]]],
 		Take,
-			If[Ns<0,Print[Style[StringForm[ShortenModeSequence::takelast,Ns],{Medium,Darker[Green]}]],
+			If[Ns<0,Print[Style[StringForm[ShortenModeSequence::takelast,-Ns],{Medium,Darker[Green]}]],
 					Print[Style[StringForm[ShortenModeSequence::takefirst,Ns],{Medium,Darker[Green]}]]],
 		_,Message[ShortenModeSequence::invalid];Abort[];
 	];
@@ -2167,7 +2075,7 @@ Module[{shorten=OptionValue[ShortenBy],KerrSEQ,SeqStatus,na},
 
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Initial Guesses*)
 
 
@@ -2284,7 +2192,7 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 ]
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Graphics*)
 
 
