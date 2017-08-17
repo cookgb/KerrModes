@@ -41,7 +41,7 @@ If[KerrModeDebug,Unprotect["KerrModes`*"];Unprotect["KerrModes`Private`*"]];
 Protect[KerrModeDebug];
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions*)
 
 
@@ -135,28 +135,87 @@ ShortenModeSequence::usage=
 	"\t\t are kept if N<0.\n"
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Plotting Routines*)
 
 
 ModePlotOmega::usage=
-"Plots sequenced values of \[Omega]"
+"ModePlotOmega[l,m,n] or ModePlotOmega[l,n]\n"<>
+"\t l : harmonic index\n"<>
+"\t m : azimuthal index\n"<>
+"\t n : overtone index (integer or overtone multiplet)\n\n"<>
+"ModePlotOmega[l,m,n] plots the single specified sequence as -Im[\[Omega]] vs Re[\[Omega]].  "<>
+"The overtone index can be either an integer or an overtone multiplet.\n"<>
+"ModePlotOmega[l,n] plots all sequences in memory (all values of m) "<>
+"as -Im[\[Omega]] vs Re[\[Omega]].  The overtone index must be an integer.  If overtone "<>
+"multiplets exist, they must be specified via the OTmultiplet option.\n"<>
+"Both plot the sequence and place markers at interals of 0.05 in a.\n\n"<>
+"Options:\n"<>
+"\t ModeType \[Rule] (QNM,TTML,TTMR) Defaults according to which backage is run, \n"<>
+"\t\t\t but can be overridden to plot any kind of sequence.\n"<>
+"\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden.\n"<>
+"\t OTmultiplet \[Rule] Null[] : List of {m,\!\(\*SubscriptBox[\(n\), \(OT\)]\)} pairs, where m designates an "<>
+"aximultal index having \n"<>
+"\t\t\t an overtone multiplet, and \!\(\*SubscriptBox[\(n\), \(OT\)]\) is the number of multiplets.\n"<>
+"\t All options available to ListPlot or ListLinePlot except for PlotMarkers."
 
 
 KerrOmegaListS::usage=
-"KerrOmegaList[l,m,n] creates a short list of the \[Omega] values after generating a sequence."
+"KerrOmegaListS[l,m,n]\n"<>
+"\t l : harmonic index\n"<>
+"\t m : azimuthal index\n"<>
+"\t n : overtone index (integer or overtone multiplet)\n\n"<>
+"KerrOmegaListS creates a short list of {Re[\[Omega]],-Im[\[Omega]]} pairs for "<>
+"modes along the specified sequence. Only modes where a is a multiple "<>
+"of 0.05 are included.  (For a~1, the mode closest to a=1 is included.)\n\n"<>
+"Options:\n"<>
+"\t ModeType \[Rule] (QNM,TTML,TTMR) Defaults according to which backage is run, \n"<>
+"\t\t\t but can be overridden to plot any kind of sequence.\n"<>
+"\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden."
 
 
 KerrOmegaList::usage=
-"KerrOmegaList[l,m,n] creates a list of the \[Omega] values after generating a sequence."
+"KerrOmegaList[l,m,n]\n"<>
+"\t l : harmonic index\n"<>
+"\t m : azimuthal index\n"<>
+"\t n : overtone index (integer or overtone multiplet)\n\n"<>
+"KerrOmegaList creates a list of {Re[\[Omega]],-Im[\[Omega]]} pairs for "<>
+"modes along the specified sequence.\n\n"<>
+"Options:\n"<>
+"\t ModeType \[Rule] (QNM,TTML,TTMR) Defaults according to which backage is run, \n"<>
+"\t\t\t but can be overridden to plot any kind of sequence.\n"<>
+"\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden."
 
 
 KerraOmegaListS::usage=
-"KerrOmegaList[l,m,n,ReIM] creates a short list of a vs \[Omega]."
+"KerraOmegaListS[l,m,n,ReIm]\n"<>
+"\t l : harmonic index\n"<>
+"\t m : azimuthal index\n"<>
+"\t n : overtone index (integer or overtone multiplet)\n"<>
+"\t ReIm : Re or Im\n"<>
+"KerraOmegaList creates a short list of either {a,Re[\[Omega]]} or {a,-Im[\[Omega]]} pairs for "<>
+"modes along the specified sequence.  Which sequence is produced is governed "<>
+"by the choice of ReIm. Only modes where a is a multiple "<>
+"of 0.05 are included.  (For a~1, the mode closest to a=1 is included.)\n\n"<>
+"Options:\n"<>
+"\t ModeType \[Rule] (QNM,TTML,TTMR) Defaults according to which backage is run, \n"<>
+"\t\t\t but can be overridden to plot any kind of sequence.\n"<>
+"\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden."
 
 
 KerraOmegaList::usage=
-"KerraOmegaList[l,m,n,ReIM] creates a list of a vs \[Omega]."
+"KerraOmegaList[l,m,n,ReIm]\n"<>
+"\t l : harmonic index\n"<>
+"\t m : azimuthal index\n"<>
+"\t n : overtone index (integer or overtone multiplet)\n"<>
+"\t ReIm : Re or Im\n"<>
+"KerraOmegaList creates a list of either {a,Re[\[Omega]]} or {a,-Im[\[Omega]]} pairs for "<>
+"modes along the specified sequence.  Which sequence is produced is governed "<>
+"by the choice of ReIm.\n\n"<>
+"Options:\n"<>
+"\t ModeType \[Rule] (QNM,TTML,TTMR) Defaults according to which backage is run, \n"<>
+"\t\t\t but can be overridden to plot any kind of sequence.\n"<>
+"\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden."
 
 
 PlotModeFunction::usage=
@@ -493,7 +552,7 @@ Module[{\[Lambda],starob},
 
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Kerr Modes methods*)
 
 
@@ -688,7 +747,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Adaptive Bisection sequencer*)
 
 
@@ -2192,7 +2251,7 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 ]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Graphics*)
 
 
