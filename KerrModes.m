@@ -139,6 +139,11 @@ ShortenModeSequence::usage=
 (*Plotting Routines*)
 
 
+SchwarzschildOmega::usage=
+	"SchwarzschildOmega[l,m,n] returns the conjucate of the Schwarzschild mode "<>
+	"frequency for mode l and overtone n."
+
+
 ModePlotOmega::usage=
 "ModePlotOmega[l,m,n] or ModePlotOmega[l,n]\n"<>
 "\t l : harmonic index\n"<>
@@ -148,6 +153,27 @@ ModePlotOmega::usage=
 "The overtone index can be either an integer or an overtone multiplet.\n"<>
 "ModePlotOmega[l,n] plots all sequences in memory (all values of m) "<>
 "as -Im[\[Omega]] vs Re[\[Omega]].  The overtone index must be an integer.  If overtone "<>
+"multiplets exist, they must be specified via the OTmultiplet option.\n"<>
+"Both plot the sequence and place markers at interals of 0.05 in a.\n\n"<>
+"Options:\n"<>
+"\t ModeType \[Rule] (QNM,TTML,TTMR) Defaults according to which backage is run, \n"<>
+"\t\t\t but can be overridden to plot any kind of sequence.\n"<>
+"\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden.\n"<>
+"\t OTmultiplet \[Rule] Null[] : List of {m,\!\(\*SubscriptBox[\(n\), \(OT\)]\)} pairs, where m designates an "<>
+"aximultal index having \n"<>
+"\t\t\t an overtone multiplet, and \!\(\*SubscriptBox[\(n\), \(OT\)]\) is the number of multiplets.\n"<>
+"\t All options available to ListPlot or ListLinePlot except for PlotMarkers."
+
+
+ModePlotA::usage=
+"ModePlotA[l,m,n] or ModePlotA[l,n]\n"<>
+"\t l : harmonic index\n"<>
+"\t m : azimuthal index\n"<>
+"\t n : overtone index (integer or overtone multiplet)\n\n"<>
+"ModePlotA[l,m,n] plots the single specified sequence as Im[\!\(\*SubscriptBox[\(A\), \(lm\)]\)] vs Re[\!\(\*SubscriptBox[\(A\), \(lm\)]\)].  "<>
+"The overtone index can be either an integer or an overtone multiplet.\n"<>
+"ModePlotOmega[l,n] plots all sequences in memory (all values of m) "<>
+"as Im[\!\(\*SubscriptBox[\(A\), \(lm\)]\)] vs Re[\!\(\*SubscriptBox[\(A\), \(lm\)]\)].  The overtone index must be an integer.  If overtone "<>
 "multiplets exist, they must be specified via the OTmultiplet option.\n"<>
 "Both plot the sequence and place markers at interals of 0.05 in a.\n\n"<>
 "Options:\n"<>
@@ -187,6 +213,33 @@ KerrOmegaList::usage=
 "\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden."
 
 
+KerrAListS::usage=
+"KerrOmegaListS[l,m,n]\n"<>
+"\t l : harmonic index\n"<>
+"\t m : azimuthal index\n"<>
+"\t n : overtone index (integer or overtone multiplet)\n\n"<>
+"KerrAListS creates a short list of {Re[\!\(\*SubscriptBox[\(A\), \(lm\)]\)],Im[\!\(\*SubscriptBox[\(A\), \(lm\)]\)]} pairs for "<>
+"modes along the specified sequence. Only modes where a is a multiple "<>
+"of 0.05 are included.  (For a~1, the mode closest to a=1 is included.)\n\n"<>
+"Options:\n"<>
+"\t ModeType \[Rule] (QNM,TTML,TTMR) Defaults according to which backage is run, \n"<>
+"\t\t\t but can be overridden to plot any kind of sequence.\n"<>
+"\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden."
+
+
+KerrAList::usage=
+"KerrOmegaList[l,m,n]\n"<>
+"\t l : harmonic index\n"<>
+"\t m : azimuthal index\n"<>
+"\t n : overtone index (integer or overtone multiplet)\n\n"<>
+"KerrAList creates a list of {Re[\!\(\*SubscriptBox[\(A\), \(lm\)]\)],Im[\!\(\*SubscriptBox[\(A\), \(lm\)]\)]} pairs for "<>
+"modes along the specified sequence.\n\n"<>
+"Options:\n"<>
+"\t ModeType \[Rule] (QNM,TTML,TTMR) Defaults according to which backage is run, \n"<>
+"\t\t\t but can be overridden to plot any kind of sequence.\n"<>
+"\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden."
+
+
 KerraOmegaListS::usage=
 "KerraOmegaListS[l,m,n,ReIm]\n"<>
 "\t l : harmonic index\n"<>
@@ -216,6 +269,19 @@ KerraOmegaList::usage=
 "\t ModeType \[Rule] (QNM,TTML,TTMR) Defaults according to which backage is run, \n"<>
 "\t\t\t but can be overridden to plot any kind of sequence.\n"<>
 "\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden."
+
+
+ModePlotOmegaTones::usage=
+	"ModePlotOmegaTones[l,m] plots the Kerr mode frequency for all modes (l,m) "<>
+	"and overtone n.  The imaginary axis is inverted.\n\n"<>
+	"Overtone Multiplets: There are cases where more than one sequence is associated with "<>
+	"the same overtone n of mode (l,m).  Such sets are called overtone multiplets.\n\n"<>
+	"Options:  All options for ListPlot are allowed.\n"<>
+	"\t SpinWeight\[Rule]Null : -2,-1,0\n"<>
+	"\t OTmultiple\[Rule]{}\n"<>
+	"\t\t List of overtone multiplets.  An overtone multiplet is a List {n,Nmult},\n"<>
+	"\t\t where 'n' is the overtone index,and 'Nmult' is the number of sequences\n"<>
+	"\t\t with the same overtone index."
 
 
 PlotModeFunction::usage=
@@ -2277,10 +2343,26 @@ Options[PlotSchModes]=Union[{PlotTable->Null[]},Options[ListPlot]];
 PlotSchModes[l_Integer,opts:OptionsPattern[]]:=
 Module[{ptable=OptionValue[PlotTable]},
 	PlotSchModes::plottable="Invalid PlotTable : `1`";
-	If[ptable==Null[],Message[PlotSchModes::plottable,Null[]];Abort[]];
+	If[ptable==Null[],Message[PlotSchModes::plottable,ptable];Abort[]];
 	plist=Table[{Re[ptable[l,n][[1]]],-Im[ptable[l,n][[1]]]},{n,0,ptable[l]-1}];
 	mlist=Table[{-Re[ptable[l,n][[1]]],-Im[ptable[l,n][[1]]]},{n,0,ptable[l]-1}];
 	ListLinePlot[{plist,mlist},PlotMarkers->Automatic,FilterRules[{opts},Options[ListLinePlot]]]
+]
+
+
+Options[SchwarzschildOmega]={ModeType->Null[],SpinWeight->Null[]};
+
+
+SchwarzschildOmega[l_Integer,m_Integer,n_Integer|n_List,OptionsPattern[]]:=
+Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,not},
+	SchwarzschildOmega::noschwarzt="Schwarzschild limit not found, a=`1`.";
+	If[Head[n]==Integer,not=n,Null[],not=n[[1]]];
+	If[l==2 && not==8,Return[{0,2}]]; (* Special Cases *)
+	If[l==3 && not==40,Return[{0,10}]]; (* Special Cases *)
+	KerrSEQ:= modeName[l,m,n];
+	If[MemberQ[{QNM,TTML,TTMR},modetype],KerrSEQ:=GetKerrName[modetype,s][l,m,n]];
+	If[Chop[KerrSEQ[[1,1]]]!=0,Message[SchwarzschildOmega::noschwarzt,KerrSEQ[[1,1]]];Abort[]];
+	{Re[KerrSEQ[[1,2,1]]],-Im[KerrSEQ[[1,2,1]]]}
 ]
 
 
@@ -2312,6 +2394,39 @@ Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na,Nend
 	];
 	If[KerrSEQ[[Na,1]]>=999999/1000000,
 		Append[Slist,{Re[KerrSEQ[[Na,2,1]]],-Im[KerrSEQ[[Na,2,1]]]}],
+		Slist
+	]
+]
+
+
+Options[KerrAList]={ModeType->Null[],SpinWeight->Null[]};
+
+
+KerrAList[l_Integer,m_Integer,n_Integer|n_List,OptionsPattern[]]:= 
+Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na},
+	KerrSEQ:= modeName[l,m,n];
+	If[MemberQ[{QNM,TTML,TTMR},modetype],KerrSEQ:=GetKerrName[modetype,s][l,m,n]];
+	Na = Length[KerrSEQ];
+	Table[{Re[KerrSEQ[[i,3,1]]],-Im[KerrSEQ[[i,3,1]]]},{i,1,Na}]
+]
+
+
+Options[KerrAListS]={ModeType->Null[],SpinWeight->Null[]};
+
+
+KerrAListS[l_Integer,m_Integer,n_Integer|n_List,OptionsPattern[]]:= 
+Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na,Nend,i,Slist={}},
+	KerrSEQ:= modeName[l,m,n];
+	If[MemberQ[{QNM,TTML,TTMR},modetype],KerrSEQ:=GetKerrName[modetype,s][l,m,n]];
+	Na = Length[KerrSEQ];
+	Nend = If[KerrSEQ[[Na,1]]<999999/1000000,Na,Na-1];
+	For[i=1,i<=Nend,++i,
+		If[Mod[KerrSEQ[[i,1]],1/20]==0,
+			AppendTo[Slist,{Re[KerrSEQ[[i,3,1]]],-Im[KerrSEQ[[i,3,1]]]}]
+		];
+	];
+	If[KerrSEQ[[Na,1]]>=999999/1000000,
+		Append[Slist,{Re[KerrSEQ[[Na,3,1]]],-Im[KerrSEQ[[Na,3,1]]]}],
 		Slist
 	]
 ]
@@ -2364,7 +2479,7 @@ Module[{s=OptionValue[SpinWeight],multiple=OptionValue[OTmultiple],
 		SpinWeightTable,KerrSEQ,
 		mmodes={},multints,i,pos,m,linelist,pointlist,mainplot},
 	SpinWeightTable:=modeName;
-	If[modetype!=Null[], SpinWeightTable:=GetKerrName[modetype,s]];
+	If[MemberQ[{QNM,TTML,TTMR},modetype],SpinWeightTable:=GetKerrName[modetype,s]];
 	multints=Sort[DeleteDuplicates[Table[multiple[[i,1]],{i,Length[multiple]}]]];
 	For[m=-l,m<=l,++m,
 		If[MemberQ[multints,m],
@@ -2403,6 +2518,114 @@ Module[{mmodes={},linelist,pointlist,mainplot},
 		Show[mainplot,
 			ListPlot[pointlist,FilterRules[{opts},Options[ListPlot]],PlotRange->All,PlotMarkers->Automatic]],
 		Show[mainplot]
+	]
+]
+
+
+Options[ModePlotA]=Union[{ModeType->Null[],SpinWeight->Null[],OTmultiple->{}},
+							Options[ListLinePlot],Options[ListPlot]];
+
+
+ModePlotA[l_Integer,n_Integer,opts:OptionsPattern[]]:=
+Module[{s=OptionValue[SpinWeight],multiple=OptionValue[OTmultiple],
+		legend=OptionValue[PlotLegends],modetype=OptionValue[ModeType],autolegend,
+		SpinWeightTable,KerrSEQ,
+		mmodes={},multints,i,pos,m,linelist,pointlist,mainplot},
+	SpinWeightTable:=modeName;
+	If[MemberQ[{QNM,TTML,TTMR},modetype],SpinWeightTable:=GetKerrName[modetype,s]];
+	multints=Sort[DeleteDuplicates[Table[multiple[[i,1]],{i,Length[multiple]}]]];
+	For[m=-l,m<=l,++m,
+		If[MemberQ[multints,m],
+			(* m,n is a multplet *)
+			pos=Flatten[Position[multiple,{m,_}]][[1]];
+			For[i=0,i<multiple[[pos,2]],++i,
+				KerrSEQ:=SpinWeightTable[l,m,{n,i}];
+				If[Head[KerrSEQ]==List,AppendTo[mmodes,{m,{n,i}}]]
+			],
+			(* Not a multplet *)
+			KerrSEQ:=SpinWeightTable[l,m,n];
+			If[Head[KerrSEQ]==List,AppendTo[mmodes,{m,n}]]
+		]
+	];
+	autolegend=Table[If[Head[mmodes[[i,2]]]==List,Subscript[mmodes[[i,1]], mmodes[[i,2,2]]],Null,mmodes[[i,1]]],{i,1,Length[mmodes]}];
+	If[legend==Automatic,legend=autolegend];
+	If[Head[legend]==Placed,If[legend[[1]]==Automatic,legend=Placed[autolegend,legend[[2]]]]];
+	linelist=KerrAList[l,#[[1]],#[[2]],FilterRules[{opts},Options[KerrAList]]]&/@  mmodes;
+	pointlist=KerrAListS[l,#[[1]],#[[2]],FilterRules[{opts},Options[KerrAListS]]]&/@  mmodes;
+	mainplot=ListLinePlot[linelist,FilterRules[FilterRules[{opts},Options[ListLinePlot]],Except[{PlotLegends,PlotMarkers}]],PlotRange->All];
+	If[Length[pointlist[[1]]]>0,
+		Show[mainplot,
+			ListPlot[pointlist,PlotLegends->legend,FilterRules[{opts},Options[ListPlot]],PlotRange->All,PlotMarkers->Automatic]],
+		Show[mainplot]
+	]
+]
+
+
+ModePlotA[l_Integer,m_Integer,n_Integer|n_List,opts:OptionsPattern[]]:=
+Module[{mmodes={},linelist,pointlist,mainplot},
+	mmodes={m};
+	linelist=KerrAList[l,#,n,FilterRules[{opts},Options[KerrAList]]]&/@  mmodes;
+	pointlist=KerrAListS[l,#,n,FilterRules[{opts},Options[KerrAListS]]]&/@  mmodes;
+	mainplot=ListLinePlot[linelist,FilterRules[FilterRules[{opts},Options[ListLinePlot]],Except[{PlotLegends,PlotMarkers}]],PlotRange->All];
+	If[Length[pointlist[[1]]]>0,
+		Show[mainplot,
+			ListPlot[pointlist,FilterRules[{opts},Options[ListPlot]],PlotRange->All,PlotMarkers->Automatic]],
+		Show[mainplot]
+	]
+]
+
+
+Options[ModePlotOmegaTones]=Union[{ModeType->Null[],SpinWeight->Null[],OTmultiple->{}},
+							Options[ListLinePlot],Options[ListPlot]];
+
+
+ModePlotOmegaTones[l_Integer,m_Integer,opts:OptionsPattern[]]:=
+Module[{s=OptionValue[SpinWeight],multiple=OptionValue[OTmultiple],
+		legend=OptionValue[PlotLegends],modetype=OptionValue[ModeType],autolegend,
+		SpinWeightTable,KerrSEQ,
+		ntones={},schtones={},n,multints,pos,i,j,linelist,pointlist,mainplot,Schlist,amin,amini},
+	SpinWeightTable:=modeName;
+	If[MemberQ[{QNM,TTML,TTMR},modetype],SpinWeightTable:=GetKerrName[modetype,s]];
+	multints=Sort[DeleteDuplicates[Table[multiple[[i,1]],{i,Length[multiple]}]]];
+	For[n=0,n<=300,++n,
+		If[MemberQ[multints,n],
+			pos=Flatten[Position[multiple,{n,_}]][[1]];
+			For[i=0,i<multiple[[pos,2]],++i,
+				KerrSEQ:=SpinWeightTable[l,m,{n,i}];
+				If[Head[KerrSEQ]==List,AppendTo[ntones,{n,i}]]
+			]
+			,
+			KerrSEQ:=SpinWeightTable[l,m,n];
+			If[Head[KerrSEQ]==List,AppendTo[ntones,n]]
+		]
+	];
+	schtones=ntones;
+	For[i=1,i<=Length[multints],++i,
+		pos=Position[schtones,{multints[[i]],_}];
+		amini=1;
+		amin=SpinWeightTable[l,m,schtones[[pos[[1,1]]]]][[1,1]];
+		For[j=2,j<=Length[pos],++j,
+			If[SpinWeightTable[l,m,schtones[[pos[[j,1]]]]][[1,1]]<amin,
+				amini=j;
+				amin=SpinWeightTable[l,m,schtones[[pos[[j,1]]]]][[1,1]];
+			];
+		];
+		pos=Drop[pos,amini];
+		schtones=Delete[schtones,pos];
+	];
+	autolegend=Table[If[Head[ntones[[i]]]==List,Subscript[ntones[[i,1]], ntones[[i,2]]],Null,ntones[[i]]],{i,1,Length[ntones]}];
+	If[legend==Automatic,legend=autolegend];
+	If[Head[legend]==Placed,If[legend[[1]]==Automatic,legend=Placed[autolegend,legend[[2]]]]];
+	linelist=KerrOmegaList[l,m,#,FilterRules[{opts},Options[KerrOmegaList]]]&/@ ntones;
+	pointlist=KerrOmegaListS[l,m,#,FilterRules[{opts},Options[KerrOmegaListS]]]&/@ ntones;
+	Schlist=SchwarzschildOmega[l,m,#,FilterRules[{opts},Options[SchwarzschildOmega]]]&/@ schtones;
+	mainplot=ListLinePlot[linelist,FilterRules[FilterRules[{opts},Options[ListLinePlot]],Except[{PlotLegends,PlotMarkers}]],PlotRange->All];
+	If[Length[pointlist[[1]]]>0,
+		Show[mainplot,
+			ListPlot[pointlist,PlotLegends->legend,FilterRules[{opts},Options[ListPlot]],PlotRange->All,PlotMarkers->Automatic],
+			ListLinePlot[Schlist,FilterRules[FilterRules[{opts},Options[ListLinePlot]],Except[{PlotLegends,PlotMarkers,PlotStyle}]],PlotStyle->{Gray,Dashed},PlotRange->All],ImageSize->800],
+		Show[mainplot,
+			ListLinePlot[Schlist,FilterRules[FilterRules[{opts},Options[ListLinePlot]],Except[{PlotLegends,PlotMarkers,PlotStyle}]],PlotStyle->{Gray,Dashed},PlotRange->All],ImageSize->800]
 	]
 ]
 

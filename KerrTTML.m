@@ -103,8 +103,16 @@ Module[{},
 	SetOptions[KerrTTML`SchwarzschildTTML,SpinWeight->s];
 	SetOptions[KerrTTML`KerrTTMLSequence,SpinWeight->s];
 	SetOptions[KerrTTML`KerrTTMLRefineSequence,SpinWeight->s];
+	SetOptions[KerrModes`SchwarzschildOmega,SpinWeight->s];
 	SetOptions[KerrModes`KerrOmegaList,SpinWeight->s];
 	SetOptions[KerrModes`KerrOmegaListS,SpinWeight->s];
+	SetOptions[KerrModes`KerraOmegaList,SpinWeight->s];
+	SetOptions[KerrModes`KerraOmegaListS,SpinWeight->s];
+	SetOptions[KerrModes`KerrAList,SpinWeight->s];
+	SetOptions[KerrModes`KerrAListS,SpinWeight->s];
+	SetOptions[KerrModes`ModePlotOmega,SpinWeight->s];
+	SetOptions[KerrModes`ModePlotA,SpinWeight->s];
+	SetOptions[KerrModes`ModePlotOmegaTones,SpinWeight->s];
 	Print[Style[StringForm[SetSpinWeight::confirm,s],{Medium,Darker[Green]}]];
 ]
 
@@ -137,7 +145,7 @@ If[!KerrModeDebug,Protect[SetSpinWeight]];
 End[] (* KerrModes`Private` *)
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Documentation of External Functions in KerrTTML Namespace*)
 
 
