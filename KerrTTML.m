@@ -304,12 +304,12 @@ SchwarzschildTTML::usage=
 
 
 PlotSchTTML::usage=
-	"SchTTMLTable[l] plots both the \"positive\" and \"negative\" frequency TTMLs.  "<>
+	"PlotSchTTML[l] plots both the \"positive\" and \"negative\" frequency TTMLs.  "<>
 	"By default, the gravitational modes are plotted, but the PlotSpinWeight option "<>
 	"can be set to change this.\n\n"<>
 	"Options:\n"<>
 	"\t PlotSpinWeight->-2 : -2,-1,0\n\n"<>
-	"SchTTMLTable also take all of the options available to ListPlot.\n"
+	"PlotSchTTML also take all of the options available to ListPlot.\n"
 
 
 (* ::Subsection::Closed:: *)
@@ -326,7 +326,7 @@ Begin["`Private`"]
 (*Kerr TTML methods*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Adaptive Bisection sequencer*)
 
 

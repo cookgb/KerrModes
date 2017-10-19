@@ -98,19 +98,21 @@ SetSpinWeight[s_Integer]:=
 Module[{},
 	SetSpinWeight::spinweight="Invalid TTMR Spin Weight : `1`";
 	SetSpinWeight::confirm="All KerrMode routines (TTMR) set for Spin-Weight s = `1`";
-	(*Switch[s,
-		   2,modeName:=Global`KerrTTMR; SchTable:=Global`SchTTMRTable,
-		   1,modeName:=Global`KerrTTMRe; SchTable:=Global`SchTTMReTable,
-		   0,modeName:=Global`KerrTTMRs; SchTable:=Global`SchTTMRsTable,
-		   _,Message[SetSpinWeight::spinweight,s];Abort[]
-		  ];*)
 	modeName:=GetKerrName[TTMR,s];
 	SchTable:=GetSchName[TTMR,s];
 	SetOptions[KerrTTMR`SchwarzschildTTMR,SpinWeight->s];
 	SetOptions[KerrTTMR`KerrTTMRSequence,SpinWeight->s];
 	SetOptions[KerrTTMR`KerrTTMRRefineSequence,SpinWeight->s];
+	SetOptions[KerrModes`SchwarzschildOmega,SpinWeight->s];
 	SetOptions[KerrModes`KerrOmegaList,SpinWeight->s];
 	SetOptions[KerrModes`KerrOmegaListS,SpinWeight->s];
+	SetOptions[KerrModes`KerraOmegaList,SpinWeight->s];
+	SetOptions[KerrModes`KerraOmegaListS,SpinWeight->s];
+	SetOptions[KerrModes`KerrAList,SpinWeight->s];
+	SetOptions[KerrModes`KerrAListS,SpinWeight->s];
+	SetOptions[KerrModes`ModePlotOmega,SpinWeight->s];
+	SetOptions[KerrModes`ModePlotA,SpinWeight->s];
+	SetOptions[KerrModes`ModePlotOmegaTones,SpinWeight->s];
 	Print[Style[StringForm[SetSpinWeight::confirm,s],{Medium,Darker[Green]}]];
 ]
 
@@ -147,7 +149,35 @@ End[] (* KerrModes`Private` *)
 (*Documentation of External Functions in KerrTTMR Namespace*)
 
 
-KerrTTMRRefineSequence::usage=""
+KerrTTMRRefineSequence::usage=
+"KerrTTMRRefineSequence[l,m,n,\[Epsilon]] refines an already generated sequence and includes "<>
+" a set of options for further refinement\n"<>
+"Options:\n"<>
+"\t Refinement\[Rule] All: integer,[0,1],{nstart,nend},{astart,aend}\n"<>
+"\t\t Select a range of a sequence to refine\n"<>
+"\t LimitRefinement\[Rule] None: Minima,{Minima,Nwidth},{RadialCFMinDepth,rcfmin}\n"<>
+"\t\t Puts an additional limitation on a refinement range\n"<>
+"\t ForceRefinement\[Rule] False: True, False\n"<>
+"\t\t Forces refinement even if refinement criteria are already met\n"<>
+"\t RefinementAction\[Rule] None: RefineAccuracy, RefinePrecision, Update, RefineAdapt, FixAdapt, RemoveLevels\n"<>
+"\t\t RefineAccuracy: baseed on \[Epsilon]\n"<>
+"\t\t RefinePrecision: based on ModePrecision\n"<>
+"\t\t RefineAdapt: based on CurvatureRatio, Minblevel, Maxblevel\n"<>
+"\t\t FixAdapt: ensures that ratio of \[CapitalDelta]a at adjacent points is 1/2, 1, or 2\n"<>
+"\t\t RemoveLevels: based on Maxblevel\n"<>
+"\t\t Update: Calls ModeSolution with current settings\n"<>
+"\t RefinementPlot\[Rule] SeqLevel: None, RadialCFLevel, AccuracyLevel, PrecisionLevel, StepRatio, CurveRatio\n"<>
+"\t\t SeqLevel: b along sequence\n"<>
+"\t\t RadialCFLevel: RCF depth of solution along sequence\n"<>
+"\t\t AccuracyLevel: \[Epsilon] along the sequence\n"<>
+"\t\t PrecisionLevel: Precision of solution along sequence\n"<>
+"\t\t StepRatio: \[CapitalDelta]a(i)/\[CapitalDelta]a(i+1) along sequence\n"<>
+"\t\t CurveRatio: Curvature ratio along sequence\n"<>
+"\t Index\[Rule] False: True\n"<>
+"\t\t True: parameterize sequence by integer index\n"<>
+"\t\t False: paraneterize sequence by a[i]\n"<>
+"\t RadialCFMaxGuess->20,000,000\n"<>
+"\t\t limits guessed value for RCF when refining"
 
 
 KerrTTMRSequence::usage=
@@ -186,7 +216,7 @@ KerrTTMRSequence::usage=
 	"\t\t The List contains the initial value of 'a', and initial guesses for \[Omega] and \!\(\*SubscriptBox[\(A\), \(lm\)]\).\n"<>
 	"\t\t An option 4th argument, specifying the initial Integer size of the spectral\n"<>
 	"\t\t matrix used to solve the angular Teukolsky equation.\n"<>
-	"\t ModeGuess \[Rule] 0 : {a,\[Omega]}\n"<>
+	"\t ModeGuess \[Rule] 0 : {\[Omega],Alm}\n"<>
 	"\t\t This option is used to override the initial guess (only the first solution).\n"<>
 	"\t\t The list contains initial guesses for \[Omega] and \!\(\*SubscriptBox[\(A\), \(lm\)]\).\n"<>
 	"\t\t An option 3rd argument contains the initial depth of the continued fraction\n"<>
@@ -330,8 +360,8 @@ Options[KerrTTMRRefineSequence]=Options[KerrModes`Private`KerrModeRefineSequence
 KerrTTMRRefineSequence[l_Integer,m_Integer,n_Integer|n_List,\[Epsilon]_Integer,
 				opts:OptionsPattern[]]:=
 Module[{SavePrecision=$MinPrecision,saneopts},
-	(* saneopts ensures options set via SetOptions[KerTTMLRefineSequenceB,...] are used *)
-	saneopts=Flatten[Union[{opts},FilterRules[Options[KerrTTMLRefineSequence],Except[Flatten[{opts}]]]]];
+	(* saneopts ensures options set via SetOptions[KerTTMRRefineSequenceB,...] are used *)
+	saneopts=Flatten[Union[{opts},FilterRules[Options[KerrTTMRRefineSequence],Except[Flatten[{opts}]]]]];
 	CheckAbort[KerrModes`Private`KerrModeRefineSequence[l,m,n,\[Epsilon],saneopts],
 				$MinPrecision=SavePrecision;Abort[]];
 	$MinPrecision=SavePrecision;
