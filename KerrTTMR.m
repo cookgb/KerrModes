@@ -91,6 +91,18 @@ If[!KerrTTMRDebug,Protect[RadialCFRemainder]];
 
 
 (* ::Subsection::Closed:: *)
+(*AsymptoteFunction*)
+
+
+AsymptoteFunction[s_Integer,l_Integer,m_Integer,a_Rational|a_Integer]:=
+Module[{\[Omega],Alm},
+	\[Omega]=SetPrecision[-(2^(2/3)3^(1/3)a^(-4/3)+(4/3l-2)/a-(39+15l-2l^2)/(18 2^(2/3) 3^(1/3))a^(-1/3))I,$MinPrecision];
+	Alm=SetPrecision[(2l-3)(I \[Omega] a)+1/4+3/2*l-1/2l^2,$MinPrecision];
+	{\[Omega],Alm}
+]
+
+
+(* ::Subsection::Closed:: *)
 (*Set SpinWeight, SelectMode, and Data-Variable Names*)
 
 
