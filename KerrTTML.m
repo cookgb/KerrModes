@@ -96,8 +96,12 @@ If[!KerrTTMLDebug,Protect[RadialCFRemainder]];
 
 AsymptoteFunction[s_Integer,l_Integer,m_Integer,a_Rational|a_Integer]:=
 Module[{\[Omega],Alm},
-	\[Omega]=SetPrecision[-(2^(2/3)3^(1/3)a^(-4/3)+(4/3l-2)/a-(39+15l-2l^2)/(18 2^(2/3) 3^(1/3))a^(-1/3))I,$MinPrecision];
-	Alm=SetPrecision[(2l-3)(I \[Omega] a)+17/4+3/2*l-1/2l^2,$MinPrecision];
+	\[Omega]=SetPrecision[-(2^(2/3)3^(1/3)a^(-4/3)+(4/3l-2)/a
+		-(39+6l-2l^2)/(18 2^(2/3) 3^(1/3))a^(-2/3)
+		+(11583-6678l-990l^2+40l^3)/(3240 2^(1/3) 3^(2/3))a^(-1/3))I,$MinPrecision];
+	Alm=SetPrecision[(2l-3)(I \[Omega] a)
+		+17/4+3/2*l-1/2l^2
+		-(621/40-223/20l+3/4l^2)/(2^(2/3) 3^(1/3))a^(1/3),$MinPrecision];
 	{\[Omega],Alm}
 ]
 
