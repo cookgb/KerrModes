@@ -271,6 +271,37 @@ KerraOmegaList::usage=
 "\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden."
 
 
+KerraAListS::usage=
+"KerraAListS[l,m,n,ReIm]\n"<>
+"\t l : harmonic index\n"<>
+"\t m : azimuthal index\n"<>
+"\t n : overtone index (integer or overtone multiplet)\n"<>
+"\t ReIm : Re or Im\n"<>
+"KerraAList creates a short list of either {a,Re[\!\(\*SubscriptBox[\(A\), \(lm\)]\)]} or {a,Im[\!\(\*SubscriptBox[\(A\), \(lm\)]\)]} pairs for "<>
+"modes along the specified sequence.  Which sequence is produced is governed "<>
+"by the choice of ReIm. Only modes where a is a multiple "<>
+"of 0.05 are included.  (For a~1, the mode closest to a=1 is included.)\n\n"<>
+"Options:\n"<>
+"\t ModeType \[Rule] (QNM,TTML,TTMR) Defaults according to which backage is run, \n"<>
+"\t\t\t but can be overridden to plot any kind of sequence.\n"<>
+"\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden."
+
+
+KerraAList::usage=
+"KerraAList[l,m,n,ReIm]\n"<>
+"\t l : harmonic index\n"<>
+"\t m : azimuthal index\n"<>
+"\t n : overtone index (integer or overtone multiplet)\n"<>
+"\t ReIm : Re or Im\n"<>
+"KerraAList creates a list of either {a,Re[\!\(\*SubscriptBox[\(A\), \(lm\)]\)]} or {a,Im[\!\(\*SubscriptBox[\(A\), \(lm\)]\)]} pairs for "<>
+"modes along the specified sequence.  Which sequence is produced is governed "<>
+"by the choice of ReIm.\n\n"<>
+"Options:\n"<>
+"\t ModeType \[Rule] (QNM,TTML,TTMR) Defaults according to which backage is run, \n"<>
+"\t\t\t but can be overridden to plot any kind of sequence.\n"<>
+"\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden."
+
+
 ModePlotOmegaTones::usage=
 	"ModePlotOmegaTones[l,m] plots the Kerr mode frequency for all modes (l,m) "<>
 	"and overtone n.  The imaginary axis is inverted.\n\n"<>
@@ -333,10 +364,10 @@ Protect[SpinWeight,ModePrecision,RadialCFDepth,RadialCFMinDepth,RadialDebug,Radi
 
 
 Protect[SolutionDebug,NoNeg\[Omega],ModePrecision,SolutionSlow,SolutionOscillate,SolutionIter,
-		RadialCFDigits]
+		RadialCFDigits,NewtonRadius]
 
 
-Protect[Minblevel,Maxblevel,CurvatureRatio,Max\[CapitalDelta]\[Omega],ExtrapolationOrder]
+Protect[Minblevel,Maxblevel,CurvatureRatio,Max\[CapitalDelta]\[Omega],ExtrapolationOrder,Asymptote]
 
 
 Protect[ModeaStart,ModeGuess,SeqDirection,Maximala\[Epsilon],SolutionRelax,SolutionWindowl,SolutionWindowt]
@@ -539,13 +570,14 @@ Module[{Rem,i,func,t},
 ]
 
 
-Options[TestRadialCFConvergence]=Options[RadialLentzRoot];
+Options[TestRadialCFConvergence]=Union[Options[RadialLentzRoot],{NewtonRadius->10^(-3)}];
 
 
 TestRadialCFConvergence[n_Integer,s_Integer,m_Integer,a_Rational|a_Integer,
 						Alm_?NumberQ,\[Omega]_?NumberQ,Nrcf_Integer,jacobian_,\[Epsilon]_Integer,Nrcfmin_Integer,
 						Nm_Integer,\[Alpha]_Real|\[Alpha]_Rational|\[Alpha]_Integer,opts:OptionsPattern[]]:= 
-Module[{N1,N2,Rem,CFval,CFval1,CFval2,cfpow,newNrcf,saveNrcf,diff,diffh,diffl,sol,cfpowcut=-2,NewtonRadius=10^(-3)},
+Module[{N1,N2,Rem,CFval,CFval1,CFval2,cfpow,newNrcf,saveNrcf,diff,diffh,diffl,sol,cfpowcut=-2,
+	newtonRadius=OptionValue[NewtonRadius]},
 	TestRadialCFConvergence::notset="WARNING: Jacobian not set when Nradialnew needs computation!";
 	TestRadialCFConvergence::accuracyceiling="WARNING: \[CapitalDelta]CF=0 testing RCF Depth with Acc : 10^(-`1`) ";
 	TestRadialCFConvergence::diff="WARNING: cfpow>-1/2 (diff =`1` , diffh =`2` )";
@@ -581,7 +613,7 @@ Module[{N1,N2,Rem,CFval,CFval1,CFval2,cfpow,newNrcf,saveNrcf,diff,diffh,diffl,so
 		Return[{newNrcf,diff,CFval,Rem,cfpow}]
 	];
 	newNrcf=Max[Nrcfmin,N1];
-	sol=RadialLentzRoot[n,s,m,a,Alm,\[Omega],newNrcf,Nm,\[Epsilon],NewtonRadius,
+	sol=RadialLentzRoot[n,s,m,a,Alm,\[Omega],newNrcf,Nm,\[Epsilon],newtonRadius,
 							RadialRelax->\[Alpha],FilterRules[{opts},Options[RadialLentzRoot]]];
 	If[sol[[1,1]] && !sol[[1,2]],
 		If[Log10[Abs[\[Omega]-sol[[2,1]]]]<\[Epsilon],newNrcf=Max[Nrcfmin,N1],newNrcf=Nrcf,newNrcf=Nrcf],
@@ -631,7 +663,7 @@ Options[Set\[CapitalDelta]a]={Min\[CapitalDelta]alevel->1,Max\[CapitalDelta]alev
 
 Options[ModeSolution]=Union[{SolutionDebug->0,NoNeg\[Omega]->False,RadialCFMinDepth->300,ModePrecision->24,
 							SolutionSlow->10,SolutionOscillate->10,SolutionIter->50,
-							RadialCFDigits->8},Options[RadialLentzRoot]];
+							RadialCFDigits->8,NewtonRadius->10^(-3)},Options[RadialLentzRoot]];
 
 
 ModeSolution[n_Integer,s_Integer,l_Integer,m_Integer,
@@ -646,7 +678,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 		\[CapitalDelta]\[Omega],\[CapitalDelta]\[Omega]2,iteration=0,nrpow,rcfpow,NradFlag=False,jacobianmatrix=Null,invJacobian,
 		converged=False,count,expconv,rcferr,\[Alpha],inversion,i,invcount,slowcount,
 		radialfail=0,slowcount2=0,oscillate=0,\[Epsilon]2=\[Epsilon],Nradialnew,rcfpower=0,testNrcf,
-		NewtonRadius=10^(-3),
+		newtonRadius=OptionValue[NewtonRadius],
 		nonegfreq=OptionValue[NoNeg\[Omega]],
 		slowval=OptionValue[SolutionSlow],oscval=OptionValue[SolutionOscillate],
 		iterval=OptionValue[SolutionIter],jacobianstep=OptionValue[JacobianStep],
@@ -701,7 +733,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 				Return[{False}];
 			];
 		];
-		radialsol = RadialLentzRoot[inversion,s,m,a,oldAlm,old\[Omega],Nradial,Nmatrix,\[Epsilon]2,NewtonRadius,
+		radialsol = RadialLentzRoot[inversion,s,m,a,oldAlm,old\[Omega],Nradial,Nmatrix,\[Epsilon]2,newtonRadius,
 										RadialRelax->\[Alpha],FilterRules[{opts},Options[RadialLentzRoot]]];
 		If[Not[radialsol[[1,1]]] && Length[radialsol]==1, (* Re[\[Omega]] flipping sign, solution fails *)
 			Return[{False,\[Alpha],Nradialnew,{a,Null[],Null[]}}]
@@ -713,7 +745,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 			(* Radial solution not converged, but convergence not slow *)
 			If[++slowcount>=20,Break[]];
 			(* Print["Looping with non-slow radial convergence"]; *)
-			radialsol = RadialLentzRoot[inversion,s,m,a,oldAlm,radialsol[[2,1]],Nradial,Nmatrix,\[Epsilon]2,NewtonRadius,
+			radialsol = RadialLentzRoot[inversion,s,m,a,oldAlm,radialsol[[2,1]],Nradial,Nmatrix,\[Epsilon]2,newtonRadius,
 											RadialRelax->\[Alpha],FilterRules[{opts}, Options[RadialLentzRoot]]];
 			If[Not[radialsol[[1,1]]] && Length[radialsol]==1, (* Re[\[Omega]] flipping sign, solution fails *)
 				Return[{False,\[Alpha],Nradialnew,{a,Null[],Null[]}}]
@@ -955,7 +987,8 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 						\[Omega]=3(\[Omega]p-\[Omega]0)+\[Omega]m;Alm=3(Almp-Alm0)+Almm,
 						\[Omega]=3(\[Omega]m-\[Omega]0)+\[Omega]p;Alm=3(Almm-Alm0)+Almp
 					];
-					If[extraporder==Accumulate,
+					Switch[extraporder,
+						Accumulate,
 						If[!forward,
 							Message[KerrModeSequence::missuse];
 							Abort[]
@@ -969,8 +1002,10 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 						edat=Table[{1-edat0[[i,1]],Im[edat0[[i,2,1]]]},{i,1,Length[edat0]}];
 						afit=NonlinearModelFit[edat,\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
 													{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
-						\[Omega]+=I afit[1-(KerrSEQ[[NKMode,1]]+\[CapitalDelta]a)];
-						,Null[],
+						\[Omega]+=I afit[1-(KerrSEQ[[NKMode,1]]+\[CapitalDelta]a)],
+						Asymptote,
+						{\[Omega],Alm}=AsymptoteFunction[s,l,m,If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]],
+						_,
 						If[extraporder>2,
 							edat0=Take[KerrSEQ,If[forward,-(extraporder+1),extraporder+1]];
 							edat=Table[{edat0[[i,1]],edat0[[i,2,1]]},{i,1,Length[edat0]}];
@@ -1078,13 +1113,9 @@ Print[KerrModeSequence::untested1];
 					If[forward,
 						\[Omega]=6\[Omega]p-8\[Omega]0+3\[Omega]m;Alm=6Almp-8Alm0+3Almm,
 						\[Omega]=6\[Omega]m-8\[Omega]0+3\[Omega]p;Alm=6Almm-8Alm0+3Almp
-					],
-					If[blevel>blevelsave,Print[Style[StringForm[KerrModeSequence::decblevel,blevel],{Medium,Darker[Green]}]]];
-					If[forward,
-						\[Omega]=3(\[Omega]p-\[Omega]0)+\[Omega]m;Alm=3(Almp-Alm0)+Almm,
-						\[Omega]=3(\[Omega]m-\[Omega]0)+\[Omega]p;Alm=3(Almm-Alm0)+Almp
 					];
-					If[extraporder==Accumulate,
+					Switch[extraporder,
+						Accumulate,
 						If[!forward,
 							Print[KerrModeSequence::missuse];
 							Abort[]
@@ -1098,8 +1129,42 @@ Print[KerrModeSequence::untested1];
 						edat=Table[{1-edat0[[i,1]],Im[edat0[[i,2,1]]]},{i,1,Length[edat0]}];
 						afit=NonlinearModelFit[edat,\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
 													{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
-						\[Omega]+=I afit[1-(KerrSEQ[[NKMode,1]]+\[CapitalDelta]a)];
-						,Null[],
+						\[Omega]+=I afit[1-(KerrSEQ[[NKMode,1]]+\[CapitalDelta]a)],
+						Asymptote,
+						{\[Omega],Alm}=AsymptoteFunction[s,l,m,If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]],
+						_,
+						If[extraporder>2,
+							edat0=Take[KerrSEQ,If[forward,-(extraporder+1),extraporder+1]];
+							edat=Table[{edat0[[i,1]],edat0[[i,2,1]]},{i,1,Length[edat0]}];
+							ef[iv_]=InterpolatingPolynomial[edat,iv];
+							\[Omega]=ef[If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]];
+						];
+					];
+					,
+					If[blevel>blevelsave,Print[Style[StringForm[KerrModeSequence::decblevel,blevel],{Medium,Darker[Green]}]]];
+					If[forward,
+						\[Omega]=3(\[Omega]p-\[Omega]0)+\[Omega]m;Alm=3(Almp-Alm0)+Almm,
+						\[Omega]=3(\[Omega]m-\[Omega]0)+\[Omega]p;Alm=3(Almm-Alm0)+Almp
+					];
+					Switch[extraporder,
+						Accumulate,
+						If[!forward,
+							Print[KerrModeSequence::missuse];
+							Abort[]
+						];
+						edat0=SetPrecision[Take[KerrSEQ,-10],Max[precision,$MinPrecision]];
+						edat=Table[{1-edat0[[i,1]],Re[edat0[[i,2,1]]]},{i,1,Length[edat0]}];
+						afit=NonlinearModelFit[edat,m/2+\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
+													{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
+						(*afit=NonlinearModelFit[edat,m/2+\[Beta] eps,{\[Beta]},eps];*)
+						\[Omega]=afit[1-(KerrSEQ[[NKMode,1]]+\[CapitalDelta]a)];
+						edat=Table[{1-edat0[[i,1]],Im[edat0[[i,2,1]]]},{i,1,Length[edat0]}];
+						afit=NonlinearModelFit[edat,\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
+													{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
+						\[Omega]+=I afit[1-(KerrSEQ[[NKMode,1]]+\[CapitalDelta]a)],
+						Asymptote,
+						{\[Omega],Alm}=AsymptoteFunction[s,l,m,If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]],
+						_,
 						If[extraporder>2,
 							edat0=Take[KerrSEQ,If[forward,-(extraporder+1),extraporder+1]];
 							edat=Table[{edat0[[i,1]],edat0[[i,2,1]]},{i,1,Length[edat0]}];
@@ -1192,7 +1257,8 @@ Print[KerrModeSequence::untested1];
 						\[Omega]=3(\[Omega]p-\[Omega]0)+\[Omega]m;Alm=3(Almp-Alm0)+Almm,
 						\[Omega]=3(\[Omega]m-\[Omega]0)+\[Omega]p;Alm=3(Almm-Alm0)+Almp
 					];
-					If[extraporder==Accumulate,
+					Switch[extraporder,
+						Accumulate,
 						If[!forward,
 							Print[KerrModeSequence::missuse];
 							Abort[]
@@ -1206,8 +1272,10 @@ Print[KerrModeSequence::untested1];
 						edat=Table[{1-edat0[[i,1]],Im[edat0[[i,2,1]]]},{i,1,Length[edat0]}];
 						afit=NonlinearModelFit[edat,\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
 													{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
-						\[Omega]+=I afit[1-(KerrSEQ[[NKMode,1]]+\[CapitalDelta]a)];
-						,Null[],
+						\[Omega]+=I afit[1-(KerrSEQ[[NKMode,1]]+\[CapitalDelta]a)],
+						Asymptote,
+						{\[Omega],Alm}=AsymptoteFunction[s,l,m,If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]],
+						_,
 						If[extraporder>2,
 							edat0=Take[KerrSEQ,If[forward,-(extraporder+1),extraporder+1]];
 							edat=Table[{edat0[[i,1]],edat0[[i,2,1]]},{i,1,Length[edat0]}];
@@ -1274,7 +1342,7 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 	index0p=index0m=index0; (* reset to central index *)
 	blevelp=blevelm=blevel;
 	d\[Omega]=\[Omega]p-\[Omega]m; dd\[Omega]=\[Omega]p-2\[Omega]0+\[Omega]m;
-	curvrat=4Sqrt[Abs[d\[Omega]]^2Abs[dd\[Omega]]^2-(Re[d\[Omega]]Re[dd\[Omega]]+Im[d\[Omega]]Im[dd\[Omega]])^2]/(Abs[d\[Omega]]^2);
+	curvrat=4Sqrt[Chop[Abs[d\[Omega]]^2Abs[dd\[Omega]]^2-(Re[d\[Omega]]Re[dd\[Omega]]+Im[d\[Omega]]Im[dd\[Omega]])^2]]/(Abs[d\[Omega]]^2);
 	\[CapitalDelta]\[Omega]=Abs[\[Omega]0-If[forward,\[Omega]p,\[Omega]m]];
 	\[Epsilon]p=\[Epsilon]m=\[Epsilon]=Max[Min[\[Epsilon]max,Floor[Log10[Abs[\[CapitalDelta]\[Omega]]]-2.5]],\[Epsilon]min];
 	\[Epsilon]2=Max[Min[\[Epsilon]max,Floor[Log10[Abs[\[CapitalDelta]\[Omega]/2]]-2.5]],\[Epsilon]min];
@@ -1287,7 +1355,8 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 			(* Compute solution at a+ *)
 			\[Omega]g = (6\[Omega]0+3\[Omega]p-\[Omega]m)/8;
 			Almg = (6Alm0+3Almp-Almm)/8;
-			If[extraporder==Accumulate,
+			Switch[extraporder,
+				Accumulate,
 				If[!forward,
 					Message[AdaptCheck3::missuse];
 					Abort[]
@@ -1301,9 +1370,10 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 				edat=Table[{1-edat0[[i,1]],Im[edat0[[i,2,1]]]},{i,1,Length[edat0]}];
 				afit=NonlinearModelFit[edat,\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
 											{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
-				\[Omega]g+=I afit[1-(KerrSEQ[[index0,1]]+\[CapitalDelta]a/2)];
-				Null[]
-				,Null[],
+				\[Omega]g+=I afit[1-(KerrSEQ[[index0,1]]+\[CapitalDelta]a/2)],
+				Asymptote,
+				{\[Omega],Alm}=AsymptoteFunction[s,l,m,KerrSEQ[[index0,1]]+\[CapitalDelta]a/2],
+				_,
 				If[extraporder>2,
 						edat0=Take[KerrSEQ,If[forward,{index0p-extraporder,index0p},{index0m,index0m+extraporder}]];
 						edat=Table[{edat0[[i,1]],edat0[[i,2,1]]},{i,1,Length[edat0]}];
@@ -1336,7 +1406,8 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 			(* Compute solution at a- *)
 			\[Omega]g = (6\[Omega]0+3\[Omega]m-\[Omega]p)/8;
 			Almg = (6Alm0+3Almm-Almp)/8;
-			If[extraporder==Accumulate,
+			Switch[extraporder,
+				Accumulate,
 				If[!forward,
 					Message[AdaptCheck3::missuse];
 					Abort[]
@@ -1350,9 +1421,10 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 				edat=Table[{1-edat0[[i,1]],Im[edat0[[i,2,1]]]},{i,1,Length[edat0]}];
 				afit=NonlinearModelFit[edat,\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
 											{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
-				\[Omega]g+=I afit[1-(KerrSEQ[[index0,1]]-\[CapitalDelta]a/2)];
-				Null[]
-				,Null[],
+				\[Omega]g+=I afit[1-(KerrSEQ[[index0,1]]-\[CapitalDelta]a/2)],
+				Asymptote,
+				{\[Omega],Alm}=AsymptoteFunction[s,l,m,KerrSEQ[[index0,1]]-\[CapitalDelta]a/2],
+				_,
 				If[extraporder>2,
 						edat0=Take[KerrSEQ,If[forward,{index0p-extraporder,index0p},{index0m,index0m+extraporder}]];
 						edat=Table[{edat0[[i,1]],edat0[[i,2,1]]},{i,1,Length[edat0]}];
@@ -1405,7 +1477,8 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 					Message[AdaptCheck3::appsolfail];
 					Abort[];
 				];
-			,If[\[CapitalDelta]am>2\[CapitalDelta]ap,
+			,
+			If[\[CapitalDelta]am>2\[CapitalDelta]ap,
 				\[Omega]g = (KerrSEQ[[ind0,2,1]]+KerrSEQ[[ind0-1,2,1]])/2;
 				Almg = (KerrSEQ[[ind0,3,1]]+KerrSEQ[[ind0-1,3,1]])/2;
 				Nrcf=Max[If[Length[KerrSEQ[[ind0,2]]]>=6,KerrSEQ[[ind0,2,6]],KerrSEQ[[ind0,2,3]]],
@@ -2259,7 +2332,7 @@ Module[{s=OptionValue[SpinWeight],guess},
 
 
 Options[SchwarzschildMode]=Union[{SpinWeight->Null[],SchDebug->0,
-								RadialCFMinDepth->300,RadialCFDepth->1,ModePrecision->24},
+								RadialCFMinDepth->300,RadialCFDepth->1,ModePrecision->24,NewtonRadius->10^(-3)},
 								Options[TestRadialCFConvergence]];
 
 
@@ -2267,7 +2340,7 @@ SchwarzschildMode[l_Integer,n_Integer,opts:OptionsPattern[]] :=
 Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 		rcfdepth=OptionValue[RadialCFDepth],
 		Nrcf=300,testinv0,testinv1,Ninv,rcferr,rcfpow,nrpow,jacobianmatrix,Nradialnew,
-		NewtonRadius=10^(-3),
+		newtonRadius=OptionValue[NewtonRadius],
 		notconverged,guess,sol0,sol1,\[Epsilon]=-14,
 		RCFmin=OptionValue[RadialCFMinDepth],
 		precision=OptionValue[ModePrecision]},
@@ -2291,7 +2364,7 @@ Module[{s=OptionValue[SpinWeight],debug=OptionValue[SchDebug],
 	Nrcf=Max[Nrcf,RCFmin];
 	notconverged = True;
 	While[notconverged,
-		sol1=RadialLentzRoot[Ninv,s,0,0,l(l+1)-s(s+1),SetPrecision[sol1[[1]],precision],Nrcf,l+2,\[Epsilon],NewtonRadius,FilterRules[{opts},Options[RadialLentzRoot]]];
+		sol1=RadialLentzRoot[Ninv,s,0,0,l(l+1)-s(s+1),SetPrecision[sol1[[1]],precision],Nrcf,l+2,\[Epsilon],newtonRadius,FilterRules[{opts},Options[RadialLentzRoot]]];
 		If[sol1[[1, 1]],
 			jacobianmatrix=sol1[[1,3]];
 			sol1=sol1[[2]];
@@ -2407,7 +2480,7 @@ Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na},
 	KerrSEQ:= modeName[l,m,n];
 	If[MemberQ[{QNM,TTML,TTMR},modetype],KerrSEQ:=GetKerrName[modetype,s][l,m,n]];
 	Na = Length[KerrSEQ];
-	Table[{Re[KerrSEQ[[i,3,1]]],-Im[KerrSEQ[[i,3,1]]]},{i,1,Na}]
+	Table[{Re[KerrSEQ[[i,3,1]]],Im[KerrSEQ[[i,3,1]]]},{i,1,Na}]
 ]
 
 
@@ -2422,11 +2495,11 @@ Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na,Nend
 	Nend = If[KerrSEQ[[Na,1]]<999999/1000000,Na,Na-1];
 	For[i=1,i<=Nend,++i,
 		If[Mod[KerrSEQ[[i,1]],1/20]==0,
-			AppendTo[Slist,{Re[KerrSEQ[[i,3,1]]],-Im[KerrSEQ[[i,3,1]]]}]
+			AppendTo[Slist,{Re[KerrSEQ[[i,3,1]]],Im[KerrSEQ[[i,3,1]]]}]
 		];
 	];
 	If[KerrSEQ[[Na,1]]>=999999/1000000,
-		Append[Slist,{Re[KerrSEQ[[Na,3,1]]],-Im[KerrSEQ[[Na,3,1]]]}],
+		Append[Slist,{Re[KerrSEQ[[Na,3,1]]],Im[KerrSEQ[[Na,3,1]]]}],
 		Slist
 	]
 ]
@@ -2464,6 +2537,43 @@ Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na,Nend
 	];
 	If[KerrSEQ[[Na,1]]>=999999/1000000,
 		Append[Slist,{KerrSEQ[[Na,1]],If[ReIm==Im,-1,1,1]ReIm[KerrSEQ[[Na,2,1]]]}],
+		Slist
+	]
+]
+
+
+Options[KerraAList]={ModeType->Null[],SpinWeight->Null[]};
+
+
+KerraAList[l_Integer,m_Integer,n_Integer|n_List,ReIm_Symbol,OptionsPattern[]]:= 
+Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na},
+	KerraOmegaList::ReIm="ReIm must be Re or Im, set to `1`";
+	KerrSEQ:= modeName[l,m,n];
+	If[ReIm==Re || ReIm==Im,Null[],Null[],Message[KerraOmegaList::ReIm,ReIm];Abort[]];
+	If[MemberQ[{QNM,TTML,TTMR},modetype],KerrSEQ:=GetKerrName[modetype,s][l,m,n]];
+	Na = Length[KerrSEQ];
+	Table[{KerrSEQ[[i,1]],ReIm[KerrSEQ[[i,3,1]]]},{i,1,Na}]
+]
+
+
+Options[KerraAListS]={ModeType->Null[],SpinWeight->Null[]};
+
+
+KerraAListS[l_Integer,m_Integer,n_Integer|n_List,ReIm_Symbol,OptionsPattern[]]:= 
+Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na,Nend,i,Slist={}},
+	KerraOmegaListS::ReIm="ReIm must be Re or Im, set to `1`";
+	KerrSEQ:= modeName[l,m,n];
+	If[ReIm==Re || ReIm==Im,Null[],Null[],Message[KerraOmegaListS::ReIm,ReIm];Abort[]];
+	If[MemberQ[{QNM,TTML,TTMR},modetype],KerrSEQ:=GetKerrName[modetype,s][l,m,n]];
+	Na = Length[KerrSEQ];
+	Nend = If[KerrSEQ[[Na,1]]<999999/1000000,Na,Na-1];
+	For[i=1,i<=Nend,++i,
+		If[Mod[KerrSEQ[[i,1]],1/20]==0,
+			AppendTo[Slist,{KerrSEQ[[i,1]],ReIm[KerrSEQ[[i,3,1]]]}]
+		];
+	];
+	If[KerrSEQ[[Na,1]]>=999999/1000000,
+		Append[Slist,{KerrSEQ[[Na,1]],ReIm[KerrSEQ[[Na,3,1]]]}],
 		Slist
 	]
 ]
