@@ -245,8 +245,9 @@ KerraOmegaListS::usage=
 "\t l : harmonic index\n"<>
 "\t m : azimuthal index\n"<>
 "\t n : overtone index (integer or overtone multiplet)\n"<>
-"\t ReIm : Re or Im\n"<>
-"KerraOmegaList creates a short list of either {a,Re[\[Omega]]} or {a,-Im[\[Omega]]} pairs for "<>
+"\t ReIm : Re, Im, or Abs\n"<>
+"KerraOmegaList creates a short list of either {a,Re[\[Omega]]}, {a,-Im[\[Omega]]}, or "<>
+"{a,Abs[\[Omega]]} pairs for "<>
 "modes along the specified sequence.  Which sequence is produced is governed "<>
 "by the choice of ReIm. Only modes where a is a multiple "<>
 "of 0.05 are included.  (For a~1, the mode closest to a=1 is included.)\n\n"<>
@@ -261,8 +262,9 @@ KerraOmegaList::usage=
 "\t l : harmonic index\n"<>
 "\t m : azimuthal index\n"<>
 "\t n : overtone index (integer or overtone multiplet)\n"<>
-"\t ReIm : Re or Im\n"<>
-"KerraOmegaList creates a list of either {a,Re[\[Omega]]} or {a,-Im[\[Omega]]} pairs for "<>
+"\t ReIm : Re, Im, or Abs\n"<>
+"KerraOmegaList creates a short list of either {a,Re[\[Omega]]}, {a,-Im[\[Omega]]}, or "<>
+"{a,Abs[\[Omega]]} pairs for "<>
 "modes along the specified sequence.  Which sequence is produced is governed "<>
 "by the choice of ReIm.\n\n"<>
 "Options:\n"<>
@@ -276,8 +278,9 @@ KerraAListS::usage=
 "\t l : harmonic index\n"<>
 "\t m : azimuthal index\n"<>
 "\t n : overtone index (integer or overtone multiplet)\n"<>
-"\t ReIm : Re or Im\n"<>
-"KerraAList creates a short list of either {a,Re[\!\(\*SubscriptBox[\(A\), \(lm\)]\)]} or {a,Im[\!\(\*SubscriptBox[\(A\), \(lm\)]\)]} pairs for "<>
+"\t ReIm : Re, Im, or Abs\n"<>
+"KerraAList creates a short list of either {a,Re[\!\(\*SubscriptBox[\(A\), \(lm\)]\)]} "<>
+"{a,Im[\!\(\*SubscriptBox[\(A\), \(lm\)]\)]}, or {a,Abs[\!\(\*SubscriptBox[\(A\), \(lm\)]\)]} pairs for "<>
 "modes along the specified sequence.  Which sequence is produced is governed "<>
 "by the choice of ReIm. Only modes where a is a multiple "<>
 "of 0.05 are included.  (For a~1, the mode closest to a=1 is included.)\n\n"<>
@@ -292,8 +295,9 @@ KerraAList::usage=
 "\t l : harmonic index\n"<>
 "\t m : azimuthal index\n"<>
 "\t n : overtone index (integer or overtone multiplet)\n"<>
-"\t ReIm : Re or Im\n"<>
-"KerraAList creates a list of either {a,Re[\!\(\*SubscriptBox[\(A\), \(lm\)]\)]} or {a,Im[\!\(\*SubscriptBox[\(A\), \(lm\)]\)]} pairs for "<>
+"\t ReIm : Re, Im, or Abs\n"<>
+"KerraAList creates a short list of either {a,Re[\!\(\*SubscriptBox[\(A\), \(lm\)]\)]} "<>
+"{a,Im[\!\(\*SubscriptBox[\(A\), \(lm\)]\)]}, or {a,Abs[\!\(\*SubscriptBox[\(A\), \(lm\)]\)]} pairs for "<>
 "modes along the specified sequence.  Which sequence is produced is governed "<>
 "by the choice of ReIm.\n\n"<>
 "Options:\n"<>
@@ -2510,9 +2514,9 @@ Options[KerraOmegaList]={ModeType->Null[],SpinWeight->Null[]};
 
 KerraOmegaList[l_Integer,m_Integer,n_Integer|n_List,ReIm_Symbol,OptionsPattern[]]:= 
 Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na},
-	KerraOmegaList::ReIm="ReIm must be Re or Im, set to `1`";
+	KerraOmegaList::ReIm="ReIm must be Re, Im, or Abs, set to `1`";
 	KerrSEQ:= modeName[l,m,n];
-	If[ReIm==Re || ReIm==Im,Null[],Null[],Message[KerraOmegaList::ReIm,ReIm];Abort[]];
+	If[ReIm==Re || ReIm==Im || ReIm==Abs,Null[],Null[],Message[KerraOmegaList::ReIm,ReIm];Abort[]];
 	If[MemberQ[{QNM,TTML,TTMR},modetype],KerrSEQ:=GetKerrName[modetype,s][l,m,n]];
 	Na = Length[KerrSEQ];
 	Table[{KerrSEQ[[i,1]],If[ReIm==Im,-1,1,1]ReIm[KerrSEQ[[i,2,1]]]},{i,1,Na}]
@@ -2524,9 +2528,9 @@ Options[KerraOmegaListS]={ModeType->Null[],SpinWeight->Null[]};
 
 KerraOmegaListS[l_Integer,m_Integer,n_Integer|n_List,ReIm_Symbol,OptionsPattern[]]:= 
 Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na,Nend,i,Slist={}},
-	KerraOmegaListS::ReIm="ReIm must be Re or Im, set to `1`";
+	KerraOmegaListS::ReIm="ReIm must be Re, Im, or Abs, set to `1`";
 	KerrSEQ:= modeName[l,m,n];
-	If[ReIm==Re || ReIm==Im,Null[],Null[],Message[KerraOmegaListS::ReIm,ReIm];Abort[]];
+	If[ReIm==Re || ReIm==Im || ReIm==Abs,Null[],Null[],Message[KerraOmegaListS::ReIm,ReIm];Abort[]];
 	If[MemberQ[{QNM,TTML,TTMR},modetype],KerrSEQ:=GetKerrName[modetype,s][l,m,n]];
 	Na = Length[KerrSEQ];
 	Nend = If[KerrSEQ[[Na,1]]<999999/1000000,Na,Na-1];
@@ -2547,9 +2551,9 @@ Options[KerraAList]={ModeType->Null[],SpinWeight->Null[]};
 
 KerraAList[l_Integer,m_Integer,n_Integer|n_List,ReIm_Symbol,OptionsPattern[]]:= 
 Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na},
-	KerraOmegaList::ReIm="ReIm must be Re or Im, set to `1`";
+	KerraOmegaList::ReIm="ReIm must be RRe, Im, or Abs, set to `1`";
 	KerrSEQ:= modeName[l,m,n];
-	If[ReIm==Re || ReIm==Im,Null[],Null[],Message[KerraOmegaList::ReIm,ReIm];Abort[]];
+	If[ReIm==Re || ReIm==Im || ReIm==Abs,Null[],Null[],Message[KerraOmegaList::ReIm,ReIm];Abort[]];
 	If[MemberQ[{QNM,TTML,TTMR},modetype],KerrSEQ:=GetKerrName[modetype,s][l,m,n]];
 	Na = Length[KerrSEQ];
 	Table[{KerrSEQ[[i,1]],ReIm[KerrSEQ[[i,3,1]]]},{i,1,Na}]
@@ -2561,9 +2565,9 @@ Options[KerraAListS]={ModeType->Null[],SpinWeight->Null[]};
 
 KerraAListS[l_Integer,m_Integer,n_Integer|n_List,ReIm_Symbol,OptionsPattern[]]:= 
 Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],KerrSEQ,Na,Nend,i,Slist={}},
-	KerraOmegaListS::ReIm="ReIm must be Re or Im, set to `1`";
+	KerraOmegaListS::ReIm="ReIm must be Re, Im, or Abs, set to `1`";
 	KerrSEQ:= modeName[l,m,n];
-	If[ReIm==Re || ReIm==Im,Null[],Null[],Message[KerraOmegaListS::ReIm,ReIm];Abort[]];
+	If[ReIm==Re || ReIm==Im || ReIm==Abs,Null[],Null[],Message[KerraOmegaListS::ReIm,ReIm];Abort[]];
 	If[MemberQ[{QNM,TTML,TTMR},modetype],KerrSEQ:=GetKerrName[modetype,s][l,m,n]];
 	Na = Length[KerrSEQ];
 	Nend = If[KerrSEQ[[Na,1]]<999999/1000000,Na,Na-1];
