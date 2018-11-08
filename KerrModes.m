@@ -5,7 +5,7 @@
 
 
 (* ::Section::Closed:: *)
-(*Documentation *)
+(*Documentation*)
 
 
 (* ::Item:: *)
@@ -371,10 +371,10 @@ Protect[SolutionDebug,NoNeg\[Omega],ModePrecision,SolutionSlow,SolutionOscillate
 		RadialCFDigits,NewtonRadius]
 
 
-Protect[Minblevel,Maxblevel,CurvatureRatio,Max\[CapitalDelta]\[Omega],ExtrapolationOrder,Asymptote]
+Protect[Minblevel,Maxblevel,CurvatureRatio,Max\[CapitalDelta]\[Omega],ExtrapolationOrder,Asymptote,LogLog]
 
 
-Protect[ModeaStart,ModeGuess,SeqDirection,Maximala\[Epsilon],SolutionRelax,SolutionWindowl,SolutionWindowt]
+Protect[ModeaStart,ModeGuess,SeqDirection,Maximala\[Epsilon],Minimala\[Epsilon],SolutionRelax,SolutionWindowl,SolutionWindowt]
 
 
 Protect[Index,Refinement,RefinementAction,RefineAccuracy,RefinePrecision,RefineAdapt,FixAdapt,Update,RemoveLevels,ForceRefinement,RefinementPlot,SeqLevel,RadialCFLevel,AccuracyLevel,PrecisionLevel,StepRatio,CurveRatio,LimitRefinement,RadialCFMaxGuess]
@@ -654,11 +654,11 @@ Module[{\[Lambda],starob},
 
 
 
-(* ::Section::Closed:: *)
+(* ::Section:: *)
 (*Kerr Modes methods*)
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Iterative simultaneous solution of radial & angular Teukolsky equations*)
 
 
@@ -682,6 +682,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 		\[CapitalDelta]\[Omega],\[CapitalDelta]\[Omega]2,iteration=0,nrpow,rcfpow,NradFlag=False,jacobianmatrix=Null,invJacobian,
 		converged=False,count,expconv,rcferr,\[Alpha],inversion,i,invcount,slowcount,
 		radialfail=0,slowcount2=0,oscillate=0,\[Epsilon]2=\[Epsilon],Nradialnew,rcfpower=0,testNrcf,
+		err1,err2,N1,N2,\[CapitalDelta]N,
 		newtonRadius=OptionValue[NewtonRadius],
 		nonegfreq=OptionValue[NoNeg\[Omega]],
 		slowval=OptionValue[SolutionSlow],oscval=OptionValue[SolutionOscillate],
@@ -695,6 +696,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 	ModeSolution::soldebug3="a = `1` \[Omega] = `2` alm = `3` ";
 	ModeSolution::soldebug4="\[Omega]0 = `1`, Alm0 = `2` ";
 	ModeSolution::soldebug5a="Expconv = `1` , N = `2`";
+	ModeSolution::soldebug5ad="Extrapolate angular matrix size: N = `1`";
 	ModeSolution::soldebug5b="Increase Nradial to `1`";
 	ModeSolution::soldebug5c="Decrease Nradial to `1`";
 	ModeSolution::soldebug5d="Expconv =  `1`: count = `2`: N = `3`";
@@ -722,9 +724,17 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 	angularsol=AngularSpectralRoot[s,m,c,oldAlm,Nmatrix];
 	expconv=Max[Take[Abs[angularsol[[3]]],-2]];
 	While[expconv >= 10^\[Epsilon]2 && ++count<5,  (* Make sure Spectral resolution is good before doing lots of work *)
+		If[count>1,err2=err1;N2=N1];
+		err1=expconv;N1=Nmatrix;
+		If[count>2,
+			\[CapitalDelta]N=Floor[-(N1-N2)Log[10^\[Epsilon]2/err1]/Log[err2/err1]];
+			If[\[CapitalDelta]N/N1>1/10,\[CapitalDelta]N=Floor[(\[CapitalDelta]N+1)/2]];
+			Nmatrix+=\[CapitalDelta]N-1;
+			If[solutiondebug>4,Print[Style[StringForm[ModeSolution::soldebug5ad,Nmatrix+1],{Medium,Darker[Yellow,0.3]}]]]
+		];
 		angularsol=AngularSpectralRoot[s,m,c,oldAlm,++Nmatrix];
-		If[solutiondebug>4,Print[Style[StringForm[ModeSolution::soldebug5a,expconv,Nmatrix],{Medium,Darker[Yellow,0.3]}]]];
 		expconv=Max[Take[Abs[angularsol[[3]]],-2]];
+		If[solutiondebug>4,Print[Style[StringForm[ModeSolution::soldebug5a,expconv,Nmatrix],{Medium,Darker[Yellow,0.3]}]]];
 	];
 	count=0;
 	While[Not[converged],
@@ -849,7 +859,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 ]
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Adaptive Bisection sequencer*)
 
 
@@ -857,7 +867,7 @@ Options[AdaptCheck3]=Union[{Minblevel->0,Maxblevel->20,CurvatureRatio->1/2,Max\[
 
 
 Options[KerrModeSequence]=Union[{SpinWeight->Null[],ModeaStart->0,ModeGuess->0,
-								SeqDirection->Forward,Maximala\[Epsilon]->10,
+								SeqDirection->Forward,Maximala\[Epsilon]->10,Minimala\[Epsilon]->False,
 								SolutionRelax->1,RadialCFDepth->1,
 								SolutionWindowl->1/2,SolutionWindowt->1/3},
 								Options[AdaptCheck3]];
@@ -868,7 +878,7 @@ KerrModeSequence[l_Integer,m_Integer,n_Integer|n_List,\[Epsilon]max_Integer,
 Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqStatus,context,
 		\[Omega]Guess,inversion,\[Omega],Alm,\[Omega]try,Almtry,ModeSol,a,index0=0,index0p,index0m,
 		\[Epsilon]=\[Epsilon]max,Nrcf,Nm=4,rl=0,rt=0,NKMode=0,edat0,edat,ef,iv,afit,
-		maximuma=1,blevel=0,\[CapitalDelta]a=10^(-3),\[CapitalDelta]a2,\[CapitalDelta]a3,dir=1,\[CapitalDelta]aincflag=False,\[CapitalDelta]aincstep=0,blevelsave,
+		maximuma=1,minimuma=0,blevel=0,\[CapitalDelta]a=10^(-3),\[CapitalDelta]a2,\[CapitalDelta]a3,dir=1,\[CapitalDelta]aincflag=False,\[CapitalDelta]aincstep=0,blevelsave,
 		\[Omega]0,\[Omega]p,\[Omega]m,Alm0,Almp,Almm,\[Omega]w=0,Almw=0,precisionsave,precisioncount=0,
 		Minb=OptionValue[Minblevel],Maxb=OptionValue[Maxblevel],
 		forward=If[OptionValue[SeqDirection]==Backward,False,True,True],
@@ -880,6 +890,7 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 
 	KerrModeSequence::minprecision="Set $MinPrecision = `1`";
 	KerrModeSequence::invalidmax="Invalid value for Maximala\[Epsilon]";
+	KerrModeSequence::invalidmin="Invalid value for Minimala\[Epsilon]";
 	KerrModeSequence::entries="`1`[`2`,`3`,`4`] sequence exists with `5` entries";
 	KerrModeSequence::untested1="Untested section of code! 1";
 	KerrModeSequence::untested2="Untested section of code! 2";
@@ -904,6 +915,13 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 					If[OptionValue[Maximala\[Epsilon]] \[Element] Booleans && OptionValue[Maximala\[Epsilon]]==False,
 						1,
 						Message[KerrModeSequence::invalidmax];Abort[]
+					]
+				];
+	minimuma=If[OptionValue[Minimala\[Epsilon]] \[Element] Integers,
+					(2^-OptionValue[Minimala\[Epsilon]])/1000,
+					If[OptionValue[Minimala\[Epsilon]] \[Element] Booleans && OptionValue[Minimala\[Epsilon]]==False,
+						0,
+						Message[KerrModeSequence::invalidmin];Abort[]
 					]
 				];
 	SpinWeightTable:=modeName;
@@ -952,16 +970,15 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 				\[CapitalDelta]a=If[forward,KerrSEQ[[NKMode,1]]-KerrSEQ[[index0,1]],KerrSEQ[[index0,1]]-KerrSEQ[[1,1]]];
 				blevelsave=blevel=Round[-(3+Log10[\[CapitalDelta]a])/Log10[2]];
 				\[CapitalDelta]a2=If[forward,KerrSEQ[[index0,1]]-KerrSEQ[[index0-1,1]],KerrSEQ[[index0+1,1]]-KerrSEQ[[index0,1]]];
-
 				If[\[CapitalDelta]a > 2\[CapitalDelta]a2,Message[KerrModeSequence::unusualstepsize];Abort[]];
 				\[CapitalDelta]a3=2^(-Maxb)/1000;
-				If[a+dir*\[CapitalDelta]a3>maximuma,Return[]];
+				If[a+dir*\[CapitalDelta]a3>maximuma||a+dir*\[CapitalDelta]a3<minimuma,Return[]];
 				If[\[CapitalDelta]a>=\[CapitalDelta]a2,
 					If[\[CapitalDelta]a==2\[CapitalDelta]a2,
 						{KerrSEQret,blevel,\[CapitalDelta]aincflag,\[CapitalDelta]aincstep,\[Epsilon]}=
-						AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,maximuma,forward,True,False,FilterRules[{opts},Options[AdaptCheck3]]],
+						AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,maximuma,minimuma,forward,True,False,FilterRules[{opts},Options[AdaptCheck3]]],
 						{KerrSEQret,blevel,\[CapitalDelta]aincflag,\[CapitalDelta]aincstep,\[Epsilon]}=
-						AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,maximuma,forward,False,False,FilterRules[{opts},Options[AdaptCheck3]]]
+						AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,maximuma,minimuma,forward,False,False,FilterRules[{opts},Options[AdaptCheck3]]]
 					];
 					modeName[l,m,n]=KerrSEQret;
 				];
@@ -1007,6 +1024,14 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,KerrSEQret,AC3ret,SeqS
 						afit=NonlinearModelFit[edat,\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
 													{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
 						\[Omega]+=I afit[1-(KerrSEQ[[NKMode,1]]+\[CapitalDelta]a)],
+						LogLog,
+						edat0=Take[KerrSEQ,If[forward,-2,2]];
+						edat=Table[{Log[edat0[[i,1]]],Log[Abs[Re[edat0[[i,2,1]]]]]},{i,1,2}];
+						ef=LinearModelFit[edat,{1,af},af];
+						\[Omega]=Sign[Re[edat0[[1,2,1]]]]Exp[ef[Log[If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]]]];
+						edat=Table[{Log[edat0[[i,1]]],Log[Abs[Im[edat0[[i,2,1]]]]]},{i,1,2}];
+						ef=LinearModelFit[edat,{1,af},af];
+						\[Omega]+=I Sign[Im[edat0[[1,2,1]]]]Exp[ef[Log[If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]]]],
 						Asymptote,
 						{\[Omega],Alm}=AsymptoteFunction[s,l,m,If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]],
 						_,
@@ -1058,7 +1083,7 @@ Print[KerrModeSequence::untested1];
 			Abort[]
 		];
 	];
-	While[0 <= a+dir*\[CapitalDelta]a <= maximuma,
+	While[minimuma <= a+dir*\[CapitalDelta]a <= maximuma,
 		(* Try lowering precision every so often *)
 		If[$MinPrecision<precisionsave,precisionsave=$MinPrecision;precisioncount=0];
 		If[$MinPrecision>precisionsave,
@@ -1095,7 +1120,7 @@ Print[KerrModeSequence::untested1];
 			If[NKMode>2,
 				blevelsave=blevel;
 				{KerrSEQret,blevel,\[CapitalDelta]aincflag,\[CapitalDelta]aincstep,\[Epsilon]}=
-					AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,maximuma,forward,\[CapitalDelta]aincflag,False,FilterRules[{opts},Options[AdaptCheck3]]];
+					AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,maximuma,minimuma,forward,\[CapitalDelta]aincflag,False,FilterRules[{opts},Options[AdaptCheck3]]];
 				modeName[l,m,n]=KerrSEQret;
 				NKMode=Length[KerrSEQ];
 				index0=If[forward,NKMode-1,2];
@@ -1134,6 +1159,14 @@ Print[KerrModeSequence::untested1];
 						afit=NonlinearModelFit[edat,\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
 													{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
 						\[Omega]+=I afit[1-(KerrSEQ[[NKMode,1]]+\[CapitalDelta]a)],
+						LogLog,
+						edat0=Take[KerrSEQ,If[forward,-2,2]];
+						edat=Table[{Log[edat0[[i,1]]],Log[Abs[Re[edat0[[i,2,1]]]]]},{i,1,2}];
+						ef=LinearModelFit[edat,{1,af},af];
+						\[Omega]=Sign[Re[edat0[[1,2,1]]]]Exp[ef[Log[If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]]]];
+						edat=Table[{Log[edat0[[i,1]]],Log[Abs[Im[edat0[[i,2,1]]]]]},{i,1,2}];
+						ef=LinearModelFit[edat,{1,af},af];
+						\[Omega]+=I Sign[Im[edat0[[1,2,1]]]]Exp[ef[Log[If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]]]],
 						Asymptote,
 						{\[Omega],Alm}=AsymptoteFunction[s,l,m,If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]],
 						_,
@@ -1166,6 +1199,14 @@ Print[KerrModeSequence::untested1];
 						afit=NonlinearModelFit[edat,\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
 													{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
 						\[Omega]+=I afit[1-(KerrSEQ[[NKMode,1]]+\[CapitalDelta]a)],
+						LogLog,
+						edat0=Take[KerrSEQ,If[forward,-2,2]];
+						edat=Table[{Log[edat0[[i,1]]],Log[Abs[Re[edat0[[i,2,1]]]]]},{i,1,2}];
+						ef=LinearModelFit[edat,{1,af},af];
+						\[Omega]=Sign[Re[edat0[[1,2,1]]]]Exp[ef[Log[If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]]]];
+						edat=Table[{Log[edat0[[i,1]]],Log[Abs[Im[edat0[[i,2,1]]]]]},{i,1,2}];
+						ef=LinearModelFit[edat,{1,af},af];
+						\[Omega]+=I Sign[Im[edat0[[1,2,1]]]]Exp[ef[Log[If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]]]],
 						Asymptote,
 						{\[Omega],Alm}=AsymptoteFunction[s,l,m,If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]],
 						_,
@@ -1238,7 +1279,7 @@ Print[KerrModeSequence::untested1];
 				blevelsave=blevel;
 				If[NKMode>2,
 					{KerrSEQret,blevel,\[CapitalDelta]aincflag,\[CapitalDelta]aincstep,\[Epsilon]}=
-						AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,maximuma,forward,False,False,Minblevel->Max[blevel,OptionValue[Minblevel]],FilterRules[{opts},Options[AdaptCheck3]]];
+						AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,maximuma,minimuma,forward,False,False,Minblevel->Max[blevel,OptionValue[Minblevel]],FilterRules[{opts},Options[AdaptCheck3]]];
 					modeName[l,m,n]=KerrSEQret;
 					NKMode=Length[KerrSEQ];
 					index0=If[forward,NKMode-1,2];
@@ -1277,6 +1318,14 @@ Print[KerrModeSequence::untested1];
 						afit=NonlinearModelFit[edat,\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
 													{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
 						\[Omega]+=I afit[1-(KerrSEQ[[NKMode,1]]+\[CapitalDelta]a)],
+						LogLog,
+						edat0=Take[KerrSEQ,If[forward,-2,2]];
+						edat=Table[{Log[edat0[[i,1]]],Log[Abs[Re[edat0[[i,2,1]]]]]},{i,1,2}];
+						ef=LinearModelFit[edat,{1,af},af];
+						\[Omega]=Sign[Re[edat0[[1,2,1]]]]Exp[ef[Log[If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]]]];
+						edat=Table[{Log[edat0[[i,1]]],Log[Abs[Im[edat0[[i,2,1]]]]]},{i,1,2}];
+						ef=LinearModelFit[edat,{1,af},af];
+						\[Omega]+=I Sign[Im[edat0[[1,2,1]]]]Exp[ef[Log[If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]]]],
 						Asymptote,
 						{\[Omega],Alm}=AsymptoteFunction[s,l,m,If[forward,KerrSEQ[[NKMode,1]]+\[CapitalDelta]a,KerrSEQ[[1,1]]-\[CapitalDelta]a]],
 						_,
@@ -1305,7 +1354,8 @@ Print[KerrModeSequence::untested1];
 
 AdaptCheck3[KerrTMP_List,inversion_Integer,s_Integer,l_Integer,m_Integer,\[Epsilon]max_Integer,
 			relax_Real|relax_Rational|relax_Integer,
-			index0_Integer,blevel_Integer,maximuma_Rational|maximuma_Integer,
+			index0_Integer,blevel_Integer,
+			maximuma_Rational|maximuma_Integer,minimuma_Rational|minimuma_Integer,
 			forward_/;forward \[Element] Booleans,
 			incflag_/;incflag \[Element] Booleans,
 			recursflag_/;recursflag \[Element] Booleans,
@@ -1352,7 +1402,7 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 	\[Epsilon]2=Max[Min[\[Epsilon]max,Floor[Log10[Abs[\[CapitalDelta]\[Omega]/2]]-2.5]],\[Epsilon]min];
 	If[blevel < Minb || 
 		(Maxb > blevel && (curvrat > maxcurvrat || \[CapitalDelta]\[Omega] > max\[CapitalDelta]\[Omega] || 
-		(forward && a0+\[CapitalDelta]a<maximuma && a0+2\[CapitalDelta]a>maximuma) || (Not[forward] && a0-\[CapitalDelta]a>0 && a0-2\[CapitalDelta]a<0))),
+		(forward && a0+\[CapitalDelta]a<maximuma && a0+2\[CapitalDelta]a>maximuma) || (Not[forward] && a0-\[CapitalDelta]a>minimuma && a0-2\[CapitalDelta]a<minimuma))),
 		If[incflag,incstep=1]; (* shouldn't have increased step size *)
 		(* Increase resolution *)
 		If[forward || (!forward && !incflag),
@@ -1375,6 +1425,14 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 				afit=NonlinearModelFit[edat,\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
 											{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
 				\[Omega]g+=I afit[1-(KerrSEQ[[index0,1]]+\[CapitalDelta]a/2)],
+				LogLog,
+				edat0=Take[KerrSEQ,If[forward,-2,2]];
+				edat=Table[{Log[edat0[[i,1]]],Log[Abs[Re[edat0[[i,2,1]]]]]},{i,1,2}];
+				ef=LinearModelFit[edat,{1,a},a];
+				\[Omega]=Sign[Re[edat0[[1,2,1]]]]Exp[ef[Log[KerrSEQ[[index0,1]]+\[CapitalDelta]a/2]]];
+				edat=Table[{Log[edat0[[i,1]]],Log[Abs[Im[edat0[[i,2,1]]]]]},{i,1,2}];
+				ef=LinearModelFit[edat,{1,a},a];
+				\[Omega]+=I Sign[Im[edat0[[1,2,1]]]]Exp[ef[Log[KerrSEQ[[index0,1]]+\[CapitalDelta]a/2]]],
 				Asymptote,
 				{\[Omega],Alm}=AsymptoteFunction[s,l,m,KerrSEQ[[index0,1]]+\[CapitalDelta]a/2],
 				_,
@@ -1397,7 +1455,7 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 				index0p=index0+1;
 				blevelp=blevel+1;
 				KerrSEQ=Insert[KerrSEQ,ModeSol[[4]],index0p];
-				AC3ret=AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon]2,relax,index0p,blevelp,maximuma,forward,False,True,FilterRules[{opts},Options[AdaptCheck3]]];
+				AC3ret=AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon]2,relax,index0p,blevelp,maximuma,minimuma,forward,False,True,FilterRules[{opts},Options[AdaptCheck3]]];
 				KerrSEQ=AC3ret[[1]];
 				blevelp=AC3ret[[2]];
 				\[Epsilon]p=AC3ret[[5]];
@@ -1426,6 +1484,14 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 				afit=NonlinearModelFit[edat,\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
 											{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
 				\[Omega]g+=I afit[1-(KerrSEQ[[index0,1]]-\[CapitalDelta]a/2)],
+				LogLog,
+				edat0=Take[KerrSEQ,If[forward,-2,2]];
+				edat=Table[{Log[edat0[[i,1]]],Log[Abs[Re[edat0[[i,2,1]]]]]},{i,1,2}];
+				ef=LinearModelFit[edat,{1,a},a];
+				\[Omega]=Sign[Re[edat0[[1,2,1]]]]Exp[ef[Log[KerrSEQ[[index0,1]]-\[CapitalDelta]a/2]]];
+				edat=Table[{Log[edat0[[i,1]]],Log[Abs[Im[edat0[[i,2,1]]]]]},{i,1,2}];
+				ef=LinearModelFit[edat,{1,a},a];
+				\[Omega]+=I Sign[Im[edat0[[1,2,1]]]]Exp[ef[Log[KerrSEQ[[index0,1]]-\[CapitalDelta]a/2]]],
 				Asymptote,
 				{\[Omega],Alm}=AsymptoteFunction[s,l,m,KerrSEQ[[index0,1]]-\[CapitalDelta]a/2],
 				_,
@@ -1447,7 +1513,7 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 				Print["ModeSol- a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision]," Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision]];
 				blevelm=blevel+1;
 				KerrSEQ=Insert[KerrSEQ,ModeSol[[4]],index0];
-				AC3ret=AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon]2,relax,index0m,blevelm,maximuma,forward,False,True,FilterRules[{opts},Options[AdaptCheck3]]];
+				AC3ret=AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon]2,relax,index0m,blevelm,maximuma,minimuma,forward,False,True,FilterRules[{opts},Options[AdaptCheck3]]];
 				KerrSEQ=AC3ret[[1]];
 				blevelm=AC3ret[[2]];
 				\[Epsilon]m=AC3ret[[5]];
@@ -1507,7 +1573,7 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 		,
 		If[Not[recursflag] && 
 			(blevel > Maxb || (Minb < blevel && curvrat < maxcurvrat/2 && \[CapitalDelta]\[Omega] < max\[CapitalDelta]\[Omega]/2
-								&& ((forward && a0+3\[CapitalDelta]a<=maximuma) || (Not[forward] && a0-3\[CapitalDelta]a>=0)))),
+								&& ((forward && a0+3\[CapitalDelta]a<=maximuma) || (Not[forward] && a0-3\[CapitalDelta]a>=minimuma)))),
 			(* Reduce resoltuion *)
 			If[Mod[1000(a0+\[CapitalDelta]a),2000\[CapitalDelta]a]==0, (* Make sure we can end up one sensible values of a *)
 				blevelm=blevelp=blevel-1;
@@ -1935,7 +2001,7 @@ Print["RefineAcc at : ",index0];
 				$MinPrecision=If[Length[KerrSEQ[[index0,2]]]>=9,KerrSEQ[[index0,2,9]],IntegerPart[MyPrecision[KerrSEQ[[index0,2,1]]]]];
 (*Print["At a = ",N[KerrSEQ[[index0,1]]]," index0 = ",index0," forward : ",forward," incflag : ",incflag];*)
 				{KerrSEQret,blevel,dummy,dummy,\[Epsilon]}=
-					AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,1,forward,incflag,False,FilterRules[{opts},Options[AdaptCheck3]]];
+					AdaptCheck3[KerrSEQ,inversion,s,l,m,\[Epsilon],relax,index0,blevel,1,0,forward,incflag,False,FilterRules[{opts},Options[AdaptCheck3]]];
 				modeName[l,m,n]=KerrSEQret;
 				(*Switch[s,
 					   -2,Global`KerrQNM[l,m,n]=KerrSEQret,
@@ -2408,8 +2474,16 @@ Module[{Alm\[Omega]},
 
 PlotModeFunctionL[n_Integer,s_Integer,m_Integer,a_Rational|a_Integer,
 			lindex_Integer,\[Omega]_?NumberQ,Nrcf_Integer,Nm_Integer]:= 
-Module[{Alm\[Omega]},
-	Alm\[Omega]=AngularSpectralRootIndex[s,m,a*\[Omega],lindex,Nm][[1]];
+Module[{angularsol,expconv,count=0,Nmatrix=Nm,Alm\[Omega]},	
+	PlotModeFunctionL::inaccurateAlm="Angular solution matrix too small; expconv = `1`";
+	angularsol=AngularSpectralRootIndex[s,m,a*\[Omega],lindex,Nmatrix];
+	expconv=Max[Take[Abs[angularsol[[3]]],-2]];
+	While[expconv >= 10^-8 && ++count<5,  (* Make sure Spectral resolution is good before doing lots of work *)
+		angularsol=AngularSpectralRootIndex[s,m,a*\[Omega],lindex,++Nmatrix];
+		expconv=Max[Take[Abs[angularsol[[3]]],-2]];
+	];
+	If[count>=5,Message[PlotModeFunctionL::inaccurateAlm,expconv]];
+	Alm\[Omega]=angularsol[[1]];
 	ModeFunction[n,s,m,a,Alm\[Omega],\[Omega],Nrcf][[1]]
 ]
 
