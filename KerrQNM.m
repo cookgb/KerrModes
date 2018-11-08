@@ -135,6 +135,8 @@ KerrQNMSequence::usage=
 	"\t\t Solutions are not considered valid until the value of the continued fraction\n"<>
     "\t\t is less than \!\(\*SuperscriptBox[\(10\), \(Root\[Epsilon]\)]\).  "<>
     " By default, Root\[Epsilon] is set to \[Epsilon].\n"<>
+    "\t NewtonRadius \[Rule] 0.001\n"<>
+    "\t\t Maximum allowed change in \[Omega] during a Newton update.\n"<>
 	"\t SeqDirection \[Rule] Forward : Forward, Backward\n"<>
 	"\t\t Direction for new elements of the sequence.  With Forward, new elements \n"<>
     "\t\t are added after the maximum value of 'a'.  With Backward, new elements \n"<>
@@ -146,6 +148,9 @@ KerrQNMSequence::usage=
 	"\t Maximala\[Epsilon] \[Rule] 10\n"<>
 	"\t\t Sequencer terminates at a=1 if Maximala\[Epsilon]=False.\n"<>
     "\t\t If Maximala\[Epsilon] is an integer (n), it terminates at 1-\!\(\*SuperscriptBox[\(2\),\(-n\)]\)/1000.\n"<>
+	"\t Minimala\[Epsilon] \[Rule] False\n"<>
+	"\t\t Sequencer terminates at a=0 if Minimala\[Epsilon]=False.\n"<>
+    "\t\t If Minimala\[Epsilon] is an integer (n), it terminates at \!\(\*SuperscriptBox[\(2\),\(-n\)]\)/1000.\n"<>
 	"\t Max\[CapitalDelta]\[Omega] \[Rule] 0.01\n"<>
 	"\t\t Maximum distance in \[Omega] space between solutions on a sequence\n"<>
 	"\t ModeaStart\[Rule]0 : {a,\[Omega],\!\(\*SubscriptBox[\(A\), \(lm\)]\)}\n"<>
@@ -165,10 +170,11 @@ KerrQNMSequence::usage=
 	"\t SolutionWindowt\[Rule]1/3\n"<>
 	"\t\t Set the size of the solution window.  Solutions must fall within this window\n"<>
 	"\t\t to be accepted.  Setting either to 0 causes any solutions to be accepted.\n"<>
-    "\t ExtrapolationOrder \[Rule] 2 : An integer or 'Accumulate\n"<>
+    "\t ExtrapolationOrder \[Rule] 2 : An integer or 'LogLog' or 'Accumulate\n"<>
 	"\t\t An integer specifies the  order of polynomial extrapolation for the next point.\n"<> 
+	"\t\t 'LogLog' assumes \[Omega] behavies locally as a power law for extrapolation.\n"<>
 	"\t\t Otherwise for sequences where \[Omega]\[Rule]m/2 as a\[Rule]1, set extraporder to \n"<>
-    "\t\t 'Accumulate'to provide a more accurate extrapolation\n"<>
+    "\t\t 'Accumulate' to provide a more accurate extrapolation.\n"<>
 	"\t CurvatureRatio \[Rule] 1/2\n"<>
 	"\t\t In deciding the size of \[CapitalDelta]a, the local ratio of stepsize \[CapitalDelta]\[Omega] betweeen points\n"<>
 	"\t\t to the ratius of curvature is compared to CurvatureRatio.\n"<>
