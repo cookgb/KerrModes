@@ -654,11 +654,11 @@ Module[{\[Lambda],starob},
 
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Kerr Modes methods*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Iterative simultaneous solution of radial & angular Teukolsky equations*)
 
 
@@ -723,12 +723,13 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 	c=a \[Omega]g;
 	angularsol=AngularSpectralRoot[s,m,c,oldAlm,Nmatrix];
 	expconv=Max[Take[Abs[angularsol[[3]]],-2]];
+	err1=expconv; N1=Nmatrix;
 	While[expconv >= 10^\[Epsilon]2 && ++count<5,  (* Make sure Spectral resolution is good before doing lots of work *)
-		If[count>1,err2=err1;N2=N1];
-		err1=expconv;N1=Nmatrix;
+		err2=err1; N2=N1;
+		err1=expconv; N1=Nmatrix;
 		If[count>2,
 			\[CapitalDelta]N=Floor[-(N1-N2)Log[10^\[Epsilon]2/err1]/Log[err2/err1]];
-			If[\[CapitalDelta]N/N1>1/10,\[CapitalDelta]N=Floor[(\[CapitalDelta]N+1)/2]];
+			If[\[CapitalDelta]N/N1>1/10,\[CapitalDelta]N=Max[Floor[2\[CapitalDelta]N/3],1]];
 			Nmatrix+=\[CapitalDelta]N-1;
 			If[solutiondebug>4,Print[Style[StringForm[ModeSolution::soldebug5ad,Nmatrix+1],{Medium,Darker[Yellow,0.3]}]]]
 		];
@@ -834,11 +835,16 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 
 			expconv=Max[Take[Abs[angularsol[[3]]],-2]];
 			(*expconv=0;*)
+			If[solutiondebug>4,Print[Style[StringForm[ModeSolution::soldebug5d,expconv,count,Nmatrix],{Medium,Darker[Yellow,0.3]}]]];
 			If[expconv < 10^\[Epsilon]2,
 				If[!NradFlag,++count];
 				If[count>1&&radialsol[[1,1]],converged=True],
-				If[solutiondebug>4,Print[Style[StringForm[ModeSolution::soldebug5d,expconv,count,Nmatrix+1],{Medium,Darker[Yellow,0.3]}]]];
-				Nmatrix+=1;count=0;iteration/=2;slowcount2=0;oscillate=0
+				err2=err1; N2=N1; err1=expconv; N1=Nmatrix;
+				\[CapitalDelta]N=Floor[-(N1-N2)Log[10^\[Epsilon]2/err1]/Log[err2/err1]];
+				If[\[CapitalDelta]N/N1>1/10,\[CapitalDelta]N=Max[Floor[2\[CapitalDelta]N/3],1]];
+				Nmatrix+=\[CapitalDelta]N-1;
+				If[solutiondebug>4,Print[Style[StringForm[ModeSolution::soldebug5ad,Nmatrix+\[CapitalDelta]N],{Medium,Darker[Yellow,0.3]}]]];
+				Nmatrix+=\[CapitalDelta]N;count=0;iteration/=2;slowcount2=0;oscillate=0
 			];
 			NradFlag=False,
 			count=0
@@ -859,7 +865,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 ]
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Adaptive Bisection sequencer*)
 
 
