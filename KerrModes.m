@@ -728,7 +728,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 		err2=err1; N2=N1;
 		err1=expconv; N1=Nmatrix;
 		If[count>2,
-			\[CapitalDelta]N=Floor[-(N1-N2)Log[10^\[Epsilon]2/err1]/Log[err2/err1]];
+			\[CapitalDelta]N=Max[1,Floor[-(N1-N2)Log[10^\[Epsilon]2/err1]/Log[err2/err1]]];
 			If[\[CapitalDelta]N/N1>1/10,\[CapitalDelta]N=Max[Floor[2\[CapitalDelta]N/3],1]];
 			Nmatrix+=\[CapitalDelta]N-1;
 			If[solutiondebug>4,Print[Style[StringForm[ModeSolution::soldebug5ad,Nmatrix+1],{Medium,Darker[Yellow,0.3]}]]]
@@ -840,11 +840,11 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 				If[!NradFlag,++count];
 				If[count>1&&radialsol[[1,1]],converged=True],
 				err2=err1; N2=N1; err1=expconv; N1=Nmatrix;
-				\[CapitalDelta]N=Floor[-(N1-N2)Log[10^\[Epsilon]2/err1]/Log[err2/err1]];
+				\[CapitalDelta]N=Max[1,Floor[-(N1-N2)Log[10^\[Epsilon]2/err1]/Log[err2/err1]]];
 				If[\[CapitalDelta]N/N1>1/10,\[CapitalDelta]N=Max[Floor[2\[CapitalDelta]N/3],1]];
-				Nmatrix+=\[CapitalDelta]N-1;
-				If[solutiondebug>4,Print[Style[StringForm[ModeSolution::soldebug5ad,Nmatrix+\[CapitalDelta]N],{Medium,Darker[Yellow,0.3]}]]];
-				Nmatrix+=\[CapitalDelta]N;count=0;iteration/=2;slowcount2=0;oscillate=0
+				Nmatrix+=\[CapitalDelta]N;
+				If[solutiondebug>4,Print[Style[StringForm[ModeSolution::soldebug5ad,Nmatrix],{Medium,Darker[Yellow,0.3]}]]];
+				count=0;iteration/=2;slowcount2=0;oscillate=0
 			];
 			NradFlag=False,
 			count=0
