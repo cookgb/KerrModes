@@ -103,6 +103,7 @@ Module[{},
 	SetOptions[KerrQNM`KerrQNMRefineSequence,SpinWeight->s];
 	SetOptions[KerrModes`KerrOmegaList,SpinWeight->s];
 	SetOptions[KerrModes`KerrOmegaListS,SpinWeight->s];
+	SetOptions[KerrModes`SWSFLists,SpinWeight->s];
 	Print[Style[StringForm[SetSpinWeight::confirm,s],{Medium,Darker[Green]}]];
 ]
 

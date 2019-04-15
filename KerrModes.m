@@ -353,6 +353,17 @@ PlotModeFunctionL::usage=
 "When PolynomialMode (see SelectMode) is selected, values of n and Nrcf are ignored."
 
 
+SWSFLists::usage=
+"SWSFLists[l,m,n,i]\n"<>
+"\t l : harmonic index\n"<>
+"\t m : azimuthal index\n"<>
+"\t n : overtone index (integer or overtone multiplet)\n"<>
+"\t i : index of specific mode in the sequence to be used\n"<>
+"Returns the real and imaginary parts of the Spin-Weighted Spheroidal Function "<>
+"as functions of x = ArcCos[\[Theta]].  The function returns {reallist,imaglisst} where "<>
+"each list is itself a list of {x,SWSH} pairs suitable for plotting with ListPlot."
+
+
 (* ::Subsection::Closed:: *)
 (*Reserved Globals*)
 
@@ -2821,6 +2832,27 @@ Module[{s=OptionValue[SpinWeight],multiple=OptionValue[OTmultiple],
 		Show[mainplot,
 			ListLinePlot[Schlist,FilterRules[FilterRules[{opts},Options[ListLinePlot]],Except[{PlotLegends,PlotMarkers,PlotStyle}]],PlotStyle->{Gray,Dashed},PlotRange->All],ImageSize->800]
 	]
+]
+
+
+Options[SWSFLists]=Union[{ModeType->Null[],SpinWeight->Null[]}];
+
+
+SWSFLists[l_Integer,m_Integer,n_Integer|n_List,index_Integer,opts:OptionsPattern[]]:=
+Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],
+		SpinWeightTable,KerrSEQ,SWdat,NC,x,theta,Ntheta,lmin,Matdlx,SWSF},
+	SpinWeightTable:=modeName;
+	If[MemberQ[{QNM,TTML,TTMR},modetype],SpinWeightTable:=GetKerrName[modetype,s]];
+	KerrSEQ:=SpinWeightTable[l,m,n];
+	SWdat=KerrSEQ[[index,3,3]];
+	NC=KerrSEQ[[index,3,2]];
+	x=Table[x,{x,-1,1,1/100}];
+	theta=ArcCos[#]&/@x;
+	Ntheta=Length[theta];
+	lmin=Max[Abs[m],Abs[s]];
+	Matdlx = Table[N[WignerD[{j-1+lmin,-m,-s},0,theta[[k]],0]],{k,1,Ntheta},{j,1,NC}];
+	SWSF = N[(-1)^m Sqrt[\[Pi]] Matdlx.Table[N[Sqrt[2(j-1+lmin)+1]SWdat[[j]]],{j,1,NC}]];
+	{Transpose[{x,Re[SWSF]}],Transpose[{x,Im[SWSF]}]}
 ]
 
 

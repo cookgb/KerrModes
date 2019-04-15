@@ -132,6 +132,7 @@ Module[{},
 	SetOptions[KerrModes`ModePlotOmega,SpinWeight->s];
 	SetOptions[KerrModes`ModePlotA,SpinWeight->s];
 	SetOptions[KerrModes`ModePlotOmegaTones,SpinWeight->s];
+	SetOptions[KerrModes`SWSFLists,SpinWeight->s];
 	Print[Style[StringForm[SetSpinWeight::confirm,s],{Medium,Darker[Green]}]];
 ]
 
