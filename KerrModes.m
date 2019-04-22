@@ -312,7 +312,7 @@ ModePlotOmegaTones::usage=
 	"Overtone Multiplets: There are cases where more than one sequence is associated with "<>
 	"the same overtone n of mode (l,m).  Such sets are called overtone multiplets.\n\n"<>
 	"Options:  All options for ListPlot are allowed.\n"<>
-	"\t SpinWeight\[Rule]Null : -2,-1,0\n"<>
+	"\t SpinWeight\[Rule] Defaults to values set by SetSpinWeight.  Can be overridden\n"<>
 	"\t OTmultiple\[Rule]{}\n"<>
 	"\t\t List of overtone multiplets.  An overtone multiplet is a List {n,Nmult},\n"<>
 	"\t\t where 'n' is the overtone index,and 'Nmult' is the number of sequences\n"<>
@@ -361,7 +361,13 @@ SWSFLists::usage=
 "\t i : index of specific mode in the sequence to be used\n"<>
 "Returns the real and imaginary parts of the Spin-Weighted Spheroidal Function "<>
 "as functions of x = ArcCos[\[Theta]].  The function returns {reallist,imaglisst} where "<>
-"each list is itself a list of {x,SWSH} pairs suitable for plotting with ListPlot."
+"each list is itself a list of {x,SWSH} pairs suitable for plotting with ListPlot.\n\n"<>
+"Options:\n"<>
+"\t ModeType \[Rule] (QNM,TTML,TTMR) Defaults according to which backage is run, \n"<>
+"\t\t\t but can be overridden to plot any kind of sequence.\n"<>
+"\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden.\n"<>
+"\t OutputType \[Rule] (Complex,ReIm,AbsArg), Defaults to Complex.\n"
+"\t Chop \[Rule] False: If set data is Chopped at 10^(value)."
 
 
 (* ::Subsection::Closed:: *)
@@ -379,16 +385,19 @@ Protect[SpinWeight,ModePrecision,RadialCFDepth,RadialCFMinDepth,RadialDebug,Radi
 
 
 Protect[SolutionDebug,NoNeg\[Omega],ModePrecision,SolutionSlow,SolutionOscillate,SolutionIter,
-		RadialCFDigits,NewtonRadius]
+		RadialCFDigits,NewtonRadius];
 
 
-Protect[Minblevel,Maxblevel,CurvatureRatio,Max\[CapitalDelta]\[Omega],ExtrapolationOrder,Asymptote,LogLog]
+Protect[Minblevel,Maxblevel,CurvatureRatio,Max\[CapitalDelta]\[Omega],ExtrapolationOrder,Asymptote,LogLog];
 
 
-Protect[ModeaStart,ModeGuess,SeqDirection,Maximala\[Epsilon],Minimala\[Epsilon],SolutionRelax,SolutionWindowl,SolutionWindowt]
+Protect[ModeaStart,ModeGuess,SeqDirection,Maximala\[Epsilon],Minimala\[Epsilon],SolutionRelax,SolutionWindowl,SolutionWindowt];
 
 
-Protect[Index,Refinement,RefinementAction,RefineAccuracy,RefinePrecision,RefineAdapt,FixAdapt,Update,RemoveLevels,ForceRefinement,RefinementPlot,SeqLevel,RadialCFLevel,AccuracyLevel,PrecisionLevel,StepRatio,CurveRatio,LimitRefinement,RadialCFMaxGuess]
+Protect[Index,Refinement,RefinementAction,RefineAccuracy,RefinePrecision,RefineAdapt,FixAdapt,Update,RemoveLevels,ForceRefinement,RefinementPlot,SeqLevel,RadialCFLevel,AccuracyLevel,PrecisionLevel,StepRatio,CurveRatio,LimitRefinement,RadialCFMaxGuess];
+
+
+Protect[OutputType,ChopLevel];
 
 
 Begin["`Private`"]
@@ -2835,12 +2844,12 @@ Module[{s=OptionValue[SpinWeight],multiple=OptionValue[OTmultiple],
 ]
 
 
-Options[SWSFLists]=Union[{ModeType->Null[],SpinWeight->Null[]}];
+Options[SWSFLists]=Union[{ModeType->Null[],SpinWeight->Null[],OutputType->Complex,ChopLevel->False}];
 
 
 SWSFLists[l_Integer,m_Integer,n_Integer|n_List,index_Integer,opts:OptionsPattern[]]:=
 Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],
-		SpinWeightTable,KerrSEQ,SWdat,NC,x,theta,Ntheta,lmin,Matdlx,SWSF},
+		SpinWeightTable,KerrSEQ,SWdat,NC,x,theta,Ntheta,lmin,Matdlx,SWSF,choplev},
 	SpinWeightTable:=modeName;
 	If[MemberQ[{QNM,TTML,TTMR},modetype],SpinWeightTable:=GetKerrName[modetype,s]];
 	KerrSEQ:=SpinWeightTable[l,m,n];
@@ -2852,7 +2861,16 @@ Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],
 	lmin=Max[Abs[m],Abs[s]];
 	Matdlx = Table[N[WignerD[{j-1+lmin,-m,-s},0,theta[[k]],0]],{k,1,Ntheta},{j,1,NC}];
 	SWSF = N[(-1)^m Sqrt[\[Pi]] Matdlx.Table[N[Sqrt[2(j-1+lmin)+1]SWdat[[j]]],{j,1,NC}]];
-	{Transpose[{x,Re[SWSF]}],Transpose[{x,Im[SWSF]}]}
+	If[OptionValue[ChopLevel]!=False,
+		choplev=OptionValue[ChopLevel];
+		If[IntegerQ[choplev],
+			SWSF = Chop[SWSF,10^(choplev)]]
+	];
+	Switch[OptionValue[OutputType],
+		Complex,Transpose[{x,SWSF}],
+		ReIm,{Transpose[{x,Re[SWSF]}],Transpose[{x,Im[SWSF]}]},
+		AbsArg,{Transpose[{x,Abs[SWSF]}],Transpose[{x,Arg[SWSF]}]}
+	]
 ]
 
 
