@@ -359,14 +359,18 @@ SWSFLists::usage=
 "\t m : azimuthal index\n"<>
 "\t n : overtone index (integer or overtone multiplet)\n"<>
 "\t i : index of specific mode in the sequence to be used\n"<>
-"Returns the real and imaginary parts of the Spin-Weighted Spheroidal Function "<>
-"as functions of x = ArcCos[\[Theta]].  The function returns {reallist,imaglisst} where "<>
-"each list is itself a list of {x,SWSH} pairs suitable for plotting with ListPlot.\n\n"<>
+"Returns the Spin-Weighted Spheroidal Function as functions of x = ArcCos[\[Theta]].  "<>
+"By default, the function returns complex value of the Spin-Weighted Spheroidal "<>
+"function.  If OutputType is set to ReIm, two lists are returned "<>
+"{reallist,imaglisst} where each list is itself a list of {x,SWSH} pairs "<>
+"suitable for plotting with ListPlot.  If OutputType is set to AbsArg, "<>
+"two lists are returned {abslist,arglist} where each list is itself a list of "<>
+"{x,SWSH} pairs suitable for plotting with ListPlot.\n\n"<>
 "Options:\n"<>
 "\t ModeType \[Rule] (QNM,TTML,TTMR) Defaults according to which backage is run, \n"<>
 "\t\t\t but can be overridden to plot any kind of sequence.\n"<>
 "\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden.\n"<>
-"\t OutputType \[Rule] (Complex,ReIm,AbsArg), Defaults to Complex.\n"
+"\t OutputType \[Rule] (Complex,ReIm,AbsArg), Defaults to Complex.\n"<>
 "\t Chop \[Rule] False: If set data is Chopped at 10^(value)."
 
 
