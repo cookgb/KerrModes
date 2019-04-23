@@ -2863,7 +2863,7 @@ Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],
 	theta=ArcCos[#]&/@x;
 	Ntheta=Length[theta];
 	lmin=Max[Abs[m],Abs[s]];
-	Matdlx = Table[N[WignerD[{j-1+lmin,-m,-s},0,theta[[k]],0]],{k,1,Ntheta},{j,1,NC}];
+	Matdlx = Table[N[WignerD[{j-1+lmin,m,-s},0,theta[[k]],0]],{k,1,Ntheta},{j,1,NC}];
 	SWSF = N[(-1)^m Sqrt[\[Pi]] Matdlx.Table[N[Sqrt[2(j-1+lmin)+1]SWdat[[j]]],{j,1,NC}]];
 	If[OptionValue[ChopLevel]!=False,
 		choplev=OptionValue[ChopLevel];
