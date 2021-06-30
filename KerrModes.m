@@ -753,7 +753,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 		err1=expconv; N1=Nmatrix;
 		If[count>2,
 			\[CapitalDelta]N=Max[1,Floor[-(N1-N2)Log[10^\[Epsilon]2/err1]/Log[err2/err1]]];
-			If[\[CapitalDelta]N/N1>1/10,\[CapitalDelta]N=Max[Floor[2\[CapitalDelta]N/3],1]];
+			If[\[CapitalDelta]N/N1>1/10,\[CapitalDelta]N=Max[Min[Floor[2\[CapitalDelta]N/3],10],1]];
 			Nmatrix+=\[CapitalDelta]N-1;
 			If[solutiondebug>4,Print[Style[StringForm[ModeSolution::soldebug5ad,Nmatrix+1],{Medium,Darker[Yellow,0.3]}]]]
 		];
