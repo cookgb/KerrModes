@@ -374,6 +374,22 @@ SWSFLists::usage=
 "\t Chop \[Rule] False: If set data is Chopped at 10^(value)."
 
 
+SWSFRealPath::usage=
+"SWSFRealPath[l,m,n,i]\n"<>
+"\t l : harmonic index\n"<>
+"\t m : azimuthal index\n"<>
+"\t n : overtone index (integer or overtone multiplet)\n"<>
+"\t i : index of specific mode in the sequence to be used\n"<>
+"Returns the complex path between the poles at z=\[PlusMinus]1 along which the Spin-Weighted "<> 
+"Spheroidal Function is real, along with the the values of the Spin-Weighted "<>
+"Spheroidal Function at those locations.  This information is returned as a list " <>
+"of lists {path,values}.\n" <>
+"Options:\n"<>
+"\t ModeType \[Rule] (QNM,TTML,TTMR) Defaults according to which backage is run, \n"<>
+"\t\t\t but can be overridden to plot any kind of sequence.\n"<>
+"\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden."
+
+
 (* ::Subsection::Closed:: *)
 (*Reserved Globals*)
 
@@ -2875,6 +2891,44 @@ Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],
 		ReIm,{Transpose[{x,Re[SWSF]}],Transpose[{x,Im[SWSF]}]},
 		AbsArg,{Transpose[{x,Abs[SWSF]}],Transpose[{x,Arg[SWSF]}]}
 	]
+]
+
+
+Options[SWSFRealPath]=Union[{ModeType->Null[],SpinWeight->Null[]}]
+
+
+SWSFRealPath[l_Integer,m_Integer,n_Integer|n_List,index_Integer,opts:OptionsPattern[]]:=
+Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],SpinWeightTable,KerrSEQ,
+		SWdat,NC,lmin,Matdlx,SWSF,z,z0,zf,\[Delta]z,\[Phi],\[Phi]g,\[Phi]0,phase,zlist,SWSFlist,count=0},
+	SpinWeightTable:=modeName;
+	If[MemberQ[{QNM,TTML,TTMR},modetype],SpinWeightTable:=GetKerrName[modetype,s]];
+	KerrSEQ:=SpinWeightTable[l,m,n];
+	SWdat=KerrSEQ[[index,3,3]];
+	NC=KerrSEQ[[index,3,2]];
+	lmin=Max[Abs[m],Abs[s]];
+	Matdlx = Table[WignerD[{j-1+lmin,m,-s},0,ArcCos[z],0],{j,1,NC}];
+	SWSF = (-1)^m Sqrt[\[Pi]] Matdlx . Table[Sqrt[2(j-1+lmin)+1]SWdat[[j]],{j,1,NC}];
+	phase=1;
+	If[Abs[N[SWSF/.z->-1]]>10^(-10),phase=Exp[-I Arg[N[SWSF/.z->-1]]];z0=-1;zf=1;\[Phi]g=0,
+		If[Abs[N[SWSF/.z->+1]]>10^(-10),phase=Exp[-I Arg[N[SWSF/.z->+1]]];z0=1;zf=-1;\[Phi]g=\[Pi],
+		z0=-1;zf=1;\[Phi]g=0]
+	];
+	SWSF*=phase; \[Phi]0=\[Phi]g;
+	(*Print["SWSF(-1) = ",N[SWSF/.z->-1]];
+	Print["SWSF(+1) = ",N[SWSF/.z->1]];
+	Print["z0 = ",z0," : zf = ",zf," : \[Phi]g = ",\[Phi]g];*)
+	\[Delta]z=1/50;
+	zlist={z0};
+	SWSFlist={Chop[N[SWSF/.z->z0]]};
+	While[Abs[z0-zf]>10^(-8)&& count++<10000,
+		\[Delta]z=Min[1/500,Abs[z0-zf]/2];
+		(*If[count==1,Print[Plot[Im[SWSF/.z->z0+\[Delta]z Exp[\[ImaginaryI] \[Phi]]],{\[Phi],0,2\[Pi]}]]];*)
+		\[Phi]g=FindRoot[Im[SWSF/.z->z0+\[Delta]z Exp[I \[Phi]]]==0,{\[Phi],\[Phi]g}][[1,2]];
+		z0+=\[Delta]z Exp[I \[Phi]g];
+		AppendTo[zlist,z0];AppendTo[SWSFlist,Chop[N[SWSF/.z->z0]]];
+	];
+	If[zf==-1,zlist=Reverse[zlist];SWSFlist=Reverse[SWSFlist]];
+	{zlist,SWSFlist}
 ]
 
 
