@@ -387,7 +387,15 @@ SWSFRealPath::usage=
 "Options:\n"<>
 "\t ModeType \[Rule] (QNM,TTML,TTMR) Defaults according to which backage is run, \n"<>
 "\t\t\t but can be overridden to plot any kind of sequence.\n"<>
-"\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden."
+"\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden.\n" <>
+"\t PathStart \[Rule] {+1,-1,Automatic} Defaults to Automatic.  Determines which pole \n" <>
+"\t\t\t is fixed to be purely real.\n" <>
+"\t MaxSteps \[Rule] Defaults to 5000.  Maximum number of path steps allowed.\n" <>
+"\t StepSize \[Rule] Defaults to 1/50.  Maximum step size along path.\n" <>
+"\t PlotStart \[Rule] Defaults to False.  Plot imaginary part of Spin-Weighted Spheroidal\n" <>
+"\t\t\t Function around starting pole at distance of StepSize.\n"<>
+"\t \[Phi]guess \[Rule] Defaults to Automatic.  Initial guess for starting direction.\n"<>
+"\t PrintPoleValues \[Rule] Defaults to False."
 
 
 (* ::Subsection::Closed:: *)
@@ -417,7 +425,7 @@ Protect[ModeaStart,ModeGuess,SeqDirection,Maximala\[Epsilon],Minimala\[Epsilon],
 Protect[Index,Refinement,RefinementAction,RefineAccuracy,RefinePrecision,RefineAdapt,FixAdapt,Update,RemoveLevels,ForceRefinement,RefinementPlot,SeqLevel,RadialCFLevel,AccuracyLevel,PrecisionLevel,StepRatio,CurveRatio,LimitRefinement,RadialCFMaxGuess];
 
 
-Protect[OutputType,ChopLevel];
+Protect[OutputType,ChopLevel,PathStart,StepSize,PlotStart,\[Phi]guess,PrintPoleValues];
 
 
 Begin["`Private`"]
@@ -2880,7 +2888,7 @@ Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],
 	Ntheta=Length[theta];
 	lmin=Max[Abs[m],Abs[s]];
 	Matdlx = Table[N[WignerD[{j-1+lmin,m,-s},0,theta[[k]],0]],{k,1,Ntheta},{j,1,NC}];
-	SWSF = N[(-1)^m Sqrt[\[Pi]] Matdlx.Table[N[Sqrt[2(j-1+lmin)+1]SWdat[[j]]],{j,1,NC}]];
+	SWSF = N[(-1)^m Sqrt[\[Pi]] Matdlx . Table[N[Sqrt[2(j-1+lmin)+1]SWdat[[j]]],{j,1,NC}]];
 	If[OptionValue[ChopLevel]!=False,
 		choplev=OptionValue[ChopLevel];
 		If[IntegerQ[choplev],
@@ -2894,12 +2902,15 @@ Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],
 ]
 
 
-Options[SWSFRealPath]=Union[{ModeType->Null[],SpinWeight->Null[]}]
+Options[SWSFRealPath]=Union[{ModeType->Null[],SpinWeight->Null[],PathStart->Automatic,MaxSteps->5000,StepSize->1/50,PlotStart->False,\[Phi]guess->Automatic,PrintPoleValues->False}]
 
 
 SWSFRealPath[l_Integer,m_Integer,n_Integer|n_List,index_Integer,opts:OptionsPattern[]]:=
 Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],SpinWeightTable,KerrSEQ,
-		SWdat,NC,lmin,Matdlx,SWSF,z,z0,zf,\[Delta]z,\[Phi],\[Phi]g,\[Phi]0,phase,zlist,SWSFlist,count=0},
+		SWdat,NC,lmin,Matdlx,SWSF,z,z0,zf,\[Delta]z,\[Phi],\[Phi]g,\[Phi]0,phase,zlist,SWSFlist,count=0,
+		max\[Delta]r=OptionValue[StepSize],maxcount=OptionValue[MaxSteps],
+		plot=OptionValue[PlotStart]},
+	SWSFRealPath::PathStart="Invalid PathStart : `1`";
 	SpinWeightTable:=modeName;
 	If[MemberQ[{QNM,TTML,TTMR},modetype],SpinWeightTable:=GetKerrName[modetype,s]];
 	KerrSEQ:=SpinWeightTable[l,m,n];
@@ -2909,20 +2920,30 @@ Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],SpinWeightTable
 	Matdlx = Table[WignerD[{j-1+lmin,m,-s},0,ArcCos[z],0],{j,1,NC}];
 	SWSF = (-1)^m Sqrt[\[Pi]] Matdlx . Table[Sqrt[2(j-1+lmin)+1]SWdat[[j]],{j,1,NC}];
 	phase=1;
-	If[Abs[N[SWSF/.z->-1]]>10^(-10),phase=Exp[-I Arg[N[SWSF/.z->-1]]];z0=-1;zf=1;\[Phi]g=0,
-		If[Abs[N[SWSF/.z->+1]]>10^(-10),phase=Exp[-I Arg[N[SWSF/.z->+1]]];z0=1;zf=-1;\[Phi]g=\[Pi],
-		z0=-1;zf=1;\[Phi]g=0]
+	Switch[OptionValue[PathStart],
+		Automatic,
+			If[Abs[N[SWSF/.z->-1]]>10^(-10),phase=Exp[-I Arg[N[SWSF/.z->-1]]];z0=-1;zf=1;\[Phi]g=0,
+				If[Abs[N[SWSF/.z->+1]]>10^(-10),phase=Exp[-I Arg[N[SWSF/.z->+1]]];z0=1;zf=-1;\[Phi]g=\[Pi],
+				z0=-1;zf=1;\[Phi]g=0]
+			],
+		+1,
+			phase=Exp[-I Arg[N[SWSF/.z->+1]]];z0=+1;zf=-1;\[Phi]g=\[Pi],
+		-1,
+			phase=Exp[-I Arg[N[SWSF/.z->-1]]];z0=-1;zf=+1;\[Phi]g=0,
+		_,Message[SWSFRealPath::PathStart,OptionValue[PathStart]];Abort[]
 	];
+	If[OptionValue[\[Phi]guess]==Automatic,Null[],\[Phi]g=OptionValue[\[Phi]guess],\[Phi]g=OptionValue[\[Phi]guess]];
 	SWSF*=phase; \[Phi]0=\[Phi]g;
-	(*Print["SWSF(-1) = ",N[SWSF/.z->-1]];
-	Print["SWSF(+1) = ",N[SWSF/.z->1]];
-	Print["z0 = ",z0," : zf = ",zf," : \[Phi]g = ",\[Phi]g];*)
-	\[Delta]z=1/50;
+	If[OptionValue[PrintPoleValues]==True,
+		Print["SWSF(-1) = ",N[SWSF/.z->-1]];
+		Print["SWSF(+1) = ",N[SWSF/.z->1]];
+		Print["z0 = ",z0," : zf = ",zf," : \[Phi]g = ",\[Phi]g];
+	];
 	zlist={z0};
 	SWSFlist={Chop[N[SWSF/.z->z0]]};
-	While[Abs[z0-zf]>10^(-8)&& count++<10000,
-		\[Delta]z=Min[1/500,Abs[z0-zf]/2];
-		(*If[count==1,Print[Plot[Im[SWSF/.z->z0+\[Delta]z Exp[\[ImaginaryI] \[Phi]]],{\[Phi],0,2\[Pi]}]]];*)
+	While[Abs[z0-zf]>10^(-8)&& count++<maxcount,
+		\[Delta]z=Min[max\[Delta]r,Abs[z0-zf]/2];
+		If[plot && count==1,Print[Plot[Im[SWSF/.z->z0+\[Delta]z Exp[I \[Phi]]],{\[Phi],0,2\[Pi]}]]];
 		\[Phi]g=FindRoot[Im[SWSF/.z->z0+\[Delta]z Exp[I \[Phi]]]==0,{\[Phi],\[Phi]g}][[1,2]];
 		z0+=\[Delta]z Exp[I \[Phi]g];
 		AppendTo[zlist,z0];AppendTo[SWSFlist,Chop[N[SWSF/.z->z0]]];
