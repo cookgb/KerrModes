@@ -422,7 +422,7 @@ Protect[Minblevel,Maxblevel,CurvatureRatio,Max\[CapitalDelta]\[Omega],Extrapolat
 Protect[ModeaStart,ModeGuess,SeqDirection,Maximala\[Epsilon],Minimala\[Epsilon],SolutionRelax,SolutionWindowl,SolutionWindowt];
 
 
-Protect[Index,Refinement,RefinementAction,RefineAccuracy,RefinePrecision,RefineAdapt,FixAdapt,Update,RemoveLevels,ForceRefinement,RefinementPlot,SeqLevel,RadialCFLevel,AccuracyLevel,PrecisionLevel,StepRatio,CurveRatio,LimitRefinement,RadialCFMaxGuess];
+Protect[Index,Refinement,RefinementAction,RefineAccuracy,RefinePrecision,RefineAdapt,FixAdapt,Update,RemoveLevels,TerminalHigh,TerminalLow,ForceRefinement,RefinementPlot,SeqLevel,RadialCFLevel,AccuracyLevel,PrecisionLevel,StepRatio,CurveRatio,LimitRefinement,RadialCFMaxGuess];
 
 
 Protect[OutputType,ChopLevel,PathStart,StepSize,PlotStart,\[Phi]guess,PrintPoleValues];
@@ -1662,6 +1662,8 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,
 		i,plotdata,plotdata1,\[Omega]dat,d\[Omega],dd\[Omega],ind0,a0,\[CapitalDelta]ap,\[CapitalDelta]am,\[Omega]g,Almg,ModeSol,inversion,\[Epsilon]=\[Epsilon]max,Nrcf,Nm,
 		KerrSEQret,dummy,blevel,forward,incflag,limitlist={},ll,inc,dec,last,re\[Omega],width,
 		indexmin,indexmax,offset,oldNrcf,newNrcf,oldCf,newCf,rcfmin,ref\[Epsilon],
+		saveSeq,terminalSeq,oldbstruct,newbstruct,addlist,removelist,nearesta,
+		takerange,edat0,edat,ef,a,afit,alist,lev,
 		useindex=OptionValue[Index],
 		precision=OptionValue[ModePrecision],refinement=OptionValue[Refinement],
 		action=OptionValue[RefinementAction],forcerefine=OptionValue[ForceRefinement],
@@ -1669,7 +1671,7 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,
 		Minb=OptionValue[Minblevel],Maxb=OptionValue[Maxblevel],
 		relax=Rationalize[OptionValue[SolutionRelax]],
 		RCFmin=OptionValue[RadialCFMinDepth],RCFmax=OptionValue[RadialCFMaxGuess],
-		rcfdepth=OptionValue[RadialCFDepth]},
+		rcfdepth=OptionValue[RadialCFDepth],extraporder=OptionValue[ExtrapolationOrder]},
 	KerrModeRefineSequence::Refinement="The value of Refinement (`1`) is not an integer index, real value for a, a list of either specifying a range, or ALL.";
 	KerrModeRefineSequence::index="using index `1` instead of `2`";
 	KerrModeRefineSequence::value="using a = `1` instead of `2`";
@@ -1684,13 +1686,17 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,
 	KerrModeRefineSequence::largedepth="Warning: Computed radial CF depth too large.";
 	KerrModeRefineSequence::setdepth="         Setting CF depth to `1`";
 	KerrModeRefineSequence::indexfail="Solution failed at index `1`";
+	KerrModeRefineSequence::TerminalLoRange="Refinement `1` does not start at beginning of sequence";
+	KerrModeRefineSequence::TerminalHiRange="Refinement `1` does not end at end of sequence";
+	KerrModeRefineSequence::TerminalLowFailure="Interpolated solution at `1` failed";
+	KerrModeRefineSequence::TerminalHiFailure="Interpolated solution at `1` failed";
 	SpinWeightTable:=modeName;
 	KerrSEQ:=modeName[l,m,n];
 	NKMode=Length[KerrSEQ];
 	If[NKMode<3,Message[KerrModeRefineSequence::sequence,NKMode];Return[]];
-	If[action==RefineAccuracy || action==RefinePrecision || action==Update || action==None,
-		indexmin=1;indexmax=NKMode;offset=0
-		,Null[],
+	If[action==RefineAccuracy || action==RefinePrecision || action==Update || action==None || action==TerminalDescent || action==TerminalAscent,
+		indexmin=1;indexmax=NKMode;offset=0,
+		indexmin=2;indexmax=NKMode-1;offset=1,
 		indexmin=2;indexmax=NKMode-1;offset=1
 	];
 (* Parse Refinement option to set range of values to refine *)
@@ -1860,7 +1866,13 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,
 		,None,
 			plotdata=None;
 		,SeqLevel,
-			plotdata=Table[{If[useindex,i,KerrSEQ[[i,1]]],Round[-(3+Log10[KerrSEQ[[i+1,1]]-KerrSEQ[[i,1]]])/Log10[2]]},{i,Min[NKMode-1,index0m],Min[NKMode-1,index0p]}];
+			alist=Flatten[Take[KerrSEQ,All,1]];
+			lev=Round[-(3+Log10[Take[Min[#[[1]],#[[2]]]&/@
+									Transpose[{alist-Prepend[Drop[alist,-1],-\[Infinity]],
+											   Append[Drop[alist,1],\[Infinity]]-Take[alist]}],{index0m,index0p}]])/Log10[2]];
+			alist=Take[alist,{index0m,index0p}];
+			plotdata=Transpose[{If[useindex,Range[Length[alist]],alist],lev}];
+			(*plotdata=Table[{If[useindex,i,KerrSEQ[[i,1]]],Round[-(3+Log10[KerrSEQ[[i+1,1]]-KerrSEQ[[i,1]]])/Log10[2]]},{i,Min[NKMode-1,index0m],Min[NKMode-1,index0p]}];*)
 		,RadialCFLevel,
 			plotdata=Table[{If[useindex,i,KerrSEQ[[i,1]]],If[Length[KerrSEQ[[i,2]]]>=6,KerrSEQ[[i,2,6]],KerrSEQ[[i,2,3]],0]},{i,Min[NKMode-1,index0m],Min[NKMode-1,index0p]}];
 		,AccuracyLevel,
@@ -2221,6 +2233,173 @@ Print["RefineAcc at : ",index0];
 					];
 				];
 			];
+		,TerminalLow,
+			If[precision!=$MinPrecision,Print[Style[StringForm[KerrModeRefineSequence::precision,precision],{Medium,Darker[Red]}]]];
+			$MinPrecision=precision;
+			index0m=1;
+			index0p=0;
+			While[Length[limitlist]>0,
+				If[limitlist[[-1,1]]==1,index0p=limitlist[[-1,2]];Break[]];
+				limitlist=Drop[limitlist,-1];
+			];
+			If[index0p==0,Message[KerrModeRefineSequence::TerminalLoRange,refinement];Return[]];
+			{terminalSeq,saveSeq}=TakeDrop[KerrSEQ,index0p];
+			oldbstruct=bStructure[Take[KerrSEQ,All,1],{1,index0p}];
+			newbstruct=DescendFast[oldbstruct];
+			addlist=Complement[afrombstruct[#]&/@newbstruct,afrombstruct[#]&/@oldbstruct];
+			removelist=Complement[afrombstruct[#]&/@oldbstruct,afrombstruct[#]&/@newbstruct];
+			While[Length[addlist]>0,
+				nearesta=Nearest[#[[1]]&/@terminalSeq,addlist[[-1]]][[1]];
+				ind0=Flatten[Position[#[[1]]&/@terminalSeq,nearesta]][[1]];
+				(*Print["TerminalLow (nearest) \[Omega]=",terminalSeq[[ind0,2,1]]," : Alm=",terminalSeq[[ind0,3,1]]];*)
+				takerange=If[ind0==1||(addlist[[-1]]>nearesta&&ind0<Length[terminalSeq]),{ind0,ind0+1},{ind0-1,ind0}];
+				Switch[extraporder,
+					LogLog,
+					edat0=Take[terminalSeq,takerange];
+					edat=Table[{Log[edat0[[i,1]]],Log[Abs[Re[edat0[[i,2,1]]]]]},{i,1,2}];
+					ef=LinearModelFit[edat,{1,a},a];
+					\[Omega]g=Sign[Re[edat0[[1,2,1]]]]Exp[ef[Log[addlist[[-1]]]]];
+					edat=Table[{Log[edat0[[i,1]]],Log[Abs[Im[edat0[[i,2,1]]]]]},{i,1,2}];
+					ef=LinearModelFit[edat,{1,a},a];
+					\[Omega]g+=I Sign[Im[edat0[[1,2,1]]]]Exp[ef[Log[addlist[[-1]]]]];
+					takerange={ind0-1,ind0+1};
+					takerange[[2]]=Min[Length[terminalSeq],takerange[[1]]+2];
+					takerange[[1]]=Max[1,takerange[[2]]-2];
+					edat0=Take[terminalSeq,takerange];
+					edat=Table[{edat0[[i,1]],edat0[[i,3,1]]},{i,1,Length[edat0]}];
+					Almg=InterpolatingPolynomial[edat,addlist[[-1]]],
+					Asymptote,
+					{\[Omega]g,Almg}=AsymptoteFunction[s,l,m,addlist[[-1]]],
+					_,
+					If[!IntegerQ[extraporder]||extraporder<2,extraporder=2];
+					takerange={ind0-1,ind0+1};
+					If[extraporder>2,
+						takerange[[1]]=Max[1,If[addlist[[-1]]>nearesta,takerange[[1]]-Floor[extraporder/2]-1,takerange[[1]]-Floor[extraporder/2]]];
+					];
+					takerange[[2]]=Min[Length[terminalSeq],takerange[[1]]+extraporder];
+					takerange[[1]]=Max[1,takerange[[2]]-extraporder];
+					edat0=Take[terminalSeq,takerange];
+					edat=Table[{edat0[[i,1]],edat0[[i,2,1]]},{i,1,Length[edat0]}];
+					\[Omega]g=InterpolatingPolynomial[edat,addlist[[-1]]];
+					edat=Table[{edat0[[i,1]],edat0[[i,3,1]]},{i,1,Length[edat0]}];
+					Almg=InterpolatingPolynomial[edat,addlist[[-1]]];
+				];	
+				(*Print["TerminalLow (guess) \[Omega]=",\[Omega]g," : Alm=",Almg];*)
+				inversion=terminalSeq[[ind0,2,2]];
+				ref\[Epsilon]=Min[\[Epsilon],terminalSeq[[ind0,2,4]]];
+				Nrcf=If[Length[terminalSeq[[ind0,2]]]>=6,terminalSeq[[ind0,2,6]],terminalSeq[[ind0,2,3]]];
+				Nm=terminalSeq[[ind0,3,2]];
+				ModeSol=ModeSolution[inversion,s,l,m,addlist[[-1]],
+									SetPrecision[\[Omega]g,Max[precision,$MinPrecision]],
+									SetPrecision[Almg,Max[precision,$MinPrecision]],ref\[Epsilon],relax,
+									Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[ModeSolution]]];
+				If[ModeSol[[1]],
+					Print["ModeSol a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision],
+							" Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision],
+							"  |\[CapitalDelta]\[Omega]| = ",SetPrecision[Abs[\[Omega]g-ModeSol[[4,2,1]]],MachinePrecision]];
+					terminalSeq=Insert[terminalSeq,ModeSol[[4]],If[addlist[[-1]]>nearesta,ind0+1,ind0]],
+					Message[KerrModeRefineSequence::TerminalLowFailure,N[addlist[[1]],{Infinity,20}]];Return[]		
+				];
+				addlist=Drop[addlist,-1];
+			];
+			While[Length[removelist]>0,
+				terminalSeq=Drop[terminalSeq,Position[#[[1]]&/@terminalSeq,removelist[[1]]][[1]]];
+				removelist=Drop[removelist,1];
+			];
+			modeName[l,m,n]=Join[terminalSeq,saveSeq];
+		,TerminalHigh,
+			If[precision!=$MinPrecision,Print[Style[StringForm[KerrModeRefineSequence::precision,precision],{Medium,Darker[Red]}]]];
+			$MinPrecision=precision;
+			index0m=0;
+			index0p=NKMode;
+			While[Length[limitlist]>0,
+				If[limitlist[[-1,2]]==NKMode,index0m=limitlist[[-1,1]];Break[]];
+				limitlist=Drop[limitlist,-1];
+			];
+			If[index0m==0,Message[KerrModeRefineSequence::TerminalHiRange,refinement];Return[]];
+			{saveSeq,terminalSeq}=TakeDrop[KerrSEQ,index0m-1];
+			oldbstruct=bStructure[Take[KerrSEQ,All,1],{index0m,-1}];
+			newbstruct=AscendFast[oldbstruct];
+			addlist=Complement[afrombstruct[#]&/@newbstruct,afrombstruct[#]&/@oldbstruct];
+			removelist=Complement[afrombstruct[#]&/@oldbstruct,afrombstruct[#]&/@newbstruct];
+			While[Length[addlist]>0,
+				nearesta=Nearest[#[[1]]&/@terminalSeq,addlist[[1]]][[1]];
+				ind0=Flatten[Position[#[[1]]&/@terminalSeq,nearesta]][[1]];
+				(*Print["TerminalHigh (nearest) \[Omega]=",terminalSeq[[ind0,2,1]]," : Alm=",terminalSeq[[ind0,3,1]]];*)
+				takerange=If[ind0==1||(addlist[[-1]]>nearesta&&ind0<Length[terminalSeq]),{ind0,ind0+1},{ind0-1,ind0}];
+				Switch[extraporder,
+					Accumulate,
+					takerange[[2]]=Min[Length[terminalSeq],takerange[[1]]+2];
+					takerange[[1]]=Max[1,takerange[[2]]-2];
+					edat0=Take[terminalSeq,takerange];
+					edat=Table[{edat0[[i,1]],edat0[[i,3,1]]},{i,1,Length[edat0]}];
+					Almg=InterpolatingPolynomial[edat,addlist[[1]]];
+					takerange={ind0-5,ind0+5};
+					takerange[[2]]=Min[Length[terminalSeq],takerange[[1]]+9];
+					takerange[[1]]=Max[1,takerange[[2]]-9];
+					edat0=SetPrecision[Take[terminalSeq,takerange],Max[precision,$MinPrecision]];
+					edat=Table[{1-edat0[[i,1]],Re[edat0[[i,2,1]]]},{i,1,Length[edat0]}];
+					afit=NonlinearModelFit[edat,m/2+\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
+												{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
+					\[Omega]g=afit[1-addlist[[1]]];
+					edat=Table[{1-edat0[[i,1]],Im[edat0[[i,2,1]]]},{i,1,Length[edat0]}];
+					afit=NonlinearModelFit[edat,\[Alpha] Sqrt[eps]+\[Beta] eps+\[Gamma] eps^(3/2)+\[Delta] eps^2+\[Zeta] eps^(5/2)+\[Eta] eps^3,
+												{\[Alpha],\[Beta],\[Gamma],\[Delta],\[Zeta],\[Eta]},eps];
+					\[Omega]g+=I afit[1-addlist[[1]]],
+					LogLog,
+					edat0=Take[terminalSeq,takerange];
+					edat=Table[{Log[edat0[[i,1]]],Log[Abs[Re[edat0[[i,2,1]]]]]},{i,1,2}];
+					ef=LinearModelFit[edat,{1,a},a];
+					\[Omega]g=Sign[Re[edat0[[1,2,1]]]]Exp[ef[Log[addlist[[-1]]]]];
+					edat=Table[{Log[edat0[[i,1]]],Log[Abs[Im[edat0[[i,2,1]]]]]},{i,1,2}];
+					ef=LinearModelFit[edat,{1,a},a];
+					\[Omega]g+=I Sign[Im[edat0[[1,2,1]]]]Exp[ef[Log[addlist[[1]]]]];
+					takerange={ind0-1,ind0+1};
+					takerange[[2]]=Min[Length[terminalSeq],takerange[[1]]+2];
+					takerange[[1]]=Max[1,takerange[[2]]-2];
+					edat0=Take[terminalSeq,takerange];
+					edat=Table[{edat0[[i,1]],edat0[[i,3,1]]},{i,1,Length[edat0]}];
+					Almg=InterpolatingPolynomial[edat,addlist[[1]]],
+					Asymptote,
+Print["Shouldn't Call this! : TerminalHigh : Asymptote"];
+					{\[Omega]g,Almg}=AsymptoteFunction[s,l,m,addlist[[1]]],
+					_,
+					If[!IntegerQ[extraporder]||extraporder<2,extraporder=2];
+					takerange={ind0-1,ind0+1};
+					If[extraporder>2,
+						takerange[[1]]=Max[1,If[addlist[[-1]]>nearesta,takerange[[1]]-Floor[extraporder/2]-1,takerange[[1]]-Floor[extraporder/2]]];
+					];
+					takerange[[2]]=Min[Length[terminalSeq],takerange[[1]]+extraporder];
+					takerange[[1]]=Max[1,takerange[[2]]-extraporder];
+					edat0=Take[terminalSeq,takerange];
+					edat=Table[{edat0[[i,1]],edat0[[i,2,1]]},{i,1,Length[edat0]}];
+					\[Omega]g=InterpolatingPolynomial[edat,addlist[[-1]]];
+					edat=Table[{edat0[[i,1]],edat0[[i,3,1]]},{i,1,Length[edat0]}];
+					Almg=InterpolatingPolynomial[edat,addlist[[1]]];
+				];
+				(*Print["TerminalHigh (guess) \[Omega]=",\[Omega]g," : Alm=",Almg];*)
+				inversion=terminalSeq[[ind0,2,2]];
+				ref\[Epsilon]=Min[\[Epsilon],terminalSeq[[ind0,2,4]]];
+				Nrcf=If[Length[terminalSeq[[ind0,2]]]>=6,terminalSeq[[ind0,2,6]],terminalSeq[[ind0,2,3]]];
+				Nm=terminalSeq[[ind0,3,2]];
+				ModeSol=ModeSolution[inversion,s,l,m,addlist[[1]],
+									SetPrecision[\[Omega]g,Max[precision,$MinPrecision]],
+									SetPrecision[Almg,Max[precision,$MinPrecision]],ref\[Epsilon],relax,
+									Nrcf,Nm,0,0,0,0,FilterRules[{opts},Options[ModeSolution]]];
+				If[ModeSol[[1]],
+					Print["ModeSol a=",Block[{$MinPrecision=0},N[ModeSol[[4,1]],{Infinity,20}]]," \[Omega]=",SetPrecision[ModeSol[[4,2,1]],MachinePrecision],
+							" Alm=",SetPrecision[ModeSol[[4,3,1]],MachinePrecision],
+							"  |\[CapitalDelta]\[Omega]| = ",SetPrecision[Abs[\[Omega]g-ModeSol[[4,2,1]]],MachinePrecision]];
+					terminalSeq=Insert[terminalSeq,ModeSol[[4]],If[addlist[[1]]>nearesta,ind0+1,ind0]],
+					Message[KerrModeRefineSequence::TerminalHiFailure,N[addlist[[1]],{Infinity,20}]];Return[]	
+				];
+				addlist=Drop[addlist,1];
+			];
+			While[Length[removelist]>0,
+				terminalSeq=Drop[terminalSeq,Position[#[[1]]&/@terminalSeq,removelist[[1]]][[1]]];
+				removelist=Drop[removelist,1];
+			];
+			modeName[l,m,n]=Join[saveSeq,terminalSeq];
 		,_,Message[KerrModeRefineSequence::badaction,action];Return[]
 	];
 ]
@@ -2391,10 +2570,54 @@ Module[{shorten=OptionValue[ShortenBy],KerrSEQ,SeqStatus,na},
 ]
 
 
+bStructure[a_,range_]:=Module[{Na=Length[a],a0=Take[a,range],ap,am},
+	am=Prepend[Drop[a0,-1],If[range[[1]]==1 || Na+range[[1]]==0,-\[Infinity],a[[range[[1]]-1]]]];
+	ap=Append[Drop[a0,1],If[range[[2]]==-1 || Na-range[[2]]==0,\[Infinity],a[[range[[2]]+1]]]];
+	Join[{#[[2]]},
+		Flatten[Reap[NestWhileList[
+						Function[w,Function[u,Sow[u[[1]]];Drop[u,1]][Join[QuotientRemainder[w[[1]],10^(-3)2^(-w[[2]])],{w[[2]]+1}]]],
+						{#[[1]],0},
+						#[[1]]!=0&]
+					][[2]]]]&/@
+		Transpose[{Flatten[a0],
+				   (-FullSimplify[Log[1000#]/Log[2]]&/@(Min[#[[1]],#[[2]]]&/@Transpose[{Flatten[a0-am],Flatten[ap-a0]}]))}
+				 ]
+]
 
 
+afrombstruct[bstruct_]:=10^(-3)Sum[bstruct[[i+2]]2^(-i),{i,0,Length[bstruct]-2}]
 
 
+DescendFast[bstruct_]:=Module[{Posmax,count,b,bmax=bstruct[[1,1]],bmin=bstruct[[-1,1]],newa},
+	Posmax=Flatten[Position[#[[1]]&/@bstruct,bmax]];
+	While[Posmax[[-1]]!=Length[Posmax],Posmax=Drop[Posmax,-1]];
+	newa={afrombstruct[bstruct[[1]]]};
+	count=4;While[count-->0,AppendTo[newa,newa[[-1]]+ 10^(-3)2^(-bmax)]];
+	While[Length[bStructure[newa,{1,-1}][[-1]]]-2>bmax-1,AppendTo[newa,newa[[-1]]+ 10^(-3)2^(-bmax)]];
+	For[b=bmax-1,b>bmin,--b,
+		count=3;While[count-->0,AppendTo[newa,newa[[-1]]+ 10^(-3)2^(-b)]]
+		While[Length[bStructure[newa,{1,-1}][[-1]]]-2>b-1,AppendTo[newa,newa[[-1]]+ 10^(-3)2^(-b)]];
+	];
+	While[newa[[-1]]<afrombstruct[bstruct[[-1]]],AppendTo[newa,newa[[-1]]+ 10^(-3)2^(-bmin)]];
+	While[newa[[-1]]>afrombstruct[bstruct[[-1]]],newa=Drop[newa,-1]];
+	bStructure[newa,{1,-1}]
+]
+
+
+AscendFast[bstruct_]:=Module[{Posmax,count,b,bmax=bstruct[[-1,1]],bmin=bstruct[[1,1]],newa},
+	Posmax=Flatten[Position[#[[1]]&/@bstruct,bmax]];
+	While[Posmax[[1]]!=Length[bstruct]-Length[Posmax]+1,Posmax=Drop[Posmax,1]];
+	newa={afrombstruct[bstruct[[-1]]]};
+	count=4;While[count-->0,PrependTo[newa,newa[[1]]- 10^(-3)2^(-bmax)]];
+	While[Length[bStructure[newa,{1,-1}][[1]]]-2>bmax-1,PrependTo[newa,newa[[1]]- 10^(-3)2^(-bmax)]];
+	For[b=bmax-1,b>bmin,--b,
+		count=3;While[count-->0,PrependTo[newa,newa[[1]]- 10^(-3)2^(-b)]];
+		While[Length[bStructure[newa,{1,-1}][[1]]]-2>b-1,PrependTo[newa,newa[[1]]- 10^(-3)2^(-b)]];
+	];
+	While[newa[[1]]>afrombstruct[bstruct[[1]]],PrependTo[newa,newa[[1]]- 10^(-3)2^(-bmin)]];
+	While[newa[[1]]<afrombstruct[bstruct[[1]]],newa=Drop[newa,1]];
+	bStructure[newa,{1,-1}]
+]
 
 
 (* ::Section::Closed:: *)
