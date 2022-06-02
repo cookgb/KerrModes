@@ -422,7 +422,7 @@ Protect[Minblevel,Maxblevel,CurvatureRatio,Max\[CapitalDelta]\[Omega],Extrapolat
 Protect[ModeaStart,ModeGuess,SeqDirection,Maximala\[Epsilon],Minimala\[Epsilon],SolutionRelax,SolutionWindowl,SolutionWindowt];
 
 
-Protect[Index,Refinement,RefinementAction,RefineAccuracy,RefinePrecision,RefineAdapt,FixAdapt,Update,RemoveLevels,TerminalHigh,TerminalLow,ForceRefinement,RefinementPlot,SeqLevel,RadialCFLevel,AccuracyLevel,PrecisionLevel,StepRatio,CurveRatio,LimitRefinement,RadialCFMaxGuess];
+Protect[Index,Refinement,RefinementAction,RefineAccuracy,RefinePrecision,RefineAdapt,FixMatrixSize,FixAdapt,Update,RemoveLevels,TerminalHigh,TerminalLow,ForceRefinement,RefinementPlot,SeqLevel,RadialCFLevel,MatrixSize,AccuracyLevel,PrecisionLevel,StepRatio,CurveRatio,LimitRefinement,RadialCFMaxGuess];
 
 
 Protect[OutputType,ChopLevel,PathStart,StepSize,PlotStart,\[Phi]guess,PrintPoleValues];
@@ -1663,7 +1663,7 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,
 		KerrSEQret,dummy,blevel,forward,incflag,limitlist={},ll,inc,dec,last,re\[Omega],width,
 		indexmin,indexmax,offset,oldNrcf,newNrcf,oldCf,newCf,rcfmin,ref\[Epsilon],
 		saveSeq,terminalSeq,oldbstruct,newbstruct,addlist,removelist,nearesta,
-		takerange,edat0,edat,ef,a,afit,alist,lev,
+		takerange,edat0,edat,ef,a,afit,alist,lev,expansioncoefs,
 		useindex=OptionValue[Index],
 		precision=OptionValue[ModePrecision],refinement=OptionValue[Refinement],
 		action=OptionValue[RefinementAction],forcerefine=OptionValue[ForceRefinement],
@@ -1694,7 +1694,7 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,
 	KerrSEQ:=modeName[l,m,n];
 	NKMode=Length[KerrSEQ];
 	If[NKMode<3,Message[KerrModeRefineSequence::sequence,NKMode];Return[]];
-	If[action==RefineAccuracy || action==RefinePrecision || action==Update || action==None || action==TerminalDescent || action==TerminalAscent,
+	If[action==RefineAccuracy || action==RefinePrecision || action==Update || action==None || action==FixMatrixSize || action==TerminalLow || action==TerminalHigh,
 		indexmin=1;indexmax=NKMode;offset=0,
 		indexmin=2;indexmax=NKMode-1;offset=1,
 		indexmin=2;indexmax=NKMode-1;offset=1
@@ -1875,6 +1875,8 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,
 			(*plotdata=Table[{If[useindex,i,KerrSEQ[[i,1]]],Round[-(3+Log10[KerrSEQ[[i+1,1]]-KerrSEQ[[i,1]]])/Log10[2]]},{i,Min[NKMode-1,index0m],Min[NKMode-1,index0p]}];*)
 		,RadialCFLevel,
 			plotdata=Table[{If[useindex,i,KerrSEQ[[i,1]]],If[Length[KerrSEQ[[i,2]]]>=6,KerrSEQ[[i,2,6]],KerrSEQ[[i,2,3]],0]},{i,Min[NKMode-1,index0m],Min[NKMode-1,index0p]}];
+		,MatrixSize,
+			plotdata=Table[{If[useindex,i,KerrSEQ[[i,1]]],KerrSEQ[[i,3,2]]},{i,Min[NKMode-1,index0m],Min[NKMode-1,index0p]}];
 		,AccuracyLevel,
 			plotdata=Table[{If[useindex,i,KerrSEQ[[i,1]]],KerrSEQ[[i,2,4]]},{i,Max[1,index0m],Min[NKMode,index0p]}];
 		,PrecisionLevel,
@@ -1903,7 +1905,7 @@ Module[{s=OptionValue[SpinWeight],SpinWeightTable,KerrSEQ,
 			plotdata=Table[{If[useindex,plotdata1[[i,2]],plotdata1[[i,1]]],plotdata[[i]]},{i,2,Length[plotdata1]-1}];
 		,_,Message[KerrModeRefineSequence::badplot,plottype];Return[]
 	];
-	If[plottype==SeqLevel || plottype==RadialCFLevel || plottype==AccuracyLevel || plottype==PrecisionLevel || plottype==StepRatio || plottype==CurveRatio,
+	If[plottype==SeqLevel || plottype==RadialCFLevel || plottype==MatrixSize || plottype==AccuracyLevel || plottype==PrecisionLevel || plottype==StepRatio || plottype==CurveRatio,
 		Print[ListLinePlot[plotdata,FilterRules[{opts},Options[ListLinePlot]]]];
 	];
 	Switch[action
@@ -2077,6 +2079,13 @@ Print["RefineAcc at : ",index0];
 				incflag=True;
 				--index0;
 			];
+		,FixMatrixSize,
+			If[precision!=$MinPrecision,Print[Style[StringForm[KerrModeRefineSequence::precision,precision],{Medium,Darker[Red]}]]];
+			$MinPrecision=precision;
+			Do[expansioncoefs=Abs[KerrSEQ[[i,3,3]]];
+				While[Max[Take[expansioncoefs,-2]]<10^(\[Epsilon]-4),expansioncoefs=Drop[expansioncoefs,-1]];
+				modeName[l,m,n]=ReplacePart[KerrSEQ,{{i,3,2}->Length[expansioncoefs],{i,3,3}->Take[KerrSEQ[[i,3,3]],Length[expansioncoefs]]}];
+			,{i,index0m,index0p}];
 		,FixAdapt,
 			If[precision!=$MinPrecision,Print[Style[StringForm[KerrModeRefineSequence::precision,precision],{Medium,Darker[Red]}]]];
 			$MinPrecision=precision;

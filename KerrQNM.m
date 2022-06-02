@@ -217,7 +217,39 @@ KerrQNMSequence::usage=
 	
 
 
-KerrQNMRefineSequence::usage=""
+KerrQNMRefineSequence::usage=
+"KerrQNMRefineSequence[l,m,n,\[Epsilon]] refines an already generated sequence and includes "<>
+" a set of options for further refinement\n"<>
+"Options:\n"<>
+"\t Refinement\[Rule] All: integer,[0,1],{nstart,nend},{astart,aend}\n"<>
+"\t\t Select a range of a sequence to refine\n"<>
+"\t LimitRefinement\[Rule] None: Minima,{Minima,Nwidth},{RadialCFMinDepth,rcfmin}\n"<>
+"\t\t Puts an additional limitation on a refinement range\n"<>
+"\t ForceRefinement\[Rule] False: True, False\n"<>
+"\t\t Forces refinement even if refinement criteria are already met\n"<>
+"\t RefinementAction\[Rule] None: RefineAccuracy, RefinePrecision, Update, RefineAdapt, FixAdapt, RemoveLevels\n"<>
+"\t\t RefineAccuracy: baseed on \[Epsilon]\n"<>
+"\t\t RefinePrecision: based on ModePrecision\n"<>
+"\t\t RefineAdapt: based on CurvatureRatio, Minblevel, Maxblevel\n"<>
+"\t\t FixMatrixSize: reduce the angular matrix size until the accuracy is no higher than \!\(\*SuperscriptBox[\(10\), \(\[Epsilon] - 4\)]\)\n"<>
+"\t\t FixAdapt: ensures that ratio of \[CapitalDelta]a at adjacent points is 1/2, 1, or 2\n"<>
+"\t\t RemoveLevels: based on Maxblevel\n"<>
+"\t\t TerminalLow: optimizies the beginning of a sequence which starts at high b\n"<>
+"\t\t TerminalHigh: optimizies the end of a sequence which ends at high b\n"<>
+"\t\t Update: Calls ModeSolution with current settings\n"<>
+"\t RefinementPlot\[Rule] SeqLevel: None, RadialCFLevel, AccuracyLevel, PrecisionLevel, StepRatio, CurveRatio\n"<>
+"\t\t SeqLevel: b along sequence\n"<>
+"\t\t RadialCFLevel: RCF depth of solution along sequence\n"<>
+"\t\t MatrixSize: Size of the angular matrix\n"<>
+"\t\t AccuracyLevel: \[Epsilon] along the sequence\n"<>
+"\t\t PrecisionLevel: Precision of solution along sequence\n"<>
+"\t\t StepRatio: \[CapitalDelta]a(i)/\[CapitalDelta]a(i+1) along sequence\n"<>
+"\t\t CurveRatio: Curvature ratio along sequence\n"<>
+"\t Index\[Rule] False: True\n"<>
+"\t\t True: parameterize sequence by integer index\n"<>
+"\t\t False: paraneterize sequence by a[i]\n"<>
+"\t RadialCFMaxGuess->20,000,000\n"<>
+"\t\t limits guessed value for RCF when refining"
 
 
 SchwarzschildQNM::usage=
