@@ -1483,12 +1483,12 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 				edat0=Take[KerrSEQ,If[forward,-2,2]];
 				edat=Table[{Log[edat0[[i,1]]],Log[Abs[Re[edat0[[i,2,1]]]]]},{i,1,2}];
 				ef=LinearModelFit[edat,{1,a},a];
-				\[Omega]=Sign[Re[edat0[[1,2,1]]]]Exp[ef[Log[KerrSEQ[[index0,1]]+\[CapitalDelta]a/2]]];
+				\[Omega]g=Sign[Re[edat0[[1,2,1]]]]Exp[ef[Log[KerrSEQ[[index0,1]]+\[CapitalDelta]a/2]]];
 				edat=Table[{Log[edat0[[i,1]]],Log[Abs[Im[edat0[[i,2,1]]]]]},{i,1,2}];
 				ef=LinearModelFit[edat,{1,a},a];
-				\[Omega]+=I Sign[Im[edat0[[1,2,1]]]]Exp[ef[Log[KerrSEQ[[index0,1]]+\[CapitalDelta]a/2]]],
+				\[Omega]g+=I Sign[Im[edat0[[1,2,1]]]]Exp[ef[Log[KerrSEQ[[index0,1]]+\[CapitalDelta]a/2]]],
 				Asymptote,
-				{\[Omega],Alm}=AsymptoteFunction[s,l,m,KerrSEQ[[index0,1]]+\[CapitalDelta]a/2],
+				{\[Omega]g,Almg}=AsymptoteFunction[s,l,m,KerrSEQ[[index0,1]]+\[CapitalDelta]a/2],
 				_,
 				If[extraporder>2,
 						edat0=Take[KerrSEQ,If[forward,{index0p-extraporder,index0p},{index0m,index0m+extraporder}]];
@@ -1542,12 +1542,12 @@ Module[{KerrSEQ=KerrTMP,AC3ret,ind0,index0p=index0+1,index0m=index0-1,blevelp=bl
 				edat0=Take[KerrSEQ,If[forward,-2,2]];
 				edat=Table[{Log[edat0[[i,1]]],Log[Abs[Re[edat0[[i,2,1]]]]]},{i,1,2}];
 				ef=LinearModelFit[edat,{1,a},a];
-				\[Omega]=Sign[Re[edat0[[1,2,1]]]]Exp[ef[Log[KerrSEQ[[index0,1]]-\[CapitalDelta]a/2]]];
+				\[Omega]g=Sign[Re[edat0[[1,2,1]]]]Exp[ef[Log[KerrSEQ[[index0,1]]-\[CapitalDelta]a/2]]];
 				edat=Table[{Log[edat0[[i,1]]],Log[Abs[Im[edat0[[i,2,1]]]]]},{i,1,2}];
 				ef=LinearModelFit[edat,{1,a},a];
-				\[Omega]+=I Sign[Im[edat0[[1,2,1]]]]Exp[ef[Log[KerrSEQ[[index0,1]]-\[CapitalDelta]a/2]]],
+				\[Omega]g+=I Sign[Im[edat0[[1,2,1]]]]Exp[ef[Log[KerrSEQ[[index0,1]]-\[CapitalDelta]a/2]]],
 				Asymptote,
-				{\[Omega],Alm}=AsymptoteFunction[s,l,m,KerrSEQ[[index0,1]]-\[CapitalDelta]a/2],
+				{\[Omega]g,Almg}=AsymptoteFunction[s,l,m,KerrSEQ[[index0,1]]-\[CapitalDelta]a/2],
 				_,
 				If[extraporder>2,
 						edat0=Take[KerrSEQ,If[forward,{index0p-extraporder,index0p},{index0m,index0m+extraporder}]];
