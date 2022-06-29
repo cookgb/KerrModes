@@ -754,6 +754,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 	ModeSolution::notnumber="Failure: Solution of RadialLentzRoot not a number";
 	ModeSolution::slowconv="Persistance slow convergence \[Alpha]= `1`";
 	ModeSolution::oscillations="Persistent oscillations: Abort";
+	ModeSolution::\[Omega]flippingsigns="Re[\[Omega]] flipping signs";
 	ModeSolution::failure="Persistent failure of RadialLentzRoot: Abort";
 	ModeSolution::solwindow1="\[Omega] = `1`, is outside solution window";
 	ModeSolution::solwindow2="Alm outside solution window";
@@ -799,6 +800,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 		radialsol = RadialLentzRoot[inversion,s,m,a,oldAlm,old\[Omega],Nradial,Nmatrix,\[Epsilon]2,newtonRadius,
 										RadialRelax->\[Alpha],FilterRules[{opts},Options[RadialLentzRoot]]];
 		If[Not[radialsol[[1,1]]] && Length[radialsol]==1, (* Re[\[Omega]] flipping sign, solution fails *)
+			If[solutiondebug>0,Message[ModeSolution::\[Omega]flippingsigns]];
 			Return[{False,\[Alpha],Nradialnew,{a,Null[],Null[]}}]
 		];
 		invcount=0;
@@ -811,6 +813,7 @@ Module[{c,old\[Omega],oldAlm,radialsol,angularsol,lmin,lmax,Nradial,Nmatrix,
 			radialsol = RadialLentzRoot[inversion,s,m,a,oldAlm,radialsol[[2,1]],Nradial,Nmatrix,\[Epsilon]2,newtonRadius,
 											RadialRelax->\[Alpha],FilterRules[{opts}, Options[RadialLentzRoot]]];
 			If[Not[radialsol[[1,1]]] && Length[radialsol]==1, (* Re[\[Omega]] flipping sign, solution fails *)
+				If[solutiondebug>0,Message[ModeSolution::\[Omega]flippingsigns]];
 				Return[{False,\[Alpha],Nradialnew,{a,Null[],Null[]}}]
 			];
 			If[Head[radialsol[[1,3]]]==List,jacobianmatrix=radialsol[[1,3]]];
