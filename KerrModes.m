@@ -2083,9 +2083,11 @@ Print["RefineAcc at : ",index0];
 				--index0;
 			];
 		,FixMatrixSize,
-			If[precision!=$MinPrecision,Print[Style[StringForm[KerrModeRefineSequence::precision,precision],{Medium,Darker[Red]}]]];
-			$MinPrecision=precision;
 			Do[expansioncoefs=Abs[KerrSEQ[[i,3,3]]];
+				\[Epsilon]=Min[\[Epsilon]max,KerrSEQ[[i,2,4]]]; (* use the \[Epsilon] from computed mode if more accurate *)
+				precision=Max[OptionValue[ModePrecision],Ceiling[KerrSEQ[[i,2,-1]]]]; (* use the precision from computed mode if higher *)
+				If[precision!=$MinPrecision,Print[Style[StringForm[KerrModeRefineSequence::precision,precision],{Medium,Darker[Red]}]]];
+				$MinPrecision=precision;
 				While[Max[Take[expansioncoefs,-2]]<10^(\[Epsilon]-4),expansioncoefs=Drop[expansioncoefs,-1]];
 				modeName[l,m,n]=ReplacePart[KerrSEQ,{{i,3,2}->Length[expansioncoefs],{i,3,3}->Take[KerrSEQ[[i,3,3]],Length[expansioncoefs]]}];
 			,{i,index0m,index0p}];
