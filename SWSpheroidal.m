@@ -25,6 +25,10 @@ Protect[SWSphDebug];
 (*Documentation of External Functions*)
 
 
+(* ::Subsection::Closed:: *)
+(*Spectral Solvers*)
+
+
 SpinWeightedSpheroidal::usage=
 	"SpinWeightedSpheroidal[m,s,c,N] solves the N-dimensional discrete "<>
 	"approximation for the spin-weighted functions of spin-weight s, "<>
@@ -49,10 +53,53 @@ AngularSpectralRootIndex::usage=
 	"the eigenvalue and spectral coefficients for the index-th eigenvalue."
 
 
+(* ::Subsection::Closed:: *)
+(*Normalization and Visualization*)
+
+
+SWSFfixphase::usage=
+"SWSFfixphase[m,s,L,SWdat]\n"<>
+"\t m : azimuthal index\n"<>
+"\t s : spin weight\n"<>
+"\t L : eigenvalue index of SWdat : L = l - Max(|m|,|s|)\n"<>
+"\t SWdat : eigenvector from AngularSectralRoot or AngularSpectralRootIndex\n"<>
+"SWSFfixphase[m,s,L,SWdat] returns a complex phases correction that should "<>
+"multiply SWdat in order to produce a properly phase-fixed spin-weighted "<>
+"spheriodal function.\n\n"<>
+"Options:\n"<>
+"\t FixAt \[Rule] Provides preference for location used to set the phase. Defaults to Null.\n"<>
+"\t\t\t If the SWSF is non-zero at one of the endpoints, the phase is set to\n"<>
+"\t\t\t zero there.  If both endpoints are non-zero, FixAt must be set to\n"<>
+"\t\t\t either +1 or -1.\n"<>
+"\t InfoLevel \[Rule] Amount of diagnostic info to print. Defaults to 1.\n"<>
+"\t ChopLevel \[Rule] Chops the evaluation of the SWSF at x=\[PlusMinus]1 to ChopLevel.\n"<>
+"\t\t\t Defaults to 0."
+
+
+
+SWSFvalues::usage=
+"SWSFvalues[m,s,SWdat]\n"<>
+"\t m : azimuthal index\n"<>
+"\t s : spin weight\n"<>
+"\t SWdat : eigenvector from AngularSectralRoot or AngularSpectralRootIndex\n"<>
+"SWSFvalues[m,s,SWdat] returns a pair of lists {x,SWSF}.  "<>
+"The first list x=Cos[theta] are the locations where the SWSF is evaluated.  "<>
+"The second list contains the complex values of the SWSF at each value of x.\n\n"<>
+"Options:\n"<>
+"\t PlotPoints \[Rule] Number of vaulues of x. Defaults to 100."
+
+
+(* ::Subsection::Closed:: *)
+(*Reserved Globals*)
+
+
+Protect[InfoLevel,FixAt];
+
+
 Begin["`Private`"]
 
 
-(* ::Section:: *)
+(* ::Section::Closed:: *)
 (*Spin-Weighted Spheroidal Functions : Spectral Method*)
 
 
@@ -60,7 +107,7 @@ Begin["`Private`"]
 (*Evaluate the Spin-weighted Oblate Spheroidal Functions using a spectral method.*)
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Matrix Coefficients :*)
 
 
@@ -145,6 +192,69 @@ Module[{sol},
 
 
 If[!QNMDebug,Protect[Mat,SpinWeightedSpheroidal,AngularSpectralRoot,AngularSpectralRootForl]];
+
+
+(* ::Section::Closed:: *)
+(*Normalization and Visualization*)
+
+
+Options[SWSFfixphase]={InfoLevel->1,FixAt->Null[],ChopLevel->0};
+
+
+SWSFfixphase[m_Integer,s_Integer,La_,SWdat_List,opts:OptionsPattern[]]:=
+Module[{NC,lmin,WDplus,WDzero,WDminus,scaledcoefs,SWSFplus,SWSFzero,SWSFminus,
+		il=OptionValue[InfoLevel],cl=OptionValue[ChopLevel],phase},
+	NC=Length[SWdat];
+	lmin=Max[Abs[m],Abs[s]];
+	WDplus=ParallelTable[WignerD[{j-1+lmin,m,-s},0,0,0],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+	WDzero=ParallelTable[WignerD[{j-1+lmin,m,-s},0,\[Pi]/2,0],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+	WDminus=ParallelTable[WignerD[{j-1+lmin,m,-s},0,\[Pi],0],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+	scaledcoefs=(-1)^m Sqrt[\[Pi]] ParallelTable[Sqrt[2(j-1+lmin)+1]SWdat[[j]],{j,1,NC}];
+	SWSFplus = WDplus . scaledcoefs;
+	SWSFzero = WDzero . scaledcoefs;
+	SWSFminus = WDminus . scaledcoefs;
+	If[il>0,
+		Print["Max coeff : ",MaximalBy[SWdat,Abs]," at ",Position[SWdat,MaximalBy[SWdat,Abs][[1]]]];
+		Print["SWSF[+1] = ",SWSFplus];
+		Print["SWSF[0] = ",SWSFzero];
+		Print["SWSF[-1] = ",SWSFminus];
+	];
+	If[Chop[SWSFplus,cl]==0,
+		If[Chop[SWSFminus,cl]==0,
+			(*phase=Exp[\[ImaginaryI](-Arg[SWSFzero])];If[il>0,Print["Phase set at 0"]]*)
+			phase=1;If[il>0,Print["Phase IGNORED at 0"]],
+			phase=Exp[I(-Arg[(-1)^(La+Max[Abs[m],Abs[s]])SWSFminus])];If[il>0,Print["Phase set at -1"]],
+			Print["Logic error 1"];Abort[]
+		],
+		If[Chop[SWSFminus,cl]==0,
+			phase=Exp[I(-Arg[(-1)^m SWSFplus])];If[il>0,Print["Phase set at +1"]],
+			Switch[OptionValue[FixAt],
+				-1,phase=Exp[I(-Arg[(-1)^(La+Max[Abs[m],Abs[s]])SWSFminus])],
+				1,phase=Exp[I(-Arg[(-1)^m SWSFplus])],
+				_,Print["SWSF non-zero at both ends: set FixAt=\[PlusMinus]1"];Abort[]
+			],
+			Print["Logic error 2"];Abort[]
+		],
+		Print["Logic error 3"];Abort[]
+	];
+	phase
+]
+
+
+Options[SWSFvalues]={PlotPoints->100};
+
+
+SWSFvalues[m_Integer,s_Integer,SWdat_List,opts:OptionsPattern[]]:=
+Module[{NC,x,theta,Ntheta,lmin,Matdlx,SWSF,choplev,npoints=OptionValue[PlotPoints]},
+	NC=Length[SWdat];
+	x=Table[x,{x,-1,1,1/(npoints-1)}];
+	theta=ArcCos[#]&/@x;
+	Ntheta=Length[theta];
+	lmin=Max[Abs[m],Abs[s]];
+	Matdlx = ParallelTable[N[WignerD[{j-1+lmin,m,-s},0,theta[[k]],0]],{k,1,Ntheta},{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+	SWSF = (-1)^m Sqrt[\[Pi]] Matdlx . ParallelTable[Sqrt[2(j-1+lmin)+1]SWdat[[j]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+	{x,SWSF}
+]
 
 
 (* ::Section::Closed:: *)

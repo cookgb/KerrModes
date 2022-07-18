@@ -371,7 +371,8 @@ SWSFLists::usage=
 "\t\t\t but can be overridden to plot any kind of sequence.\n"<>
 "\t SpinWeight \[Rule] Defaults to values set by SetSpinWeight.  Can be overridden.\n"<>
 "\t OutputType \[Rule] (Complex,ReIm,AbsArg), Defaults to Complex.\n"<>
-"\t Chop \[Rule] False: If set data is Chopped at 10^(value)."
+"\t Chop \[Rule] False: If set data is Chopped at 10^(value).\n"<>
+"\t FixPhase -> False: If set to True, SWSFfixphse is used to set the phase."
 
 
 SWSFRealPath::usage=
@@ -425,7 +426,7 @@ Protect[ModeaStart,ModeGuess,SeqDirection,Maximala\[Epsilon],Minimala\[Epsilon],
 Protect[Index,Refinement,RefinementAction,RefineAccuracy,RefinePrecision,RefineAdapt,FixMatrixSize,FixAdapt,Update,RemoveLevels,TerminalHigh,TerminalLow,ForceRefinement,RefinementPlot,SeqLevel,RadialCFLevel,MatrixSize,AccuracyLevel,PrecisionLevel,StepRatio,CurveRatio,LimitRefinement,RadialCFMaxGuess];
 
 
-Protect[OutputType,ChopLevel,PathStart,StepSize,PlotStart,\[Phi]guess,PrintPoleValues];
+Protect[OutputType,ChopLevel,PathStart,FixPhase,StepSize,PlotStart,\[Phi]guess,PrintPoleValues];
 
 
 Begin["`Private`"]
@@ -3109,7 +3110,7 @@ Module[{s=OptionValue[SpinWeight],multiple=OptionValue[OTmultiple],
 ]
 
 
-Options[SWSFLists]=Union[{ModeType->Null[],SpinWeight->Null[],OutputType->Complex,ChopLevel->False}];
+Options[SWSFLists]=Union[{ModeType->Null[],SpinWeight->Null[],OutputType->Complex,ChopLevel->False,FixPhase->False},Options[SWSFvalues],Options[SWSFfixphase]];
 
 
 SWSFLists[l_Integer,m_Integer,n_Integer|n_List,index_Integer,opts:OptionsPattern[]]:=
@@ -3118,14 +3119,10 @@ Module[{s=OptionValue[SpinWeight],modetype=OptionValue[ModeType],
 	SpinWeightTable:=modeName;
 	If[MemberQ[{QNM,TTML,TTMR},modetype],SpinWeightTable:=GetKerrName[modetype,s]];
 	KerrSEQ:=SpinWeightTable[l,m,n];
-	SWdat=KerrSEQ[[index,3,3]];
-	NC=KerrSEQ[[index,3,2]];
-	x=Table[x,{x,-1,1,1/100}];
-	theta=ArcCos[#]&/@x;
-	Ntheta=Length[theta];
-	lmin=Max[Abs[m],Abs[s]];
-	Matdlx = Table[N[WignerD[{j-1+lmin,m,-s},0,theta[[k]],0]],{k,1,Ntheta},{j,1,NC}];
-	SWSF = N[(-1)^m Sqrt[\[Pi]] Matdlx . Table[N[Sqrt[2(j-1+lmin)+1]SWdat[[j]]],{j,1,NC}]];
+	{x,SWSF}=SWSFvalues[m,s,KerrSEQ[[index,3,3]],FilterRules[{opts},Options[SWSFvalues]]];
+	If[OptionValue[FixPhase],
+	SWSF*=SWSFfixphase[m,s,l-Max[Abs[m],Abs[s]],KerrSEQ[[index,3,3]],FilterRules[{opts},Options[SWSFfixphase]]];
+	];
 	If[OptionValue[ChopLevel]!=False,
 		choplev=OptionValue[ChopLevel];
 		If[IntegerQ[choplev],
