@@ -521,7 +521,7 @@ RadialLentzRoot[n_Integer,s_Integer,m_Integer,
 				Nrcf_Integer,Nm_Integer,\[Epsilon]_Integer,
 				Radius_Real|Radius_Rational|Radius_Integer,
 				opts:OptionsPattern[]]:= 
-Module[{sol1,\[Omega]root=\[Omega],\[Delta]\[Omega]1,\[Delta]\[Omega]2,Almc,Ninv,iteration=0,slow=False,convcount=0,
+Module[{sol1,\[Omega]root=\[Omega],\[Delta]\[Omega]1,\[Delta]\[Omega]2,func1,func2,Almc,Ninv,iteration=0,slow=False,convcount=0,
 		refliptotal=0,reflipcount=0,lastrealsign=0,
 		largeroot=0,largerootratio=0,largerootcount=0,largeroottotal=0,
 		jacobianmatrix=Null,
@@ -531,12 +531,13 @@ Module[{sol1,\[Omega]root=\[Omega],\[Delta]\[Omega]1,\[Delta]\[Omega]2,Almc,Ninv
 	RadialLentzRoot::fail="RadialLentzStep failed, returning `1`";
 	RadialLentzRoot::debug1="\[Delta]\[Omega]=`1`  root=`2` ";
 	RadialLentzRoot::debug2="\[Omega]=`1` ";
-	RadialLentzRoot::debug3="Conv.Rate: `1` : `2`";
+	RadialLentzRoot::debug3="Conv.Rates: `1` (`2`) : `3`";
 	If[Not[NumberQ[\[Epsilon]root]],\[Epsilon]root=\[Epsilon]];
 	lastrealsign=Sign[Re[\[Omega]]];
 	Almc=AngularSpectralRoot[s,m,a*\[Omega]root,Alm,Nm][[1]];
 	sol1=RadialLentzStep[n,s,m,a,Almc,\[Omega]root,\[Omega]step,Nrcf,Nm,\[Epsilon],FilterRules[{opts},Options[RadialLentzStep]]];
 	\[Delta]\[Omega]1 = sol1[[1,1,2]]+I sol1[[1,2,2]];
+	func1=sol1[[2,1]];
 	If[Not[NumberQ[\[Delta]\[Omega]1]],Message[RadialLentzStep::fail,sol1];Abort[]];
 	Ninv=n;
 	If[radialdebug>0,Print[Style[StringForm[RadialLentzRoot::debug1,\[Delta]\[Omega]1,Abs[sol1[[2,1]]]],{Medium, Darker[Green,0.5]}]]];
@@ -546,11 +547,12 @@ Module[{sol1,\[Omega]root=\[Omega],\[Delta]\[Omega]1,\[Delta]\[Omega]2,Almc,Ninv
 			Return[{{False,slow,jacobianmatrix},{\[Omega]root,Ninv,sol1[[2,2]],\[Epsilon],Abs[\[Delta]\[Omega]1]}}]
 		];
 		\[Delta]\[Omega]2=\[Delta]\[Omega]1;
+		func2=func1;
 		\[Delta]\[Omega]1=If[Abs[\[Delta]\[Omega]1]>Radius,Radius \[Delta]\[Omega]1/Abs[\[Delta]\[Omega]1],\[Delta]\[Omega]1];
 		\[Omega]root+= radialrelax \[Delta]\[Omega]1; (* NOTE: UNDER RELAXATION *)
-		If[Abs[sol1[[2,1]]]>10,
+		If[Abs[func1]>10,
 			largerootratio=largeroot;
-			largeroot=Abs[sol1[[2,1]]];
+			largeroot=Abs[func1];
 			largerootratio/=largeroot;
 			++largeroottotal;
 			If[1/4<largerootratio<4,
@@ -581,14 +583,15 @@ Module[{sol1,\[Omega]root=\[Omega],\[Delta]\[Omega]1,\[Delta]\[Omega]2,Almc,Ninv
 		Almc=AngularSpectralRoot[s,m,a*\[Omega]root,Alm,Nm][[1]];
 		sol1=RadialLentzStep[Ninv,s,m,a,Almc,\[Omega]root,\[Omega]step,Nrcf,Nm,\[Epsilon],FilterRules[{opts},Options[RadialLentzStep]]];
 		\[Delta]\[Omega]1 = sol1[[1,1,2]]+I sol1[[1,2,2]];
+		func1=sol1[[2,1]];
 		(*If[Not[NumberQ[\[Delta]\[Omega]1]],Print["RadialLentzStep failed, returning ",sol1];Abort[]];*)
 		If[Not[NumberQ[\[Delta]\[Omega]1]],Message[RadialLentzStep::fail,sol1];Abort[]];
 		(*If[radialdebug>0,Print["\[Delta]\[Omega]= ",\[Delta]\[Omega]1," root= ",Abs[sol1[[2,1]]]]];*)
-		If[radialdebug>0,Print[Style[StringForm[RadialLentzRoot::debug1,\[Delta]\[Omega]1,Abs[sol1[[2,1]]]],{Medium, Darker[Green,0.5]}]]];
+		If[radialdebug>0,Print[Style[StringForm[RadialLentzRoot::debug1,\[Delta]\[Omega]1,Abs[func1]],{Medium, Darker[Green,0.5]}]]];
 		If[Abs[\[Delta]\[Omega]1]/Abs[\[Delta]\[Omega]2]>1/2,
 		If[++convcount>5,slow=True],convcount=0,slow=False];
 		(*If[radialdebug>2,Print["Conv.Rate: ",Abs[\[Delta]\[Omega]2]/Abs[\[Delta]\[Omega]1]," : ",slow]]; *)
-		If[radialdebug>2,Print[Style[StringForm[RadialLentzRoot::debug3,Abs[\[Delta]\[Omega]2]/Abs[\[Delta]\[Omega]1],slow],{Medium,Darker[Magenta,0.4]}]]]; 
+		If[radialdebug>2,Print[Style[StringForm[RadialLentzRoot::debug3,Abs[\[Delta]\[Omega]2]/Abs[\[Delta]\[Omega]1],Abs[func2]/Abs[func1],slow],{Medium,Darker[Magenta,0.4]}]]]; 
 		If[Head[sol1[[3]]]==List,jacobianmatrix=sol1[[3]]];
 	];
 	\[Delta]\[Omega]1=If[Abs[\[Delta]\[Omega]1]>Radius,Radius \[Delta]\[Omega]1/Abs[\[Delta]\[Omega]1],\[Delta]\[Omega]1];
