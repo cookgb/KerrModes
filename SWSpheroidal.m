@@ -200,44 +200,36 @@ If[!QNMDebug,Protect[Mat,SpinWeightedSpheroidal,AngularSpectralRoot,AngularSpect
 (*Normalization and Visualization*)
 
 
-Options[SWSFfixphase]={InfoLevel->1,FixAt->Null[],ChopLevel->0};
+Options[SWSFfixphase]={(*InfoLevel->1,FixAt->Null[],ChopLevel->0*)};
 
 
 SWSFfixphase[m_/;IntegerQ[2m],s_/;IntegerQ[2s],La_,SWdat_List,opts:OptionsPattern[]]:=
-Module[{NC,lmin,WDplus,WDzero,WDminus,scaledcoefs,SWSFplus,SWSFzero,SWSFminus,
-		il=OptionValue[InfoLevel],cl=OptionValue[ChopLevel],phase},
+Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,scaledcoefs,SWSFzero,SWSFzeroD,phase},
 	NC=Length[SWdat];
 	lmin=Max[Abs[m],Abs[s]];
-	WDplus=ParallelTable[WignerD[{j-1+lmin,m,-s},0,0,0],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
-	WDzero=ParallelTable[WignerD[{j-1+lmin,m,-s},0,\[Pi]/2,0],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
-	WDminus=ParallelTable[WignerD[{j-1+lmin,m,-s},0,\[Pi],0],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
-	scaledcoefs=(-1)^m Sqrt[\[Pi]] ParallelTable[Sqrt[2(j-1+lmin)+1]SWdat[[j]],{j,1,NC}];
-	SWSFplus = WDplus . scaledcoefs;
-	SWSFzero = WDzero . scaledcoefs;
-	SWSFminus = WDminus . scaledcoefs;
-	If[il>0,
-		Print["Max coeff : ",MaximalBy[SWdat,Abs]," at ",Position[SWdat,MaximalBy[SWdat,Abs][[1]]]];
-		Print["SWSF[+1] = ",SWSFplus];
-		Print["SWSF[0] = ",SWSFzero];
-		Print["SWSF[-1] = ",SWSFminus];
+	SphericalVal=(-1)^m*Sqrt[\[Pi]*(2*(La+lmin)+1)]*WignerD[{La+lmin,m,-s},0,\[Pi]/2,0];
+	scaledcoefs=(-1)^m Sqrt[\[Pi]] ParallelTable[Sqrt[2(j-1+lmin)+1]SWdat[[j]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+	If[Sign[SphericalVal]!=0,
+		WDzero=ParallelTable[N[WignerD[{j-1+lmin,m,-s},0,\[Pi]/2,0]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+		SWSFzero = WDzero . scaledcoefs;
+		If[Sign[SphericalVal]==-1,
+			phase=Exp[I*(\[Pi]-Arg[SWSFzero])],
+			If[Sign[SphericalVal]==1,
+				phase=Exp[I*(-Arg[SWSFzero])];
+			];
+	],(*Case when spherical value is zero.*)
+	WDzeroplus=ParallelTable[Sqrt[(j-1+lmin-s)*(j-1+lmin+s+1)]*If[s>=(j-1+lmin),0,N[WignerD[{j-1+lmin,m,-s-1},0,\[Pi]/2,0]]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+	WDzerominus=ParallelTable[Sqrt[(j-1+lmin+s)*(j-1+lmin-s+1)]*If[-s>=(j-1+lmin),0,N[WignerD[{j-1+lmin,m,-s+1},0,\[Pi]/2,0]]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+	WDzeroD=(-1/2)*(WDzeroplus-WDzerominus);
+	SphericalD=(-1)^m*Sqrt[\[Pi]*(2*(La+lmin)+1)]*WDzeroD[[La+1]];
+	SWSFzeroD=scaledcoefs . WDzeroD;
+	If[Sign[SphericalD]==-1,
+		phase=Exp[I*(\[Pi]-Arg[SWSFzeroD])],
+		If[Sign[SphericalD]==1,
+			phase=Exp[I*(-Arg[SWSFzeroD])],
+			Print["Value and derivative both zero."];Abort[]
+		];
 	];
-	If[Chop[SWSFplus,cl]==0,
-		If[Chop[SWSFminus,cl]==0,
-			(*phase=Exp[\[ImaginaryI](-Arg[SWSFzero])];If[il>0,Print["Phase set at 0"]]*)
-			phase=1;If[il>0,Print["Phase IGNORED at 0"]],
-			phase=Exp[I(-Arg[(-1)^(La+Max[Abs[m],Abs[s]])SWSFminus])];If[il>0,Print["Phase set at -1"]],
-			Print["Logic error 1"];Abort[]
-		],
-		If[Chop[SWSFminus,cl]==0,
-			phase=Exp[I(-Arg[(-1)^m SWSFplus])];If[il>0,Print["Phase set at +1"]],
-			Switch[OptionValue[FixAt],
-				-1,phase=Exp[I(-Arg[(-1)^(La+Max[Abs[m],Abs[s]])SWSFminus])],
-				1,phase=Exp[I(-Arg[(-1)^m SWSFplus])],
-				_,Print["SWSF non-zero at both ends: set FixAt=\[PlusMinus]1"];Abort[]
-			],
-			Print["Logic error 2"];Abort[]
-		],
-		Print["Logic error 3"];Abort[]
 	];
 	phase
 ]/;IntegerQ[m+s]
