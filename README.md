@@ -30,3 +30,8 @@ Mathematica notebook to compile each package into a paclet.
 Mathematica notebook to install each paclet into a local Mathematica environment.
 
 ---
+## Mathematica-Style Package Documentation
+
+All public functions in each paclet (and some private functions as well) have full Mathematica-type documentation.  Guides and tutorials are also provided within the Mathematica documentation.  **However**, the current implementation of paclets does not fully integrate in with the Mathematica's feature of "hovering over" a function and asking for help.  
+1) Help can be obtained by searching the Wolfram Documentation in a Mathematica environment where the KerrModes paclets have been installed.
+2) Help can also be obtained by using the ?FunctionName method for getting information about a function.  In this case, clicking on the blue circle with an "i" in the middle will bring up the full Mathematica documentation for the function.  This documentation will include links to guides and tutorials.
