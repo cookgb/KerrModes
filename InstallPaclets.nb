@@ -10,46 +10,36 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    119802,       2166]
-NotebookOptionsPosition[    117772,       2126]
-NotebookOutlinePosition[    118169,       2142]
-CellTagsIndexPosition[    118126,       2139]
+NotebookDataLength[    122271,       2236]
+NotebookOptionsPosition[    119543,       2182]
+NotebookOutlinePosition[    119939,       2198]
+CellTagsIndexPosition[    119896,       2195]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
-Cell[BoxData[
- RowBox[{"PacletUninstall", "[", "\"\<SWSpheroidal\>\"", "]"}]], "Input",
- CellChangeTimes->{{3.882108599862895*^9, 3.882108669272119*^9}},
- CellLabel->"In[1]:=",ExpressionUUID->"5f3c7f9e-7532-477d-8cff-9ad7913acff5"],
 
-Cell[BoxData[
- RowBox[{"PacletUninstall", "[", "\"\<KerrModes\>\"", "]"}]], "Input",
- CellChangeTimes->{{3.882108599862895*^9, 3.882108669272119*^9}, {
-  3.882128369839861*^9, 3.8821283711429853`*^9}},
- CellLabel->"In[2]:=",ExpressionUUID->"ac44e813-02ca-419c-a880-6761c6cbf849"],
+Cell[CellGroupData[{
+Cell["Notebook for installing the Paclets", "Title",
+ CellChangeTimes->{{3.88470731385017*^9, 
+  3.884707329618457*^9}},ExpressionUUID->"8bca6061-d0c7-49a3-b228-\
+17c153da8d98"],
 
-Cell[BoxData[
- RowBox[{"PacletUninstall", "[", "\"\<KerrQNM\>\"", "]"}]], "Input",
- CellChangeTimes->{{3.882108599862895*^9, 3.882108669272119*^9}, {
-  3.882128369839861*^9, 3.8821283711429853`*^9}, {3.8822146291419477`*^9, 
-  3.882214631548312*^9}},
- CellLabel->"In[3]:=",ExpressionUUID->"8e6ba417-3a53-4b8b-8f06-f63d0e8b0cee"],
+Cell["\<\
+Note : You do not want to have used PacletDirctoryLoad to make the paclets \
+you intend to install visible in the current session!  It is a good idea to \
+quit the current local Kernel before installing paclets.\
+\>", "Text",
+ CellChangeTimes->{{3.8847076047142897`*^9, 
+  3.884707746312026*^9}},ExpressionUUID->"8e2f92e5-af5c-403c-892a-\
+966fada3c889"],
 
-Cell[BoxData[
- RowBox[{"PacletUninstall", "[", "\"\<KerrTTML\>\"", "]"}]], "Input",
- CellChangeTimes->{{3.882108599862895*^9, 3.882108669272119*^9}, {
-  3.882128369839861*^9, 3.8821283711429853`*^9}, {3.8822146291419477`*^9, 
-  3.882214631548312*^9}, {3.882291713015863*^9, 3.882291713915306*^9}},
- CellLabel->"In[4]:=",ExpressionUUID->"ecd3ac7f-a6d9-4ae4-9f6a-7fda902e372c"],
+Cell[CellGroupData[{
 
-Cell[BoxData[
- RowBox[{"PacletUninstall", "[", "\"\<KerrTTMR\>\"", "]"}]], "Input",
- CellChangeTimes->{{3.882108599862895*^9, 3.882108669272119*^9}, {
-   3.882128369839861*^9, 3.8821283711429853`*^9}, {3.8822146291419477`*^9, 
-   3.882214631548312*^9}, {3.882291713015863*^9, 3.882291713915306*^9}, 
-   3.882349882494884*^9},
- CellLabel->"In[5]:=",ExpressionUUID->"1517f50e-886a-4ee1-b7cd-efe03d8de5d5"],
+Cell["Set the directory where the Git repository resides", "Section",
+ CellChangeTimes->{{3.8847050759771233`*^9, 
+  3.884705129037209*^9}},ExpressionUUID->"5321426f-8c22-4641-ae76-\
+204cfa523476"],
 
 Cell[BoxData[
  RowBox[{
@@ -59,8 +49,8 @@ Cell[BoxData[
 
  CellChangeTimes->{{3.880727167034521*^9, 3.8807271888905582`*^9}, {
    3.880727238232298*^9, 3.8807272425245457`*^9}, 
-   3.882263488339293*^9},ExpressionUUID->"7026e9f8-e1d4-4700-90c0-\
-2564a8e6d8ac"],
+   3.882263496012701*^9},ExpressionUUID->"df2761bc-0272-4e49-ad59-\
+d99e304fe570"],
 
 Cell[BoxData[
  RowBox[{
@@ -68,8 +58,61 @@ Cell[BoxData[
   "PacletDir", "=", "\"\</home/cookgb/Research/PublicPaclets/KerrModes\>\""}],
    ";"}]], "Input",
  CellChangeTimes->{{3.880727167034521*^9, 3.880727248578663*^9}, 
-   3.882263487558042*^9},
- CellLabel->"In[6]:=",ExpressionUUID->"4d199597-38cc-400d-b1f5-76366646aa09"],
+   3.8822634970255136`*^9},
+ CellLabel->"In[1]:=",ExpressionUUID->"d04b2298-ee4d-4292-81f2-54834fc6c991"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+If these paclets have already been installed, you may want to uninstall them .\
+\>", "Subsection",
+ CellChangeTimes->{{3.884707384592408*^9, 
+  3.884707423337607*^9}},ExpressionUUID->"13184ea9-4085-49a2-9d39-\
+8c61fbec0805"],
+
+Cell[BoxData[
+ RowBox[{"PacletUninstall", "[", "\"\<SWSpheroidal\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.882108599862895*^9, 3.882108669272119*^9}},
+ CellLabel->"In[2]:=",ExpressionUUID->"5f3c7f9e-7532-477d-8cff-9ad7913acff5"],
+
+Cell[BoxData[
+ RowBox[{"PacletUninstall", "[", "\"\<KerrModes\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.882108599862895*^9, 3.882108669272119*^9}, {
+  3.882128369839861*^9, 3.8821283711429853`*^9}},
+ CellLabel->"In[3]:=",ExpressionUUID->"ac44e813-02ca-419c-a880-6761c6cbf849"],
+
+Cell[BoxData[
+ RowBox[{"PacletUninstall", "[", "\"\<KerrQNM\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.882108599862895*^9, 3.882108669272119*^9}, {
+  3.882128369839861*^9, 3.8821283711429853`*^9}, {3.8822146291419477`*^9, 
+  3.882214631548312*^9}},
+ CellLabel->"In[4]:=",ExpressionUUID->"8e6ba417-3a53-4b8b-8f06-f63d0e8b0cee"],
+
+Cell[BoxData[
+ RowBox[{"PacletUninstall", "[", "\"\<KerrTTML\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.882108599862895*^9, 3.882108669272119*^9}, {
+  3.882128369839861*^9, 3.8821283711429853`*^9}, {3.8822146291419477`*^9, 
+  3.882214631548312*^9}, {3.882291713015863*^9, 3.882291713915306*^9}},
+ CellLabel->"In[5]:=",ExpressionUUID->"ecd3ac7f-a6d9-4ae4-9f6a-7fda902e372c"],
+
+Cell[BoxData[
+ RowBox[{"PacletUninstall", "[", "\"\<KerrTTMR\>\"", "]"}]], "Input",
+ CellChangeTimes->{{3.882108599862895*^9, 3.882108669272119*^9}, {
+   3.882128369839861*^9, 3.8821283711429853`*^9}, {3.8822146291419477`*^9, 
+   3.882214631548312*^9}, {3.882291713015863*^9, 3.882291713915306*^9}, 
+   3.882349882494884*^9},
+ CellLabel->"In[6]:=",ExpressionUUID->"1517f50e-886a-4ee1-b7cd-efe03d8de5d5"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+We can install the paclets directly from their build directories .\
+\>", "Section",
+ CellChangeTimes->{{3.884707452455224*^9, 
+  3.8847074785293303`*^9}},ExpressionUUID->"7763e5d4-ddb6-4a1f-b77b-\
+33f20f2ae139"],
 
 Cell[CellGroupData[{
 
@@ -479,8 +522,9 @@ Cell[BoxData[
   3.879517594024295*^9, {3.882108678404443*^9, 3.8821086866252213`*^9}, 
    3.8821087284286747`*^9, {3.88210890250699*^9, 3.882108913749975*^9}, 
    3.882128341974134*^9, 3.8822146498486977`*^9, 3.8822634243913517`*^9, 
-   3.882291730094426*^9, 3.882349908134012*^9, 3.8823499547223043`*^9},
- CellLabel->"Out[7]=",ExpressionUUID->"c9ab9727-e8df-4863-a9cf-7b6ad640ac29"]
+   3.882291730094426*^9, 3.882349908134012*^9, 3.8823499547223043`*^9, 
+   3.884707795839408*^9},
+ CellLabel->"Out[7]=",ExpressionUUID->"2ff6ee3d-ab7e-4ddf-bf7a-56c58a50ec4c"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -891,8 +935,8 @@ Cell[BoxData[
   3.882128362734799*^9, {3.882130240900311*^9, 3.882130262131082*^9}, 
    3.882130758376019*^9, 3.8821312815916767`*^9, 3.882214652223174*^9, 
    3.882263437403056*^9, 3.882267492460209*^9, 3.882291730610051*^9, 
-   3.882349908278281*^9, 3.882349955197235*^9},
- CellLabel->"Out[8]=",ExpressionUUID->"9e4abe76-e207-4f1b-a104-a682ee9411c8"]
+   3.882349908278281*^9, 3.882349955197235*^9, 3.884707796316284*^9},
+ CellLabel->"Out[8]=",ExpressionUUID->"9fb0996a-2143-49f3-8ed5-d9ab07c26eea"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1300,8 +1344,9 @@ Cell[BoxData[
   SelectWithContents->True,
   Selectable->False]], "Output",
  CellChangeTimes->{3.882214671913268*^9, 3.882263453268824*^9, 
-  3.882291730993287*^9, 3.882349908337418*^9, 3.882349955592574*^9},
- CellLabel->"Out[9]=",ExpressionUUID->"43503f5e-fb5b-4a50-9f56-20cdfffb098e"]
+  3.882291730993287*^9, 3.882349908337418*^9, 3.882349955592574*^9, 
+  3.8847077966795683`*^9},
+ CellLabel->"Out[9]=",ExpressionUUID->"4382212d-c0a2-4ebd-93df-1b2459c6bba0"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1710,8 +1755,8 @@ Cell[BoxData[
   SelectWithContents->True,
   Selectable->False]], "Output",
  CellChangeTimes->{3.882291743214138*^9, 3.882349908398118*^9, 
-  3.882349955972362*^9},
- CellLabel->"Out[10]=",ExpressionUUID->"daa8fcff-609b-43f7-9240-13c46694e2ea"]
+  3.882349955972362*^9, 3.884707797064228*^9},
+ CellLabel->"Out[10]=",ExpressionUUID->"a1d7a21e-a1f0-4d87-98cb-753434e44a71"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -2120,12 +2165,23 @@ Cell[BoxData[
   Editable->False,
   SelectWithContents->True,
   Selectable->False]], "Output",
- CellChangeTimes->{3.8823499084556704`*^9, 3.882349956383649*^9},
- CellLabel->"Out[11]=",ExpressionUUID->"40cc6b84-a29d-4c55-bb5f-0c759520673c"]
+ CellChangeTimes->{3.8823499084556704`*^9, 3.882349956383649*^9, 
+  3.8847077974729967`*^9},
+ CellLabel->"Out[11]=",ExpressionUUID->"30d6c7e6-5b18-4124-9bbf-9a84932dada9"]
+}, Open  ]],
+
+Cell["\<\
+PacletInstall can be used to install paclets from any location.  They do not \
+need to be installed from the build directory where they were created.\
+\>", "Text",
+ CellChangeTimes->{{3.884707540115415*^9, 
+  3.884707577711082*^9}},ExpressionUUID->"ab60300f-db4b-4744-87fc-\
+17ae422298de"]
+}, Open  ]]
 }, Open  ]]
 },
 WindowSize->{729, 684},
-WindowMargins->{{Automatic, 587.25}, {77.25, Automatic}},
+WindowMargins->{{Automatic, 337.5}, {166.5, Automatic}},
 FrontEndVersion->"13.1 for Linux x86 (64-bit) (June 16, 2022)",
 StyleDefinitions->"Default.nb",
 ExpressionUUID->"a804b2a5-c056-40b7-b3e4-fcefc803d005"
@@ -2141,32 +2197,46 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[558, 20, 231, 3, 29, "Input",ExpressionUUID->"5f3c7f9e-7532-477d-8cff-9ad7913acff5"],
-Cell[792, 25, 279, 4, 29, "Input",ExpressionUUID->"ac44e813-02ca-419c-a880-6761c6cbf849"],
-Cell[1074, 31, 328, 5, 29, "Input",ExpressionUUID->"8e6ba417-3a53-4b8b-8f06-f63d0e8b0cee"],
-Cell[1405, 38, 375, 5, 29, "Input",ExpressionUUID->"ecd3ac7f-a6d9-4ae4-9f6a-7fda902e372c"],
-Cell[1783, 45, 403, 6, 29, "Input",ExpressionUUID->"1517f50e-886a-4ee1-b7cd-efe03d8de5d5"],
-Cell[2189, 53, 340, 9, 29, "Input",ExpressionUUID->"7026e9f8-e1d4-4700-90c0-2564a8e6d8ac"],
-Cell[2532, 64, 303, 7, 29, "Input",ExpressionUUID->"4d199597-38cc-400d-b1f5-76366646aa09"],
 Cell[CellGroupData[{
-Cell[2860, 75, 455, 9, 29, "Input",ExpressionUUID->"ffbe4a7a-963a-4152-adab-a29bfc7cdccf"],
-Cell[3318, 86, 22556, 396, 68, "Output",ExpressionUUID->"c9ab9727-e8df-4863-a9cf-7b6ad640ac29"]
+Cell[580, 22, 177, 3, 98, "Title",ExpressionUUID->"8bca6061-d0c7-49a3-b228-17c153da8d98"],
+Cell[760, 27, 363, 7, 81, "Text",ExpressionUUID->"8e2f92e5-af5c-403c-892a-966fada3c889"],
+Cell[CellGroupData[{
+Cell[1148, 38, 197, 3, 68, "Section",ExpressionUUID->"5321426f-8c22-4641-ae76-204cfa523476"],
+Cell[1348, 43, 340, 9, 29, "Input",ExpressionUUID->"df2761bc-0272-4e49-ad59-d99e304fe570"],
+Cell[1691, 54, 305, 7, 29, "Input",ExpressionUUID->"d04b2298-ee4d-4292-81f2-54834fc6c991"],
+Cell[CellGroupData[{
+Cell[2021, 65, 234, 5, 54, "Subsection",ExpressionUUID->"13184ea9-4085-49a2-9d39-8c61fbec0805"],
+Cell[2258, 72, 231, 3, 29, "Input",ExpressionUUID->"5f3c7f9e-7532-477d-8cff-9ad7913acff5"],
+Cell[2492, 77, 279, 4, 29, "Input",ExpressionUUID->"ac44e813-02ca-419c-a880-6761c6cbf849"],
+Cell[2774, 83, 328, 5, 29, "Input",ExpressionUUID->"8e6ba417-3a53-4b8b-8f06-f63d0e8b0cee"],
+Cell[3105, 90, 375, 5, 29, "Input",ExpressionUUID->"ecd3ac7f-a6d9-4ae4-9f6a-7fda902e372c"],
+Cell[3483, 97, 403, 6, 29, "Input",ExpressionUUID->"1517f50e-886a-4ee1-b7cd-efe03d8de5d5"]
+}, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[25911, 487, 493, 9, 29, "Input",ExpressionUUID->"d6b2cc22-6893-465a-bd48-bf92d85790ec"],
-Cell[26407, 498, 22507, 396, 68, "Output",ExpressionUUID->"9e4abe76-e207-4f1b-a104-a682ee9411c8"]
+Cell[3935, 109, 221, 5, 107, "Section",ExpressionUUID->"7763e5d4-ddb6-4a1f-b77b-33f20f2ae139"],
+Cell[CellGroupData[{
+Cell[4181, 118, 455, 9, 29, "Input",ExpressionUUID->"ffbe4a7a-963a-4152-adab-a29bfc7cdccf"],
+Cell[4639, 129, 22582, 397, 68, "Output",ExpressionUUID->"2ff6ee3d-ab7e-4ddf-bf7a-56c58a50ec4c"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[48951, 899, 539, 9, 29, "Input",ExpressionUUID->"973cf94e-c4dd-43d0-9759-22dfed458b0e"],
-Cell[49493, 910, 22347, 393, 68, "Output",ExpressionUUID->"43503f5e-fb5b-4a50-9f56-20cdfffb098e"]
+Cell[27258, 531, 493, 9, 29, "Input",ExpressionUUID->"d6b2cc22-6893-465a-bd48-bf92d85790ec"],
+Cell[27754, 542, 22529, 396, 68, "Output",ExpressionUUID->"9fb0996a-2143-49f3-8ed5-d9ab07c26eea"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[71877, 1308, 593, 10, 29, "Input",ExpressionUUID->"74926914-fc28-4bd4-9d71-d598465384a7"],
-Cell[72473, 1320, 22310, 393, 68, "Output",ExpressionUUID->"daa8fcff-609b-43f7-9240-13c46694e2ea"]
+Cell[50320, 943, 539, 9, 29, "Input",ExpressionUUID->"973cf94e-c4dd-43d0-9759-22dfed458b0e"],
+Cell[50862, 954, 22374, 394, 68, "Output",ExpressionUUID->"4382212d-c0a2-4ebd-93df-1b2459c6bba0"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[94820, 1718, 646, 11, 29, "Input",ExpressionUUID->"d27f86f4-d1bc-4d7e-9976-f12d284d303a"],
-Cell[95469, 1731, 22287, 392, 91, "Output",ExpressionUUID->"40cc6b84-a29d-4c55-bb5f-0c759520673c"]
+Cell[73273, 1353, 593, 10, 29, "Input",ExpressionUUID->"74926914-fc28-4bd4-9d71-d598465384a7"],
+Cell[73869, 1365, 22332, 393, 68, "Output",ExpressionUUID->"a1d7a21e-a1f0-4d87-98cb-753434e44a71"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[96238, 1763, 646, 11, 29, "Input",ExpressionUUID->"d27f86f4-d1bc-4d7e-9976-f12d284d303a"],
+Cell[96887, 1776, 22314, 393, 91, "Output",ExpressionUUID->"30d6c7e6-5b18-4124-9bbf-9a84932dada9"]
+}, Open  ]],
+Cell[119216, 2172, 299, 6, 58, "Text",ExpressionUUID->"ab60300f-db4b-4744-87fc-17ae422298de"]
+}, Open  ]]
 }, Open  ]]
 }
 ]
