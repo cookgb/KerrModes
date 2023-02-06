@@ -1,0 +1,780 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     30162,        772]
+NotebookOptionsPosition[     25634,        677]
+NotebookOutlinePosition[     26161,        695]
+CellTagsIndexPosition[     26118,        692]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Spin-Weighted Spheroidal Functions", "Title",
+ CellChangeTimes->{3.879775788910966*^9, 3.882439929107978*^9},
+ CellID->1380494707,ExpressionUUID->"57650713-172b-4ab7-951d-3c34d4a8862c"],
+
+Cell[CellGroupData[{
+
+Cell["Overview", "Section",
+ CellChangeTimes->{{3.8797765305721416`*^9, 3.8797765317894917`*^9}},
+ CellID->1805093217,ExpressionUUID->"c0f8787b-797a-43b6-9745-76e5e22b1a5d"],
+
+Cell[TextData[{
+ "Spin-weighted spheroidal functions ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{
+     SubscriptBox["\[InvisiblePrefixScriptBase]", "s"], 
+     SubscriptBox["S", 
+      RowBox[{"\[ScriptL]", ",", "m"}]]}], 
+    RowBox[{"(", 
+     RowBox[{"\[Theta]", ",", "\[Phi]", ",", "c"}], ")"}]}], 
+   TraditionalForm]], "InlineMath",ExpressionUUID->
+  "81832ea1-19e6-413d-b72a-24a65d387291"],
+ " are generalizations of both the spin-weighted spherical harmonics and the \
+scalar spheroidal harmonics.  Here, ",
+ Cell[BoxData[
+  FormBox["s", TraditionalForm]], "InlineMath",ExpressionUUID->
+  "6ababcf7-3305-4a0f-90d9-43fce55453db"],
+ " denotes the spin weight of the function, ",
+ Cell[BoxData[
+  FormBox["m", TraditionalForm]], "InlineMath",ExpressionUUID->
+  "edd633fb-37f1-447c-84ee-6d996c853a5f"],
+ " is the azimuthal index, both of which take on either integer or \
+half-integer values.   ",
+ Cell[BoxData[
+  FormBox["c", TraditionalForm]], "InlineMath",ExpressionUUID->
+  "e730d670-d649-4447-bd56-4a7f5e5d47b5"],
+ " is a complex number often called the oblateness parameter and the final \
+index, ",
+ Cell[BoxData[
+  FormBox["\[ScriptL]", TraditionalForm]], "InlineMath",ExpressionUUID->
+  "365ef8f6-e1b9-4c18-a031-15d59d5be62f"],
+ ", is the harmonic index which is usually chosen to take on consecutive \
+values ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"\[ScriptL]", "\[GreaterEqual]", 
+    RowBox[{"max", "(", 
+     RowBox[{
+      RowBox[{"\[LeftBracketingBar]", "s", "\[RightBracketingBar]"}], ",", 
+      RowBox[{"\[LeftBracketingBar]", "m", "\[RightBracketingBar]"}]}], 
+     ")"}]}], TraditionalForm]], "InlineMath",ExpressionUUID->
+  "a030999d-0238-4d09-ad01-4216de24c49f"],
+ " which differ by an integer.  In terms of the spin-weighted spheroidal \
+functions ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{
+     SubscriptBox["\[InvisiblePrefixScriptBase]", "s"], 
+     SubscriptBox["S", 
+      RowBox[{"\[ScriptL]", ",", "m"}]]}], 
+    RowBox[{"(", 
+     RowBox[{"x", ",", "c"}], ")"}]}], TraditionalForm]], "InlineMath",
+  ExpressionUUID->"26327e5e-8c9a-4b4c-8a39-602f834967e0"],
+ ", the harmonics are written as"
+}], "Text",
+ CellChangeTimes->{{3.879776727388145*^9, 3.879776729599846*^9}, {
+   3.879776783890761*^9, 3.879776843859508*^9}, {3.8797769378527603`*^9, 
+   3.879777230298813*^9}, 3.879777812947028*^9, {3.8797779665450773`*^9, 
+   3.879777975956613*^9}, {3.8797781438778753`*^9, 3.879778206078485*^9}, {
+   3.879778242687229*^9, 3.879778307237006*^9}, {3.879778398601063*^9, 
+   3.879778450808243*^9}, {3.8797785005246487`*^9, 3.879778538590988*^9}, {
+   3.8797786240369864`*^9, 3.8797787643074512`*^9}, {3.8797831364376383`*^9, 
+   3.87978316291186*^9}, {3.882465827775261*^9, 3.882465850422801*^9}, {
+   3.88246593715726*^9, 3.882466056919921*^9}},
+ CellID->946771371,ExpressionUUID->"69a0de37-bd41-432f-b734-f6759faa6231"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      SubscriptBox["\[InvisiblePrefixScriptBase]", "s"], 
+      SubscriptBox["S", 
+       RowBox[{"\[ScriptL]", ",", "m"}]]}], 
+     RowBox[{"(", 
+      RowBox[{"\[Theta]", ",", "\[Phi]", ",", "c"}], ")"}]}], "\[LongEqual]", 
+    
+    RowBox[{
+     FractionBox["1", 
+      RowBox[{"2", "\[Pi]"}]], 
+     RowBox[{
+      SubscriptBox["\[InvisiblePrefixScriptBase]", "s"], 
+      SubscriptBox["S", 
+       RowBox[{"\[ScriptL]", ",", "m"}]]}], 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"cos", "(", "\[Theta]", ")"}], ",", "c"}], ")"}], 
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{"\[ImaginaryI]", " ", "m", " ", "\[Phi]"}]]}]}], 
+   TraditionalForm]], "InlineMath",ExpressionUUID->
+  "a189231c-903f-40cc-9cd9-a4eaf35c3430"],
+ ","
+}], "DisplayMath",
+ CellChangeTimes->{{3.882520808294332*^9, 3.882520933620928*^9}},
+ CellID->2042889307,ExpressionUUID->"0f5010a8-1bbd-4caf-a4e2-e9ef9de42be6"],
+
+Cell[TextData[{
+ "where ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"x", "\[LongEqual]", 
+    RowBox[{"cos", "(", "\[Theta]", ")"}]}], TraditionalForm]], "InlineMath",
+  ExpressionUUID->"22230dcf-eb7b-4d8b-9f48-36287c3d77ed"],
+ " and ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{
+     SubscriptBox["\[InvisiblePrefixScriptBase]", "s"], 
+     SubscriptBox["S", 
+      RowBox[{"\[ScriptL]", ",", "m"}]]}], 
+    RowBox[{"(", 
+     RowBox[{"x", ",", "c"}], ")"}]}], TraditionalForm]], "InlineMath",
+  ExpressionUUID->"f8567278-c464-4bce-b867-31b63d5e52ee"],
+ " satisfies the angular Teukolsky equation"
+}], "Text",
+ CellChangeTimes->{{3.8797776069570227`*^9, 3.879777648271242*^9}, {
+   3.879778784154133*^9, 3.879778790380474*^9}, {3.8797790225110693`*^9, 
+   3.8797790780376787`*^9}, 3.882465868338694*^9, {3.882466097915711*^9, 
+   3.8824661012864437`*^9}, {3.882520845918427*^9, 3.8825208459185133`*^9}},
+ CellID->2082974710,ExpressionUUID->"b42a5a33-c366-48ff-864a-e15eaa4de0ec"],
+
+Cell[TextData[Cell[BoxData[
+ FormBox[
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     SubscriptBox["\[PartialD]", "x"], 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"1", "-", 
+         SuperscriptBox["x", "2"]}], ")"}], 
+       RowBox[{
+        SubscriptBox["\[PartialD]", "x"], 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{
+           SubscriptBox["\[InvisiblePrefixScriptBase]", "s"], 
+           SubscriptBox["S", 
+            RowBox[{"\[ScriptL]", ",", "m"}]]}], 
+          RowBox[{"(", 
+           RowBox[{"x", ",", 
+            RowBox[{"a", " ", "\[Omega]"}]}], ")"}]}], ")"}]}]}], ")"}]}], 
+    "+", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{"c", " ", "x"}], ")"}], "2"], "+", 
+       RowBox[{
+        RowBox[{"-", "2"}], " ", "c", " ", "s", " ", "x"}], "+", "s", "+", 
+       RowBox[{
+        RowBox[{
+         SubscriptBox["\[InvisiblePrefixScriptBase]", "s"], 
+         SubscriptBox["A", 
+          RowBox[{"\[ScriptL]", ",", "m"}]]}], 
+        RowBox[{"(", "c", ")"}]}], "-", 
+       FractionBox[
+        SuperscriptBox[
+         RowBox[{"(", 
+          RowBox[{"m", "+", 
+           RowBox[{"s", " ", "x"}]}], ")"}], "2"], 
+        RowBox[{"1", "-", 
+         SuperscriptBox["x", "2"]}]]}], ")"}], 
+     RowBox[{
+      SubscriptBox["\[InvisiblePrefixScriptBase]", "s"], 
+      SubscriptBox["S", 
+       RowBox[{"\[ScriptL]", ",", "m"}]]}], 
+     RowBox[{"(", 
+      RowBox[{"x", ",", "c"}], ")"}]}]}], "\[LongEqual]", "0"}], 
+  TraditionalForm]], \
+"InlineMath",ExpressionUUID->"a049576d-38d4-43ff-8213-954e0f792333"]], \
+"DisplayMath",
+ CellChangeTimes->{{3.882465229270844*^9, 3.8824655205005083`*^9}},
+ CellID->2514541,ExpressionUUID->"fdb59234-6cce-4c1f-b1ec-1a91b625742b"],
+
+Cell[TextData[{
+ "In addition to the spin-weighted spheroidal functions ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{
+     SubscriptBox["\[InvisiblePrefixScriptBase]", "s"], 
+     SubscriptBox["S", 
+      RowBox[{"\[ScriptL]", ",", "m"}]]}], 
+    RowBox[{"(", 
+     RowBox[{"x", ",", "c"}], ")"}]}], TraditionalForm]], "InlineMath",
+  ExpressionUUID->"87f09e90-f478-474d-aaca-df5a04ec01c5"],
+ ", ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{
+     SubscriptBox["\[InvisiblePrefixScriptBase]", "s"], 
+     SubscriptBox["A", 
+      RowBox[{"\[ScriptL]", ",", "m"}]]}], 
+    RowBox[{"(", "c", ")"}]}], TraditionalForm]], "InlineMath",ExpressionUUID->
+  "aba4eb67-200f-47a4-af71-426a17974f04"],
+ " is its associated eigenvalue often referred to as the angular separation \
+constant.  For fixed values of ",
+ Cell[BoxData[
+  FormBox["s", TraditionalForm]], "InlineMath",ExpressionUUID->
+  "0d1202fa-aab2-4d2c-b724-9ee8bf4e9b63"],
+ ", ",
+ Cell[BoxData[
+  FormBox["m", TraditionalForm]], "InlineMath",ExpressionUUID->
+  "72ec77c4-bf06-48b0-af1f-f493b7b73681"],
+ ", and ",
+ Cell[BoxData[
+  FormBox["c", TraditionalForm]], "InlineMath",ExpressionUUID->
+  "0951f6d1-e2a9-4e92-b518-ad55762ff31f"],
+ ", the angular Teukolsky equation has an infinite number of eigensolutions \
+labeled by the harmonic index ",
+ Cell[BoxData[
+  FormBox["\[ScriptL]", TraditionalForm]], "InlineMath",ExpressionUUID->
+  "288be571-68e4-4676-9a35-42a162a541ef"],
+ "."
+}], "Text",
+ CellChangeTimes->{{3.879777791205222*^9, 3.879777933520883*^9}, {
+  3.8797780051453743`*^9, 3.879778093491424*^9}, {3.879778253917128*^9, 
+  3.8797782592547894`*^9}, {3.879778994236034*^9, 3.879779006078246*^9}, {
+  3.879779155253817*^9, 3.8797793002181273`*^9}, {3.879782898179716*^9, 
+  3.879782907389093*^9}, {3.882465879462184*^9, 3.882465897002859*^9}, {
+  3.882466117812252*^9, 3.882466143609552*^9}},
+ CellID->1638509359,ExpressionUUID->"d4d12106-9a62-4c79-9b88-488c7756081d"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Solving the Eigensystem", "Section",
+ CellChangeTimes->{{3.879776557714272*^9, 3.8797765654156713`*^9}},
+ CellID->1680091774,ExpressionUUID->"6bd73dbe-49c8-4940-afed-8751af918916"],
+
+Cell[TextData[{
+ "The spin-weighted spheroidal eigensystem can be solved numerically by \
+converting it into a discrete eigensystem by means of a spectral \
+representation.  The details of the implementation can be found in ",
+ ButtonBox["Cook and Zalutskiy (2014)",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://doi.org/10.1103/PhysRevD.90.124021"], None}],
+ ".  The spectral representation is"
+}], "Text",
+ CellChangeTimes->{{3.879775988986349*^9, 3.879776004995555*^9}, {
+  3.879776165193665*^9, 3.879776177647758*^9}, {3.87977936703969*^9, 
+  3.879779418445298*^9}, {3.8797794709398937`*^9, 3.879779483070236*^9}, {
+  3.882521520780982*^9, 3.88252152747558*^9}, {3.88252155943572*^9, 
+  3.882521560155501*^9}, {3.8825240687303953`*^9, 3.882524148091366*^9}},
+ CellID->561218361,ExpressionUUID->"5d6ff70e-f14b-4890-91df-310a1bc5cd65"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{
+     RowBox[{
+      SubscriptBox["\[InvisiblePrefixScriptBase]", "s"], 
+      SubscriptBox["S", 
+       RowBox[{"\[ScriptL]", ",", "m"}]]}], 
+     RowBox[{"(", 
+      RowBox[{"x", ",", "c"}], ")"}]}], "\[LongEqual]", 
+    RowBox[{
+     UnderoverscriptBox["\[Sum]", 
+      RowBox[{
+       OverscriptBox["\[ScriptL]", "^"], "=", 
+       RowBox[{"max", "(", 
+        RowBox[{
+         RowBox[{"\[LeftBracketingBar]", "s", "\[RightBracketingBar]"}], ",", 
+         
+         RowBox[{"\[LeftBracketingBar]", "m", "\[RightBracketingBar]"}]}], 
+        ")"}]}], "\[Infinity]"], 
+     RowBox[{
+      RowBox[{
+       SubscriptBox["\[InvisiblePrefixScriptBase]", "s"], 
+       SubscriptBox["\[ScriptCapitalA]", 
+        RowBox[{
+         OverscriptBox["\[ScriptL]", "^"], ",", "\[ScriptL]", ",", "m"}]]}], 
+      RowBox[{"(", "c", ")"}], 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{"-", "1"}], ")"}], "m"], 
+      SqrtBox[
+       RowBox[{"\[Pi]", "(", 
+        RowBox[{
+         RowBox[{"2", 
+          OverscriptBox["\[ScriptL]", "^"]}], "+", "1"}], ")"}]], 
+      RowBox[{
+       SubsuperscriptBox["d", 
+        RowBox[{
+         RowBox[{"-", "m"}], ",", "s"}], 
+        OverscriptBox["\[ScriptL]", "^"]], "(", 
+       RowBox[{
+        SuperscriptBox["cos", 
+         RowBox[{"-", "1"}]], "(", "x", ")"}], ")"}]}]}]}], TraditionalForm]],
+   "InlineMath",ExpressionUUID->"376bac0a-9862-41b8-8be0-1c023370a576"],
+ "."
+}], "DisplayMath",
+ CellChangeTimes->{{3.8825213927324142`*^9, 3.882521604037859*^9}, {
+   3.882522061407856*^9, 3.8825220614080133`*^9}, 3.88252415551791*^9},
+ CellID->1679662951,ExpressionUUID->"c89adca1-0d02-435e-9094-72c896671c21"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{
+     SubscriptBox["\[InvisiblePrefixScriptBase]", "s"], 
+     SubscriptBox["\[ScriptCapitalA]", 
+      RowBox[{
+       OverscriptBox["\[ScriptL]", "^"], ",", "\[ScriptL]", ",", "m"}]]}], 
+    RowBox[{"(", "c", ")"}]}], TraditionalForm]], "InlineMath",ExpressionUUID->
+  "0072fa17-359d-42fd-93f9-89808dc68347"],
+ " are the spectral expansion coefficients and ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    SubsuperscriptBox["d", 
+     RowBox[{"m", ",", "n"}], "\[ScriptL]"], "(", "\[Theta]", ")"}], 
+   TraditionalForm]], "InlineMath",ExpressionUUID->
+  "ca2679a8-1056-4d84-bffb-daabcb091f21"],
+ " are the Wigner-d functions which follow the convention that ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{
+     SubsuperscriptBox["d", 
+      RowBox[{"m", ",", "n"}], "\[ScriptL]"], "(", "\[Theta]", ")"}], 
+    "\[LongEqual]"}], TraditionalForm]], "InlineMath",ExpressionUUID->
+  "3c89930b-5cb1-45b4-9a15-c125eb7c7983"],
+ Cell[BoxData[
+  RowBox[{
+   ButtonBox["WignerD",
+    BaseStyle->"Link"], "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"\[ScriptL]", ",", 
+      RowBox[{"-", 
+       StyleBox["m", "TI"]}], ",", 
+      RowBox[{"-", 
+       StyleBox["n", "TI"]}]}], "}"}], ",", "0", ",", 
+    StyleBox["\[Theta]", "TR"], ",", "0"}], "]"}]],ExpressionUUID->
+  "3bf0996c-cfd2-4023-b3ab-083c52b78d3c"],
+ "."
+}], "Text",
+ CellChangeTimes->{{3.879779706321827*^9, 3.879779914892647*^9}, 
+   3.882521037044379*^9, {3.882521097561846*^9, 3.882521286373932*^9}},
+ CellID->1389282908,ExpressionUUID->"83c289c1-ee73-492f-8687-20dad7eda385"],
+
+Cell[BoxData[GridBox[{
+   {
+    ButtonBox["SpinWeightedSpheroidal",
+     BaseStyle->"Link",
+     ButtonData->"paclet:SWSpheroidal/ref/SpinWeightedSpheroidal"], Cell["\<\
+Solves a discete version of the angular Teukolsky equation and a set of \
+eigenvalues and associated spectral expansion coefficients\
+\>", "TableText",ExpressionUUID->"187ff230-0eaf-4f12-a0f7-56186c1112da"]},
+   {
+    ButtonBox["AngularSpectralRoot",
+     BaseStyle->"Link",
+     ButtonData->"paclet:SWSpheroidal/ref/AngularSpectralRoot"], Cell[
+    TextData[{
+     "First calls ",
+     Cell[BoxData[
+      ButtonBox["SpinWeightedSpheroidal",
+       BaseStyle->"Link",
+       ButtonData->"paclet:SWSpheroidal/ref/SpinWeightedSpheroidal"]], 
+      "InlineFormula",ExpressionUUID->"d9ec817f-8f26-415c-add0-1adcb1753a86"],
+     
+     " and then returns the specific eigensolution whose eigenvalue is \
+closest to a specific value"
+    }], "TableText",ExpressionUUID->"678df603-d664-4b2c-b394-146ce617f527"]},
+   {
+    ButtonBox["AngularSpectralRootIndex",
+     BaseStyle->"Link",
+     ButtonData->"paclet:SWSpheroidal/ref/AngularSpectralRootIndex"], Cell[
+    TextData[{
+     "First calls ",
+     Cell[BoxData[
+      ButtonBox["SpinWeightedSpheroidal",
+       BaseStyle->"Link",
+       ButtonData->"paclet:SWSpheroidal/ref/SpinWeightedSpheroidal"]], 
+      "InlineFormula",ExpressionUUID->"b0c66d73-8948-4b89-bf91-ffee0f1d7885"],
+     
+     " and then returns a specific eigensolution chosen by its position \
+within the set of solutions"
+    }], "TableText",ExpressionUUID->"fcf28d01-f96a-4777-8b06-0944e26aabc9"]},
+   {
+    ButtonBox["SWSFfixphase",
+     BaseStyle->"Link",
+     ButtonData->"paclet:SWSpheroidal/ref/SWSFfixphase"], Cell["\<\
+Computes a phase factor the can be applied to a set of spectral expansion \
+coefficients to yield a desired phase convention for the spin-weighted \
+spheroidal functions\
+\>", "TableText",ExpressionUUID->"b5c210b8-9c0f-4995-b7e1-043f9a2602d1"]},
+   {
+    ButtonBox["SWSFvalues",
+     BaseStyle->"Link",
+     ButtonData->"paclet:SWSpheroidal/ref/SWSFvalues"], Cell[TextData[{
+     "Evalueates the spin-wieighted spheroidal function over a set of values \
+of ",
+     Cell[BoxData[
+      FormBox["x", TraditionalForm]], "InlineMath",ExpressionUUID->
+      "e14fa285-90cb-46e5-a43e-e71e425d05ff"],
+     "."
+    }], "TableText",ExpressionUUID->"d2215f79-6475-49ca-960c-3efc371f276c"]},
+   {
+    ButtonBox["SWSFRealPath",
+     BaseStyle->"Link",
+     ButtonData->"paclet:SWSpheroidal/ref/SWSFRealPath"], Cell["\<\
+Determines the path through the complex plane along which the spin-weighted \
+spheroidal function remains real.\
+\>", "TableText",ExpressionUUID->"63f67c8d-ddc9-47c3-9cb3-1cfea51b8162"]}
+  }]], "DefinitionBox",
+ CellChangeTimes->{{3.8797758386120043`*^9, 3.8797758576163282`*^9}, {
+  3.879775900968107*^9, 3.8797759743164263`*^9}, {3.8797760768575363`*^9, 
+  3.879776096221262*^9}, {3.879776202070159*^9, 3.879776206553998*^9}, {
+  3.8797800054190474`*^9, 3.879780092315604*^9}, {3.879780149987471*^9, 
+  3.879780308764258*^9}, {3.8797804266432734`*^9, 3.879780566940683*^9}, {
+  3.882027265981805*^9, 3.882027348892473*^9}, {3.882521814095779*^9, 
+  3.8825218756797028`*^9}, {3.882521912062187*^9, 3.882521914649527*^9}, {
+  3.8825219786501293`*^9, 3.882521978650161*^9}, {3.882522011314357*^9, 
+  3.882522011807753*^9}},
+ CellID->648815703,ExpressionUUID->"4b608497-3b66-4ed3-8756-554264d08870"],
+
+Cell["XXXX", "Caption",
+ CellChangeTimes->{{3.879776007750808*^9, 3.87977601732627*^9}, {
+  3.879782400625483*^9, 3.879782479809857*^9}},
+ CellID->1871044502,ExpressionUUID->"fe40afa4-f700-4b39-a22f-5de7bfed7756"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  RowBox[{
+   ButtonBox["SpinWeightedSpheroidal",
+    BaseStyle->"Link",
+    ButtonData->"paclet:SWSpheroidal/ref/SpinWeightedSpheroidal"], "[", 
+   RowBox[{
+    StyleBox["m", "TI"], ",", 
+    StyleBox["s", "TI"], ",", 
+    StyleBox["c", "TI"], ",", 
+    StyleBox[
+     ButtonBox["N",
+      BaseStyle->"Link"],
+     FontSlant->"Italic"]}], "]"}]], "InlineFormula",ExpressionUUID->
+  "7403b04a-eb1f-425f-be10-9ec4090c8d73"],
+ " constructs an ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"N", "\[Cross]", "N"}], TraditionalForm]], "InlineMath",
+  ExpressionUUID->"862609ea-439a-4544-bf48-a55367015ee1"],
+ " pentadiagonal matrix that is a truncated spectral representation of the \
+spin-weighted spheroidal eigensystem.  This matrix is passed to ",
+ ButtonBox["Eigensystem",
+  BaseStyle->"Link",
+  ButtonData->"paclet:ref/Eigensystem"],
+ " which returns it eigenvalues and associated eigenvectors.  The vector of \
+eigenvalues returns the first ",
+ Cell[BoxData[
+  FormBox["N", TraditionalForm]], "InlineMath",ExpressionUUID->
+  "d084328a-6954-41e0-8832-6c297f8231c4"],
+ " values of ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{
+     SubscriptBox["\[InvisiblePrefixScriptBase]", "s"], 
+     SubscriptBox["A", 
+      RowBox[{"\[ScriptL]", ",", "m"}]]}], 
+    RowBox[{"(", "c", ")"}]}], TraditionalForm]], "InlineMath",ExpressionUUID->
+  "3db86d24-75e9-451b-97a3-4f0c633b78ef"],
+ ".  Each associated eigenvector yields the first  ",
+ Cell[BoxData[
+  FormBox["N", TraditionalForm]], "InlineMath",ExpressionUUID->
+  "dba86962-8e8d-48dc-b7f9-7b3cff7169e6"],
+ " values of ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    RowBox[{
+     SubscriptBox["\[InvisiblePrefixScriptBase]", "s"], 
+     SubscriptBox["\[ScriptCapitalA]", 
+      RowBox[{
+       OverscriptBox["\[ScriptL]", "^"], ",", "\[ScriptL]", ",", "m"}]]}], 
+    RowBox[{"(", "c", ")"}]}], TraditionalForm]], "InlineMath",ExpressionUUID->
+  "8cf17af7-558d-444a-9ba0-e279cce77ea3"],
+ " where ",
+ Cell[BoxData[
+  FormBox[
+   OverscriptBox["\[ScriptL]", "^"], TraditionalForm]], "InlineMath",
+  ExpressionUUID->"5de2d078-01e5-4589-ba50-01ff213c4ee3"],
+ " labels the components of the eigenvector beginning with ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{
+    OverscriptBox["\[ScriptL]", "^"], "=", 
+    RowBox[{"max", "(", 
+     RowBox[{
+      RowBox[{"\[LeftBracketingBar]", "s", "\[RightBracketingBar]"}], ",", 
+      RowBox[{"\[LeftBracketingBar]", "m", "\[RightBracketingBar]"}]}], 
+     ")"}]}], TraditionalForm]], "InlineMath",ExpressionUUID->
+  "c4f66501-7146-4153-9356-aac30565b24d"],
+ "."
+}], "Text",
+ CellChangeTimes->{{3.8797824757956467`*^9, 3.879782775940237*^9}, {
+  3.8797828098520393`*^9, 3.8797828657511578`*^9}, {3.879782924960436*^9, 
+  3.879783121751884*^9}, {3.879783176656857*^9, 3.8797832069467707`*^9}, {
+  3.8797833299970837`*^9, 3.8797833299991817`*^9}, {3.88252165044307*^9, 
+  3.882521659830349*^9}, {3.88252169295028*^9, 3.8825217840709047`*^9}, {
+  3.88252196833602*^9, 3.882521971461553*^9}, {3.882522031815013*^9, 
+  3.882522034983472*^9}},
+ CellID->1875745317,ExpressionUUID->"3514a1f7-8c27-4ccf-83b0-50b706290549"],
+
+Cell[TextData[{
+ "Because the spectral representation of the spin-weighted spheroidal \
+eigensystem is truncated, the returned eigensolutions will be approximations. \
+ The first eigensolution will be the most accurate, the accuracy will \
+decrease moving further into the list of solutions, and the accuracy of all \
+solutions depends strongly on the value of ",
+ StyleBox["N",
+  FontSlant->"Italic"],
+ ".  The accuracy of each eigensolution can be gauged by looking at the \
+magnitudes of the components of its eigenvector."
+}], "Text",
+ CellChangeTimes->{{3.879783394128809*^9, 3.879783783046479*^9}},
+ CellID->1224629921,ExpressionUUID->"c07199ce-8b74-42df-9cc5-afa8da474fcc"],
+
+Cell[TextData[{
+ "If the spectral representation of the eigenfunction is in the convergent \
+regime, then the magnitudes of the spectral expansion coefficients will \
+decrease exponentially with ",
+ Cell[BoxData[
+  FormBox[
+   OverscriptBox["\[ScriptL]", "^"], TraditionalForm]], "InlineMath",
+  ExpressionUUID->"8d678afe-6d07-4281-a10d-53e7d3f91e21"],
+ " for large values of ",
+ Cell[BoxData[
+  FormBox[
+   OverscriptBox["\[ScriptL]", "^"], TraditionalForm]], "InlineMath",
+  ExpressionUUID->"22fb121f-fc41-404a-9a6d-dc329e721862"],
+ ".  Furthermore, the magnitude of the largest truncated coefficient sets the \
+scale for the error in the eigenfunction."
+}], "Text",
+ CellChangeTimes->{{3.8797837894291677`*^9, 3.879784118124524*^9}, {
+  3.8825241915054073`*^9, 3.882524194066312*^9}},
+ CellID->871809399,ExpressionUUID->"f5391c03-bed3-4117-946f-ececcd95d8ba"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Related Guides", "TutorialMoreAboutSection",
+ CellChangeTimes->{{3.843042384656711*^9, 3.843042386024461*^9}},
+ CellID->1453727187,ExpressionUUID->"3ec83fd8-88d5-4390-ad30-100137377ee5"],
+
+Cell[TextData[ButtonBox["Spin-Weighted Spheroidal Functions",
+ BaseStyle->"Link",
+ ButtonData->"paclet:SWSpheroidal/guide/SWSpheroidal"]], "TutorialMoreAbout",
+ CellChangeTimes->{{3.87977602423848*^9, 3.879776065605624*^9}, 
+   3.879786495671032*^9},
+ CellID->871379990,ExpressionUUID->"8a19f929-f51c-4df1-9d7e-2b178325c9fe"],
+
+Cell[TextData[ButtonBox["Modes of Kerr ",
+ BaseStyle->"Link",
+ ButtonData->"paclet:KerrModes/guide/ModesOfKerr"]], "TutorialMoreAbout",
+ CellChangeTimes->{{3.882524343170948*^9, 3.882524354936922*^9}, {
+  3.882524450857791*^9, 3.8825244682287292`*^9}},
+ CellID->1122474120,ExpressionUUID->"bfec72b7-da3b-461b-9360-7a30df79309d"],
+
+Cell[TextData[ButtonBox["Kerr Quasi-Normal Modes",
+ BaseStyle->"Link",
+ ButtonData->
+  "paclet:KerrQNM/guide/KerrQuasi-NormalModes"]], "TutorialMoreAbout",
+ CellID->1536208338,ExpressionUUID->"5b1a3671-3a1c-460d-a709-08c742d6028b"],
+
+Cell[TextData[ButtonBox["Kerr Total-Transmission Modes Left",
+ BaseStyle->"Link",
+ ButtonData->
+  "paclet:KerrTTML/guide/KerrTotal-TransmissionModesLeft"]], \
+"TutorialMoreAbout",
+ CellID->2122894946,ExpressionUUID->"11d9bc9f-934a-4fb6-8f2e-d476bb8caa2b"],
+
+Cell[TextData[ButtonBox["Kerr Total-Transmission Modes Right",
+ BaseStyle->"Link",
+ ButtonData->
+  "paclet:KerrTTMR/guide/KerrTotal-TransmissionModesRight"]], \
+"TutorialMoreAbout",
+ CellID->345170236,ExpressionUUID->"f081a625-681b-4a78-819f-e0d08de45bb7"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Related Tech Notes", "RelatedTutorialsSection",
+ CellID->1592503037,ExpressionUUID->"2b8132c0-8476-4481-9301-a46a88e39b31"],
+
+Cell[TextData[ButtonBox["Modes of the Kerr Geometry",
+ BaseStyle->"Link",
+ ButtonData->
+  "paclet:KerrModes/tutorial/ModesOfTheKerrGeometry"]], "RelatedTutorials",
+ CellChangeTimes->{{3.8825243211207857`*^9, 3.882524327555715*^9}, {
+  3.8825243740073013`*^9, 3.882524387280856*^9}},
+ CellID->1109850298,ExpressionUUID->"630f1f95-48e1-4611-b3d5-1818a3e3b8a3"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Metadata", "MetadataSection",
+ CellID->211000644,ExpressionUUID->"9c839029-f03d-438a-afa7-b6151ba794b8"],
+
+Cell[CellGroupData[{
+
+Cell["Categorization", "CategorizationSection",
+ CellID->792322511,ExpressionUUID->"6309b36c-fe47-44e2-a255-5c735f2b2f1e"],
+
+Cell["Tech Note", "Categorization",
+ CellLabel->"Entity Type",
+ CellID->18347330,ExpressionUUID->"e7e7431f-bf70-4df7-b373-468db2c306c0"],
+
+Cell["SWSpheroidal", "Categorization",
+ CellLabel->"Paclet Name",
+ CellID->1273413789,ExpressionUUID->"3ba20894-0b0b-4f5b-bf30-2c625c5ea12b"],
+
+Cell["SWSpheroidal`", "Categorization",
+ CellLabel->"Context",
+ CellID->443525721,ExpressionUUID->"546e59f3-dc2e-444d-a841-1ec9c7e9bed9"],
+
+Cell["SWSpheroidal/tutorial/Spin-WeightedSpheroidalFunctions", \
+"Categorization",
+ CellLabel->"URI",
+ CellID->421054110,ExpressionUUID->"29bc993f-5dd9-469c-8dc8-e305d40e9c7e"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Keywords", "KeywordsSection",
+ CellID->697809905,ExpressionUUID->"26cd6089-892e-48e7-ad5a-75dbfdd893f3"],
+
+Cell["XXXX", "Keywords",
+ CellID->682877068,ExpressionUUID->"691f180a-a742-4ae3-9607-2330d684f373"]
+}, Closed]]
+}, Open  ]]
+},
+WindowSize->{700.5, 770.25},
+WindowMargins->{{Automatic, 388.5}, {Automatic, 146.25}},
+TaggingRules-><|"Paclet" -> "SWSpheroidal"|>,
+FrontEndVersion->"13.1 for Linux x86 (64-bit) (June 16, 2022)",
+StyleDefinitions->FrontEnd`FileName[{"Wolfram"}, "TechNotePageStylesExt.nb", 
+  CharacterEncoding -> "UTF-8"],
+ExpressionUUID->"4d39fb78-7313-4f35-b490-d597296a74eb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 191, 2, 114, "Title",ExpressionUUID->"57650713-172b-4ab7-951d-3c34d4a8862c",
+ CellID->1380494707],
+Cell[CellGroupData[{
+Cell[796, 28, 173, 2, 46, "Section",ExpressionUUID->"c0f8787b-797a-43b6-9745-76e5e22b1a5d",
+ CellID->1805093217],
+Cell[972, 32, 2872, 66, 124, "Text",ExpressionUUID->"69a0de37-bd41-432f-b734-f6759faa6231",
+ CellID->946771371],
+Cell[3847, 100, 986, 29, 38, "DisplayMath",ExpressionUUID->"0f5010a8-1bbd-4caf-a4e2-e9ef9de42be6",
+ CellID->2042889307],
+Cell[4836, 131, 984, 24, 27, "Text",ExpressionUUID->"b42a5a33-c366-48ff-864a-e15eaa4de0ec",
+ CellID->2082974710],
+Cell[5823, 157, 1791, 54, 42, "DisplayMath",ExpressionUUID->"fdb59234-6cce-4c1f-b1ec-1a91b625742b",
+ CellID->2514541],
+Cell[7617, 213, 1945, 48, 65, "Text",ExpressionUUID->"d4d12106-9a62-4c79-9b88-488c7756081d",
+ CellID->1638509359]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9599, 266, 186, 2, 46, "Section",ExpressionUUID->"6bd73dbe-49c8-4940-afed-8751af918916",
+ CellID->1680091774],
+Cell[9788, 270, 850, 15, 63, "Text",ExpressionUUID->"5d6ff70e-f14b-4890-91df-310a1bc5cd65",
+ CellID->561218361],
+Cell[10641, 287, 1726, 49, 39, "DisplayMath",ExpressionUUID->"c89adca1-0d02-435e-9094-72c896671c21",
+ CellID->1679662951],
+Cell[12370, 338, 1605, 45, 52, "Text",ExpressionUUID->"83c289c1-ee73-492f-8687-20dad7eda385",
+ CellID->1389282908],
+Cell[13978, 385, 3416, 74, 379, "DefinitionBox",ExpressionUUID->"4b608497-3b66-4ed3-8756-554264d08870",
+ CellID->648815703],
+Cell[17397, 461, 213, 3, 29, "Caption",ExpressionUUID->"fe40afa4-f700-4b39-a22f-5de7bfed7756",
+ CellID->1871044502],
+Cell[17613, 466, 3122, 80, 115, "Text",ExpressionUUID->"3514a1f7-8c27-4ccf-83b0-50b706290549",
+ CellID->1875745317],
+Cell[20738, 548, 680, 12, 101, "Text",ExpressionUUID->"c07199ce-8b74-42df-9cc5-afa8da474fcc",
+ CellID->1224629921],
+Cell[21421, 562, 862, 18, 65, "Text",ExpressionUUID->"f5391c03-bed3-4117-946f-ececcd95d8ba",
+ CellID->871809399]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[22320, 585, 192, 2, 74, "TutorialMoreAboutSection",ExpressionUUID->"3ec83fd8-88d5-4390-ad30-100137377ee5",
+ CellID->1453727187],
+Cell[22515, 589, 325, 5, 24, "TutorialMoreAbout",ExpressionUUID->"8a19f929-f51c-4df1-9d7e-2b178325c9fe",
+ CellID->871379990],
+Cell[22843, 596, 328, 5, 24, "TutorialMoreAbout",ExpressionUUID->"bfec72b7-da3b-461b-9360-7a30df79309d",
+ CellID->1122474120],
+Cell[23174, 603, 231, 4, 24, "TutorialMoreAbout",ExpressionUUID->"5b1a3671-3a1c-460d-a709-08c742d6028b",
+ CellID->1536208338],
+Cell[23408, 609, 255, 5, 24, "TutorialMoreAbout",ExpressionUUID->"11d9bc9f-934a-4fb6-8f2e-d476bb8caa2b",
+ CellID->2122894946],
+Cell[23666, 616, 256, 5, 24, "TutorialMoreAbout",ExpressionUUID->"f081a625-681b-4a78-819f-e0d08de45bb7",
+ CellID->345170236]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[23959, 626, 129, 1, 74, "RelatedTutorialsSection",ExpressionUUID->"2b8132c0-8476-4481-9301-a46a88e39b31",
+ CellID->1592503037],
+Cell[24091, 629, 358, 6, 24, "RelatedTutorials",ExpressionUUID->"630f1f95-48e1-4611-b3d5-1818a3e3b8a3",
+ CellID->1109850298]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[24498, 641, 110, 1, 72, "MetadataSection",ExpressionUUID->"9c839029-f03d-438a-afa7-b6151ba794b8",
+ CellID->211000644],
+Cell[CellGroupData[{
+Cell[24633, 646, 122, 1, 21, "CategorizationSection",ExpressionUUID->"6309b36c-fe47-44e2-a255-5c735f2b2f1e",
+ CellID->792322511],
+Cell[24758, 649, 136, 2, 70, "Categorization",ExpressionUUID->"e7e7431f-bf70-4df7-b373-468db2c306c0",
+ CellID->18347330],
+Cell[24897, 653, 141, 2, 70, "Categorization",ExpressionUUID->"3ba20894-0b0b-4f5b-bf30-2c625c5ea12b",
+ CellID->1273413789],
+Cell[25041, 657, 137, 2, 70, "Categorization",ExpressionUUID->"546e59f3-dc2e-444d-a841-1ec9c7e9bed9",
+ CellID->443525721],
+Cell[25181, 661, 176, 3, 70, "Categorization",ExpressionUUID->"29bc993f-5dd9-469c-8dc8-e305d40e9c7e",
+ CellID->421054110]
+}, Closed]],
+Cell[CellGroupData[{
+Cell[25394, 669, 110, 1, 21, "KeywordsSection",ExpressionUUID->"26cd6089-892e-48e7-ad5a-75dbfdd893f3",
+ CellID->697809905],
+Cell[25507, 672, 99, 1, 70, "Keywords",ExpressionUUID->"691f180a-a742-4ae3-9607-2330d684f373",
+ CellID->682877068]
+}, Closed]]
+}, Open  ]]
+}
+]
+*)
+

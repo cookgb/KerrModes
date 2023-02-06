@@ -1,0 +1,770 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     29450,        762]
+NotebookOptionsPosition[     22173,        617]
+NotebookOutlinePosition[     22695,        635]
+CellTagsIndexPosition[     22652,        632]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Modes of Kerr", "GuideTitle",
+ CellChangeTimes->{{3.8821968502378407`*^9, 3.882196859337583*^9}},
+ CellID->1579969601,ExpressionUUID->"d62717fe-0c1f-4667-a553-63a7184bb66e"],
+
+Cell[TextData[{
+ "The ",
+ ButtonBox["KerrModes`",
+  BaseStyle->"Link",
+  ButtonData->"paclet:KerrModes/guide/KerrModes"],
+ " package provides the common functionality needed to find different types \
+of modes of the Kerr geometry."
+}], "GuideAbstract",
+ CellChangeTimes->{{3.882125054641955*^9, 3.882125107606062*^9}, {
+  3.88212513867026*^9, 3.8821251635403013`*^9}, {3.882125245543036*^9, 
+  3.8821252848801203`*^9}},
+ CellID->913788852,ExpressionUUID->"66c3c376-491c-4fb0-a67d-79c0e393e805"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["", "GuideFunctionsSection",
+ CellID->1393675867,ExpressionUUID->"e3e2dd71-ca92-4f1b-8eaf-6ce43e4093f3"],
+
+Cell[CellGroupData[{
+
+Cell["Eigenvalue Solvers", "GuideFunctionsSubsection",
+ CellChangeTimes->{{3.8821253095266647`*^9, 3.882125312836122*^9}},
+ CellID->1596405827,ExpressionUUID->"eb07e5f0-d099-4ec2-be51-2ea5bf226f2c"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["RadialLentzRoot",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/RadialLentzRoot"]], 
+  "InlineGuideFunction",ExpressionUUID->
+  "f47240ad-ff59-4199-99b2-c96eccb82450"],
+ " \[LongDash] finds a numerical solution to the radial Teukolsky equation."
+}], "GuideText",
+ CellChangeTimes->{{3.882125320659873*^9, 3.882125362873682*^9}},
+ CellID->906158840,ExpressionUUID->"d1aacd45-5ba8-4820-ad76-9bf72013405f"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["ModeSolution",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/ModeSolution"]], "InlineGuideFunction",
+  ExpressionUUID->"3d77a075-8c51-483b-9dd1-a60a2372da4a"],
+ " \[LongDash] finds a solution of the coupled radial and angular Teukolsky \
+equations."
+}], "GuideText",
+ CellChangeTimes->{{3.88212536822434*^9, 3.882125389922276*^9}, {
+  3.8826227908668003`*^9, 3.88262279133777*^9}},
+ CellID->2005083003,ExpressionUUID->"ac8a1380-eecf-47cc-85cb-0a2a9ef56606"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\t", "GuideDelimiter",
+ CellID->1116642697,ExpressionUUID->"e8af0478-cac9-4fc5-9e00-320970456969"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["SchwarzschildMode",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/SchwarzschildMode"]], "InlineFormula",
+  ExpressionUUID->"d46df1ee-c6c1-4bff-8c6d-1f31fc40c7cf"],
+ " . ",
+ Cell[BoxData[
+  ButtonBox["KerrModeSequence",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/KerrModeSequence"]], "InlineFormula",
+  ExpressionUUID->"c21fba0a-54e5-4acb-9477-0535560c28d6"],
+ " . ",
+ Cell[BoxData[
+  ButtonBox["KerrModeRefineSequence",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/KerrModeRefineSequence"]], 
+  "InlineFormula",ExpressionUUID->"6f31828d-fee9-489f-bea8-6fb629952674"]
+}], "InlineGuideFunctionListing",
+ CellChangeTimes->{{3.882125506282399*^9, 3.8821255243688726`*^9}, {
+  3.882125621731978*^9, 3.882125649511752*^9}, {3.8821259183349447`*^9, 
+  3.882125938036622*^9}},
+ CellID->554217346,ExpressionUUID->"b9123b21-c00c-4473-ab89-cf9948bc6eb4"]
+}, Open  ]],
+
+Cell["\t", "GuideDelimiter",
+ CellID->610365230,ExpressionUUID->"8b3c820f-d9da-4e1c-b75a-abf2439fafe4"],
+
+Cell[CellGroupData[{
+
+Cell["Plotting Routines", "GuideFunctionsSubsection",
+ CellChangeTimes->{{3.8821257500568933`*^9, 3.8821257537626963`*^9}},
+ CellID->1604484234,ExpressionUUID->"ab280b69-f24a-4a94-ae49-6824cf2a67f7"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["SchwarzschildOmega",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/SchwarzschildOmega"]], 
+  "InlineGuideFunction",ExpressionUUID->
+  "cbdb7471-fa10-4533-bda3-4e1a1afd8d99"],
+ " \[LongDash] returns a list of the conjugate of the Schwarzschild mode \
+frequencies."
+}], "GuideText",
+ CellChangeTimes->{{3.882125774647419*^9, 3.88212578239841*^9}, {
+  3.882125844313489*^9, 3.882125846151985*^9}},
+ CellID->566537756,ExpressionUUID->"db79cfff-07d1-41b7-975a-4deef17f4eb0"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["ModePlotOmega",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/ModePlotOmega"]], "InlineGuideFunction",
+  ExpressionUUID->"27919c57-685d-4746-b8aa-323c3ccd02dc"],
+ " \[LongDash] plots one or more sequences of mode frequencies ",
+ Cell[BoxData[
+  SubscriptBox["\[Omega]", "lmn"]], "InlineFormula",ExpressionUUID->
+  "7bae769a-fa90-46fe-9a2c-389735b80fa2"],
+ "."
+}], "GuideText",
+ CellChangeTimes->{{3.8821260388787527`*^9, 3.882126046939548*^9}, {
+  3.882126118141355*^9, 3.882126151955195*^9}, {3.882126231177837*^9, 
+  3.882126232863171*^9}},
+ CellID->622055040,ExpressionUUID->"241f0338-cfde-4d99-9d31-eef3e3c41cbe"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["ModePlotOmegaTones",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/ModePlotOmegaTones"]], 
+  "InlineGuideFunction",ExpressionUUID->
+  "d9dd2830-2cd8-44f6-ba6b-976f060a3412"],
+ " \[LongDash] plots all the mode frequency ",
+ Cell[BoxData[
+  SubscriptBox["\[Omega]", "lmn"]], "InlineFormula",ExpressionUUID->
+  "5ec43901-21c8-4d9a-b547-adc73bf1616a"],
+ " for all values of the overtone ."
+}], "GuideText",
+ CellChangeTimes->{{3.882126812515235*^9, 3.88212682340207*^9}, {
+  3.882126861272437*^9, 3.8821268798791237`*^9}, {3.8821269109743967`*^9, 
+  3.882126920592922*^9}},
+ CellID->870164128,ExpressionUUID->"b2a7a304-d9d3-4a37-a210-9daa87e99118"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["KerrOmegaList",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/KerrOmegaList"]], "InlineGuideFunction",
+  ExpressionUUID->"d324cad5-c814-48bd-9167-3ec77ec82bb3"],
+ " \[LongDash] creates a list of ",
+ Cell[BoxData[
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{
+     ButtonBox["Re",
+      BaseStyle->"Link"], "[", 
+     StyleBox["\[Omega]", "TR"], "]"}], ",", 
+    RowBox[{"-", 
+     RowBox[{
+      ButtonBox["Im",
+       BaseStyle->"Link"], "[", 
+      StyleBox["\[Omega]", "TR"], "]"}]}]}], "}"}]], "InlineFormula",
+  ExpressionUUID->"d12d3c2b-af38-4147-b233-9a324d96efcb"],
+ " pairs for modes frequencies along a sequence."
+}], "GuideText",
+ CellChangeTimes->{{3.8821272408972797`*^9, 3.882127273589293*^9}},
+ CellID->1340900737,ExpressionUUID->"50400468-a1ff-4da7-9580-4feb5a07b87c"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["KerraOmegaList",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/KerraOmegaList"]], "InlineGuideFunction",
+  ExpressionUUID->"914b378e-07c0-48b0-a6fe-4bf741b24a12"],
+ " \[LongDash] creates a list of ",
+ Cell[BoxData[
+  RowBox[{"{", 
+   RowBox[{"a", ",", 
+    RowBox[{
+     ButtonBox["Re",
+      BaseStyle->"Link"], "[", 
+     StyleBox["\[Omega]", "TR"], "]"}]}], "}"}]], "InlineFormula",
+  ExpressionUUID->"4b27e0fc-6516-4a97-ae92-5d22946825f9"],
+ ",  ",
+ Cell[BoxData[
+  RowBox[{"{", 
+   RowBox[{"a", ",", 
+    RowBox[{"-", 
+     RowBox[{
+      ButtonBox["Im",
+       BaseStyle->"Link"], "[", 
+      StyleBox["\[Omega]", "TR"], "]"}]}]}], "}"}]], "InlineFormula",
+  ExpressionUUID->"55331fc1-691e-4547-ab89-06b0b5260e3e"],
+ ", or ",
+ Cell[BoxData[
+  RowBox[{"{", 
+   RowBox[{"a", ",", 
+    RowBox[{
+     ButtonBox["Abs",
+      BaseStyle->"Link"], "[", 
+     StyleBox["\[Omega]", "TR"], "]"}]}], "}"}]], "InlineFormula",
+  ExpressionUUID->"1bffdcfa-6da2-4052-bec0-0032647f3ea0"],
+ "pairs for modes frequencies along a sequence."
+}], "GuideText",
+ CellChangeTimes->{{3.8821273413344088`*^9, 3.882127372178343*^9}},
+ CellID->2102244468,ExpressionUUID->"d5d866d6-3e20-4fdd-baa0-e142566cb050"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["ModePlotA",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/ModePlotA"]], "InlineGuideFunction",
+  ExpressionUUID->"3f4dde19-0e9b-4bee-9f04-e63136fe8605"],
+ " \[LongDash] plots one or more sequences of separation constants  ",
+ Cell[BoxData[
+  SubscriptBox[
+   StyleBox[
+    ButtonBox["A",
+     BaseStyle->"Link",
+     ButtonData->"paclet:KerrModes/ref/A"], "TI"], 
+   StyleBox["lmn", "TI"]]], "InlineFormula",ExpressionUUID->
+  "ec8a399e-2258-4341-99a1-c9e81f41855e"],
+ "."
+}], "GuideText",
+ CellChangeTimes->{{3.882126184780492*^9, 3.88212626020747*^9}},
+ CellID->1867475512,ExpressionUUID->"4c510013-9bf9-4a02-a6dc-41b9bc39de25"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["KerrAList",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/KerrAList"]], "InlineGuideFunction",
+  ExpressionUUID->"96b96fef-eb1f-4306-8d81-a03bbd8f96bc"],
+ " \[LongDash] creates a list of ",
+ Cell[BoxData[
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{
+     ButtonBox["Re",
+      BaseStyle->"Link"], "[", 
+     StyleBox["A", "TR",
+      FontSlant->"Italic"], "]"}], ",", 
+    RowBox[{"Im", "[", 
+     StyleBox["A", "TR",
+      FontSlant->"Italic"], "]"}]}], "}"}]], "InlineFormula",ExpressionUUID->
+  "d88c5b93-6a3d-48f8-acf9-158164216e2d"],
+ " pairs for separation constants along a sequence."
+}], "GuideText",
+ CellChangeTimes->{{3.882127418482546*^9, 3.882127444013701*^9}},
+ CellID->1004657438,ExpressionUUID->"7ae2483c-c391-47d5-abcf-46fb04151b94"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["KerraAList",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/KerraAList"]], "InlineGuideFunction",
+  ExpressionUUID->"81f3ba0f-3ae1-4520-a5e7-eb7085cb56ec"],
+ " \[LongDash] creates a list of ",
+ Cell[BoxData[
+  RowBox[{"{", 
+   RowBox[{"a", ",", 
+    RowBox[{
+     ButtonBox["Re",
+      BaseStyle->"Link"], "[", 
+     StyleBox["A", "TR",
+      FontSlant->"Italic"], "]"}]}], "}"}]], "InlineFormula",ExpressionUUID->
+  "a428092f-ee76-4b36-ad49-8a434de14464"],
+ ",  ",
+ Cell[BoxData[
+  RowBox[{"{", 
+   RowBox[{"a", ",", 
+    RowBox[{
+     ButtonBox["Im",
+      BaseStyle->"Link"], "[", 
+     StyleBox["A", "TR",
+      FontSlant->"Italic"], "]"}]}], "}"}]], "InlineFormula",ExpressionUUID->
+  "6864eee3-f806-478b-9807-6168f2ff7f94"],
+ ", or ",
+ Cell[BoxData[
+  RowBox[{"{", 
+   RowBox[{"a", ",", 
+    RowBox[{
+     ButtonBox["Abs",
+      BaseStyle->"Link"], "[", 
+     StyleBox["A", "TR",
+      FontSlant->"Italic"], "]"}]}], "}"}]], "InlineFormula",ExpressionUUID->
+  "fd4ba011-bdf4-4f6a-a193-42288ef7e5a1"],
+ "pairs for separation constants along a sequence."
+}], "GuideText",
+ CellChangeTimes->{{3.882127466570004*^9, 3.882127495060598*^9}},
+ CellID->1086205534,ExpressionUUID->"51eed032-3987-4e71-9ecd-b94a7def9664"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["SWSFLists",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/SWSFLists"]], "InlineGuideFunction",
+  ExpressionUUID->"59f77cbf-a8bc-4421-8689-aad59562f478"],
+ " \[LongDash] evaluates the spin-weighted spheroidal function for a \
+specified mode along a sequence."
+}], "GuideText",
+ CellChangeTimes->{{3.8821271503937263`*^9, 3.8821271773603687`*^9}},
+ CellID->259738688,ExpressionUUID->"2120d7c0-5982-4645-ad2b-a217650aa319"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["AngularModeRealPath",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/AngularModeRealPath"]], 
+  "InlineGuideFunction",ExpressionUUID->
+  "214e4a81-d7a9-4687-85f0-4b4bb175db98"],
+ " \[LongDash] returns a complex path between the poles at ",
+ Cell[BoxData[
+  RowBox[{
+   StyleBox["z", "TI"], "=", 
+   RowBox[{"\[PlusMinus]", "1"}]}]], "InlineFormula",ExpressionUUID->
+  "ee0c7e0c-fa72-423b-895b-ac10dd1d18ca"],
+ " along which a spin-weighted spheroidal function is real."
+}], "GuideText",
+ CellChangeTimes->{{3.8821269985334044`*^9, 3.882127027006054*^9}, {
+  3.8821271044335127`*^9, 3.88212712448925*^9}},
+ CellID->1133027838,ExpressionUUID->"6ea44dfd-901c-4ced-aca4-a65a84e0e7ee"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["PlotModeFunction",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/PlotModeFunction"]], 
+  "InlineGuideFunction",ExpressionUUID->
+  "8a681317-67d7-47ba-bc95-8717a16b0aa4"],
+ " \[LongDash] returns the complex value of the mode function for specified \
+values of \[Omega] based on a reference value for the angular mode."
+}], "GuideText",
+ CellChangeTimes->{{3.882127534142227*^9, 3.882127542431944*^9}, {
+  3.882127575857705*^9, 3.8821275863580923`*^9}, {3.883040066154477*^9, 
+  3.8830400912648697`*^9}},
+ CellID->1701691775,ExpressionUUID->"84ccf23b-042e-4fc2-8572-5d610f936ed6"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["PlotModeFunctionIndex",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/PlotModeFunctionIndex"]], 
+  "InlineGuideFunction",ExpressionUUID->
+  "522149bc-293d-43ed-88b4-ce747ad4f62d"],
+ " \[LongDash] returns the complex value of the mode function for specified \
+values of \[Omega] using an index to choose the angular mode."
+}], "GuideText",
+ CellChangeTimes->{{3.882127534142227*^9, 3.882127542431944*^9}, {
+  3.882127575857705*^9, 3.8821275863580923`*^9}, {3.8830400304989843`*^9, 
+  3.883040054141265*^9}, {3.8830401018688307`*^9, 3.883040128345305*^9}},
+ CellID->2117388956,ExpressionUUID->"a923a9b7-befb-4817-b2d8-6c2d3ea51fa0"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\t", "GuideDelimiter",
+ CellID->2042973955,ExpressionUUID->"61b8156b-0cd6-45a6-b51b-97438fb17c46"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["KerrOmegaListS",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/KerrOmegaListS"]], "InlineFormula",
+  ExpressionUUID->"a2fbb0c2-3cdb-4ecd-9edd-7b280cf6177c"],
+ " . ",
+ Cell[BoxData[
+  ButtonBox["KerrAListS",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/KerrAListS"]], "InlineFormula",
+  ExpressionUUID->"bef20d2a-2e3c-49a3-9479-9751f31d2122"],
+ " . ",
+ Cell[BoxData[
+  ButtonBox["KerraOmegaListS",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/KerraOmegaListS"]], "InlineFormula",
+  ExpressionUUID->"02e2e437-73ba-4111-b0c6-be1f66c6c012"],
+ " . ",
+ Cell[BoxData[
+  ButtonBox["KerraAListS",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/KerraAListS"]], "InlineFormula",
+  ExpressionUUID->"bd1e3389-5317-4a83-a39e-8278f7a49636"]
+}], "InlineGuideFunctionListing",
+ CellChangeTimes->{{3.882126331453319*^9, 3.882126577720871*^9}, 
+   3.8821272936786423`*^9, {3.8821274021021843`*^9, 3.8821274232728157`*^9}, 
+   3.882127477104308*^9},
+ CellID->147229802,ExpressionUUID->"0c9268a1-e4a0-4c00-8582-3c789a8ff369"]
+}, Open  ]],
+
+Cell["\t", "GuideDelimiter",
+ CellID->743655995,ExpressionUUID->"122cfcb6-2f5a-4ea6-b690-a5eca0031cc3"],
+
+Cell[CellGroupData[{
+
+Cell["Additional Routines", "GuideFunctionsSubsection",
+ CellChangeTimes->{{3.882127623544002*^9, 3.882127629074668*^9}},
+ CellID->271482425,ExpressionUUID->"e4840cd1-e252-4e2f-b29f-70f9705bab7b"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["SetSpinWeight",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/SetSpinWeight"]], "InlineGuideFunction",
+  ExpressionUUID->"3990c2dc-764f-477e-8db5-e7b72478a747"],
+ " \[LongDash] sets the default value of the ",
+ Cell[BoxData[
+  ButtonBox["SpinWeight",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/SpinWeight"]], "InlineFormula",
+  ExpressionUUID->"863d7262-814e-431a-98a9-bae35787e4da"],
+ "."
+}], "GuideText",
+ CellChangeTimes->{{3.882127636713139*^9, 3.882127672818921*^9}},
+ CellID->806283338,ExpressionUUID->"6f9a9082-7cb9-4005-820b-a23191cb991f"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["KerrModeMakeMultiplet",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/KerrModeMakeMultiplet"]], 
+  "InlineGuideFunction",ExpressionUUID->
+  "3fffc5fb-4d5c-4e0e-b438-2192d03d4f00"],
+ " \[LongDash] converts an ",
+ Cell[BoxData[
+  ButtonBox["Integer",
+   BaseStyle->"Link"]], "InlineFormula",ExpressionUUID->
+  "e2bc953f-2a10-4d95-a0dd-6c14c67d950e"],
+ " overtone index for an existing Kerr mode sequence into an overtone \
+multiplet index."
+}], "GuideText",
+ CellChangeTimes->{{3.8821277194530888`*^9, 3.882127790870167*^9}, {
+  3.882127841072342*^9, 3.8821278531713533`*^9}},
+ CellID->921288721,ExpressionUUID->"d75a2bf1-c8c0-4304-bc07-a04c84b0e29b"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["ShortenModeSequence",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/ShortenModeSequence"]], 
+  "InlineGuideFunction",ExpressionUUID->
+  "81fa7dc3-5adf-4021-889d-f0b75549bfcd"],
+ " \[LongDash] removes elements from a mode sequence."
+}], "GuideText",
+ CellChangeTimes->{{3.8821278985178537`*^9, 3.882127949353929*^9}, {
+  3.882290278033107*^9, 3.8822902824877996`*^9}},
+ CellID->1726275360,ExpressionUUID->"d96e8330-5095-46c8-a474-d5034de0d187"],
+
+Cell[TextData[{
+ Cell[BoxData[
+  ButtonBox["SelectMode",
+   BaseStyle->"Link",
+   ButtonData->"paclet:KerrModes/ref/SelectMode"]], "InlineGuideFunction",
+  ExpressionUUID->"98af9e56-146d-4f2e-9202-66b576172e1c"],
+ " \[LongDash] specifies the type of mode function when solving for TTMs."
+}], "GuideText",
+ CellChangeTimes->{{3.8822903505776463`*^9, 3.882290394047805*^9}},
+ CellID->639588860,ExpressionUUID->"77a5bb3a-5fae-45ff-9e66-b341b2622645"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Tech Notes", "GuideTutorialsSection",
+ CellID->1094357183,ExpressionUUID->"142af693-2e68-48a8-912a-e86b67250fd9"],
+
+Cell[TextData[ButtonBox["Modes of the Kerr Geometry",
+ BaseStyle->"Link",
+ ButtonData->
+  "paclet:KerrModes/tutorial/ModesOfTheKerrGeometry"]], "GuideTutorial",
+ CellChangeTimes->{{3.882524592385168*^9, 3.882524642445797*^9}},
+ CellID->1811221773,ExpressionUUID->"6a2e87f9-970c-483b-b2d5-edc3f3e76494"],
+
+Cell[TextData[ButtonBox["Spin-Weighted Spheroidal Functions",
+ BaseStyle->"Link",
+ ButtonData->
+  "paclet:SWSpheroidal/tutorial/Spin-WeightedSpheroidalFunctions"]], \
+"GuideTutorial",
+ CellChangeTimes->{
+  3.8825246191171017`*^9, {3.8825246549532127`*^9, 3.882524666883737*^9}},
+ CellID->623642586,ExpressionUUID->"8697deae-42cb-4aea-b0f8-9584f2072e59"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Related Guides", "GuideMoreAboutSection",
+ CellChangeTimes->{{3.8430423939366693`*^9, 3.843042395176153*^9}},
+ CellID->1840745542,ExpressionUUID->"b58a9ab0-a12e-4c49-842a-ea6be298fae9"],
+
+Cell[TextData[ButtonBox["Kerr Quasi-Normal Modes",
+ BaseStyle->"Link",
+ ButtonData->"paclet:KerrQNM/guide/KerrQuasi-NormalModes"]], "GuideMoreAbout",\
+
+ CellChangeTimes->{{3.882376772833908*^9, 3.882376808098833*^9}},
+ CellID->319887729,ExpressionUUID->"1449ff69-c339-4345-b231-9f8e571e3bed"],
+
+Cell[TextData[ButtonBox["Kerr Total-Transmission Modes Left",
+ BaseStyle->"Link",
+ ButtonData->
+  "paclet:KerrTTML/guide/KerrTotal-TransmissionModesLeft"]], "GuideMoreAbout",\
+
+ CellID->1459356961,ExpressionUUID->"c5c07bcd-f04e-4470-bcd3-21390fac62d7"],
+
+Cell[TextData[ButtonBox["Kerr Total-Transmission Modes Right",
+ BaseStyle->"Link",
+ ButtonData->
+  "paclet:KerrTTMR/guide/KerrTotal-TransmissionModesRight"]], "GuideMoreAbout",\
+
+ CellID->718586393,ExpressionUUID->"12174184-5356-4060-b655-96194d070984"],
+
+Cell[TextData[ButtonBox["Spin-Weighted Spheroidal Functions",
+ BaseStyle->"Link",
+ ButtonData->"paclet:SWSpheroidal/guide/SWSpheroidal"]], "GuideMoreAbout",
+ CellChangeTimes->{{3.882127979045594*^9, 3.882128007582239*^9}, 
+   3.882196831233885*^9},
+ CellID->760905712,ExpressionUUID->"29aae2c6-d4aa-4066-af61-7b5d096b7142"],
+
+Cell["XXXX", "GuideMoreAbout",
+ CellID->277183699,ExpressionUUID->"ead979e6-0441-42c8-96bb-44edbbf81aa7"]
+}, Open  ]],
+
+Cell["Related Links", "GuideRelatedLinksSection",
+ CellID->734398750,ExpressionUUID->"01b2f3c2-9972-43da-9860-d85ec29464e5"],
+
+Cell[CellGroupData[{
+
+Cell["Metadata", "MetadataSection",
+ CellID->1451271941,ExpressionUUID->"2718a7dc-f26a-4249-90bf-fdd541eb36e2"],
+
+Cell[TextData[{
+ "New in: ",
+ Cell["1.0.0", "HistoryData",
+  CellTags->"New",ExpressionUUID->"dff5163b-9503-461d-8b81-b66d8914230c"],
+ " | Modified in: ",
+ Cell[" ", "HistoryData",
+  CellTags->"Modified",ExpressionUUID->"afbe4b53-66a6-4164-9541-d01cea9604e3"],
+ " | Obsolete in: ",
+ Cell[" ", "HistoryData",
+  CellTags->"Obsolete",ExpressionUUID->
+  "7a9e25f1-21d3-4b68-8b6d-7c1f725c9962"]
+}], "History",
+ CellChangeTimes->{{3.882120106637127*^9, 3.882120112558247*^9}},
+ CellID->408249761,ExpressionUUID->"bf2b20da-4d5e-47ad-9a97-6645311f1d3f"],
+
+Cell[CellGroupData[{
+
+Cell["Categorization", "CategorizationSection",
+ CellID->243480962,ExpressionUUID->"6f213707-1414-4167-81be-5fcad12f8b46"],
+
+Cell["Guide", "Categorization",
+ CellLabel->"Entity Type",
+ CellID->1228180799,ExpressionUUID->"da233015-c96b-4f51-97e9-ab934326185c"],
+
+Cell["KerrModes", "Categorization",
+ CellLabel->"Paclet Name",
+ CellID->421873829,ExpressionUUID->"d3871bb5-1f58-4c99-b2ea-5a4a316df356"],
+
+Cell["KerrModes`", "Categorization",
+ CellLabel->"Context",
+ CellID->1589925256,ExpressionUUID->"7366e33b-2286-466b-b1f5-b73da44e6641"],
+
+Cell["KerrModes/guide/KerrModes", "Categorization",
+ CellLabel->"URI",
+ CellID->734757971,ExpressionUUID->"bb980467-daf2-40c0-8be5-69b77bb4e46b"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Keywords", "KeywordsSection",
+ CellID->1046248347,ExpressionUUID->"21331660-52e6-4807-a868-31a7a09cad2c"],
+
+Cell["Kerr", "Keywords",
+ CellChangeTimes->{{3.882128104465708*^9, 3.8821281057111692`*^9}},
+ CellID->699866393,ExpressionUUID->"fafb7484-3079-43c6-a2a1-4a505904a786"],
+
+Cell["Modes", "Keywords",
+ CellChangeTimes->{{3.882128104465708*^9, 3.882128131523342*^9}, {
+  3.882196723852862*^9, 3.882196723856711*^9}},
+ CellID->737871311,ExpressionUUID->"48341df8-3d15-4d54-ad3e-93450e0de540"],
+
+Cell["KerrModes", "Keywords",
+ CellChangeTimes->{{3.882128104465708*^9, 3.882128131523342*^9}, {
+  3.882196724429187*^9, 3.8821967260563097`*^9}},
+ CellID->205579314,ExpressionUUID->"afd60d2c-645c-46f5-bdc9-968c293ccdc1"],
+
+Cell["SpinWeight", "Keywords",
+ CellChangeTimes->{{3.882128104465708*^9, 3.882128134869931*^9}},
+ CellID->711890629,ExpressionUUID->"f0d959d5-7c38-4e87-9887-b406650b4018"],
+
+Cell["Spin-weight", "Keywords",
+ CellChangeTimes->{{3.882128104465708*^9, 3.882128138241806*^9}},
+ CellID->1978121494,ExpressionUUID->"177a5807-3c16-470f-84aa-5b32956b526c"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{700.5, 770.25},
+WindowMargins->{{Automatic, 686.25}, {Automatic, 156.75}},
+TaggingRules-><|"Paclet" -> "KerrModes"|>,
+FrontEndVersion->"13.1 for Linux x86 (64-bit) (June 16, 2022)",
+StyleDefinitions->FrontEnd`FileName[{"Wolfram"}, "GuidePageStylesExt.nb", 
+  CharacterEncoding -> "UTF-8"],
+ExpressionUUID->"587ae662-69dc-48c7-8bd5-b5d0a87453b2"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 179, 2, 88, "GuideTitle",ExpressionUUID->"d62717fe-0c1f-4667-a553-63a7184bb66e",
+ CellID->1579969601],
+Cell[762, 26, 494, 11, 47, "GuideAbstract",ExpressionUUID->"66c3c376-491c-4fb0-a67d-79c0e393e805",
+ CellID->913788852]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1293, 42, 109, 1, 72, "GuideFunctionsSection",ExpressionUUID->"e3e2dd71-ca92-4f1b-8eaf-6ce43e4093f3",
+ CellID->1393675867],
+Cell[CellGroupData[{
+Cell[1427, 47, 198, 2, 37, "GuideFunctionsSubsection",ExpressionUUID->"eb07e5f0-d099-4ec2-be51-2ea5bf226f2c",
+ CellID->1596405827],
+Cell[1628, 51, 460, 10, 24, "GuideText",ExpressionUUID->"d1aacd45-5ba8-4820-ad76-9bf72013405f",
+ CellID->906158840],
+Cell[2091, 63, 514, 11, 24, "GuideText",ExpressionUUID->"ac8a1380-eecf-47cc-85cb-0a2a9ef56606",
+ CellID->2005083003]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2642, 79, 104, 1, 27, "GuideDelimiter",ExpressionUUID->"e8af0478-cac9-4fc5-9e00-320970456969",
+ CellID->1116642697],
+Cell[2749, 82, 930, 22, 24, "InlineGuideFunctionListing",ExpressionUUID->"b9123b21-c00c-4473-ab89-cf9948bc6eb4",
+ CellID->554217346]
+}, Open  ]],
+Cell[3694, 107, 103, 1, 27, "GuideDelimiter",ExpressionUUID->"8b3c820f-d9da-4e1c-b75a-abf2439fafe4",
+ CellID->610365230],
+Cell[CellGroupData[{
+Cell[3822, 112, 199, 2, 37, "GuideFunctionsSubsection",ExpressionUUID->"ab280b69-f24a-4a94-ae49-6824cf2a67f7",
+ CellID->1604484234],
+Cell[4024, 116, 526, 12, 24, "GuideText",ExpressionUUID->"db79cfff-07d1-41b7-975a-4deef17f4eb0",
+ CellID->566537756],
+Cell[4553, 130, 674, 15, 24, "GuideText",ExpressionUUID->"241f0338-cfde-4d99-9d31-eef3e3c41cbe",
+ CellID->622055040],
+Cell[5230, 147, 701, 16, 24, "GuideText",ExpressionUUID->"b2a7a304-d9d3-4a37-a210-9daa87e99118",
+ CellID->870164128],
+Cell[5934, 165, 836, 23, 41, "GuideText",ExpressionUUID->"50400468-a1ff-4da7-9580-4feb5a07b87c",
+ CellID->1340900737],
+Cell[6773, 190, 1244, 37, 41, "GuideText",ExpressionUUID->"d5d866d6-3e20-4fdd-baa0-e142566cb050",
+ CellID->2102244468],
+Cell[8020, 229, 687, 18, 24, "GuideText",ExpressionUUID->"4c510013-9bf9-4a02-a6dc-41b9bc39de25",
+ CellID->1867475512],
+Cell[8710, 249, 803, 22, 24, "GuideText",ExpressionUUID->"7ae2483c-c391-47d5-abcf-46fb04151b94",
+ CellID->1004657438],
+Cell[9516, 273, 1273, 39, 41, "GuideText",ExpressionUUID->"51eed032-3987-4e71-9ecd-b94a7def9664",
+ CellID->1086205534],
+Cell[10792, 314, 477, 10, 24, "GuideText",ExpressionUUID->"2120d7c0-5982-4645-ad2b-a217650aa319",
+ CellID->259738688],
+Cell[11272, 326, 736, 17, 41, "GuideText",ExpressionUUID->"6ea44dfd-901c-4ced-aca4-a65a84e0e7ee",
+ CellID->1133027838],
+Cell[12011, 345, 635, 13, 41, "GuideText",ExpressionUUID->"84ccf23b-042e-4fc2-8572-5d610f936ed6",
+ CellID->1701691775],
+Cell[12649, 360, 687, 13, 41, "GuideText",ExpressionUUID->"a923a9b7-befb-4817-b2d8-6c2d3ea51fa0",
+ CellID->2117388956]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[13373, 378, 104, 1, 27, "GuideDelimiter",ExpressionUUID->"61b8156b-0cd6-45a6-b51b-97438fb17c46",
+ CellID->2042973955],
+Cell[13480, 381, 1101, 28, 24, "InlineGuideFunctionListing",ExpressionUUID->"0c9268a1-e4a0-4c00-8582-3c789a8ff369",
+ CellID->147229802]
+}, Open  ]],
+Cell[14596, 412, 103, 1, 27, "GuideDelimiter",ExpressionUUID->"122cfcb6-2f5a-4ea6-b690-a5eca0031cc3",
+ CellID->743655995],
+Cell[CellGroupData[{
+Cell[14724, 417, 196, 2, 37, "GuideFunctionsSubsection",ExpressionUUID->"e4840cd1-e252-4e2f-b29f-70f9705bab7b",
+ CellID->271482425],
+Cell[14923, 421, 620, 15, 24, "GuideText",ExpressionUUID->"6f9a9082-7cb9-4005-820b-a23191cb991f",
+ CellID->806283338],
+Cell[15546, 438, 706, 17, 41, "GuideText",ExpressionUUID->"d75a2bf1-c8c0-4304-bc07-a04c84b0e29b",
+ CellID->921288721],
+Cell[16255, 457, 500, 11, 24, "GuideText",ExpressionUUID->"d96e8330-5095-46c8-a474-d5034de0d187",
+ CellID->1726275360],
+Cell[16758, 470, 447, 9, 24, "GuideText",ExpressionUUID->"77a5bb3a-5fae-45ff-9e66-b341b2622645",
+ CellID->639588860]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[17254, 485, 119, 1, 74, "GuideTutorialsSection",ExpressionUUID->"142af693-2e68-48a8-912a-e86b67250fd9",
+ CellID->1094357183],
+Cell[17376, 488, 302, 5, 24, "GuideTutorial",ExpressionUUID->"6a2e87f9-970c-483b-b2d5-edc3f3e76494",
+ CellID->1811221773],
+Cell[17681, 495, 353, 7, 24, "GuideTutorial",ExpressionUUID->"8697deae-42cb-4aea-b0f8-9584f2072e59",
+ CellID->623642586]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[18071, 507, 191, 2, 74, "GuideMoreAboutSection",ExpressionUUID->"b58a9ab0-a12e-4c49-842a-ea6be298fae9",
+ CellID->1840745542],
+Cell[18265, 511, 292, 5, 24, "GuideMoreAbout",ExpressionUUID->"1449ff69-c339-4345-b231-9f8e571e3bed",
+ CellID->319887729],
+Cell[18560, 518, 252, 5, 24, "GuideMoreAbout",ExpressionUUID->"c5c07bcd-f04e-4470-bcd3-21390fac62d7",
+ CellID->1459356961],
+Cell[18815, 525, 253, 5, 24, "GuideMoreAbout",ExpressionUUID->"12174184-5356-4060-b655-96194d070984",
+ CellID->718586393],
+Cell[19071, 532, 323, 5, 24, "GuideMoreAbout",ExpressionUUID->"29aae2c6-d4aa-4066-af61-7b5d096b7142",
+ CellID->760905712],
+Cell[19397, 539, 105, 1, 24, "GuideMoreAbout",ExpressionUUID->"ead979e6-0441-42c8-96bb-44edbbf81aa7",
+ CellID->277183699]
+}, Open  ]],
+Cell[19517, 543, 124, 1, 74, "GuideRelatedLinksSection",ExpressionUUID->"01b2f3c2-9972-43da-9860-d85ec29464e5",
+ CellID->734398750],
+Cell[CellGroupData[{
+Cell[19666, 548, 111, 1, 72, "MetadataSection",ExpressionUUID->"2718a7dc-f26a-4249-90bf-fdd541eb36e2",
+ CellID->1451271941],
+Cell[19780, 551, 545, 13, 26, "History",ExpressionUUID->"bf2b20da-4d5e-47ad-9a97-6645311f1d3f",
+ CellID->408249761],
+Cell[CellGroupData[{
+Cell[20350, 568, 122, 1, 21, "CategorizationSection",ExpressionUUID->"6f213707-1414-4167-81be-5fcad12f8b46",
+ CellID->243480962],
+Cell[20475, 571, 134, 2, 35, "Categorization",ExpressionUUID->"da233015-c96b-4f51-97e9-ab934326185c",
+ CellID->1228180799],
+Cell[20612, 575, 137, 2, 35, "Categorization",ExpressionUUID->"d3871bb5-1f58-4c99-b2ea-5a4a316df356",
+ CellID->421873829],
+Cell[20752, 579, 135, 2, 35, "Categorization",ExpressionUUID->"7366e33b-2286-466b-b1f5-b73da44e6641",
+ CellID->1589925256],
+Cell[20890, 583, 145, 2, 35, "Categorization",ExpressionUUID->"bb980467-daf2-40c0-8be5-69b77bb4e46b",
+ CellID->734757971]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[21072, 590, 111, 1, 31, "KeywordsSection",ExpressionUUID->"21331660-52e6-4807-a868-31a7a09cad2c",
+ CellID->1046248347],
+Cell[21186, 593, 167, 2, 21, "Keywords",ExpressionUUID->"fafb7484-3079-43c6-a2a1-4a505904a786",
+ CellID->699866393],
+Cell[21356, 597, 215, 3, 21, "Keywords",ExpressionUUID->"48341df8-3d15-4d54-ad3e-93450e0de540",
+ CellID->737871311],
+Cell[21574, 602, 221, 3, 21, "Keywords",ExpressionUUID->"afd60d2c-645c-46f5-bdc9-968c293ccdc1",
+ CellID->205579314],
+Cell[21798, 607, 171, 2, 21, "Keywords",ExpressionUUID->"f0d959d5-7c38-4e87-9887-b406650b4018",
+ CellID->711890629],
+Cell[21972, 611, 173, 2, 21, "Keywords",ExpressionUUID->"177a5807-3c16-470f-84aa-5b32956b526c",
+ CellID->1978121494]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
