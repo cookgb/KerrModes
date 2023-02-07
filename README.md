@@ -35,3 +35,21 @@ Mathematica notebook to install each paclet into a local Mathematica environment
 All public functions in each paclet (and some private functions as well) have full Mathematica-type documentation.  Guides and tutorials are also provided within the Mathematica documentation.  **However**, the current implementation of paclets does not fully integrate in with the Mathematica's feature of "hovering over" a function and asking for help.  
 1) Help can be obtained by searching the Wolfram Documentation in a Mathematica environment where the KerrModes paclets have been installed.
 2) Help can also be obtained by using the ?FunctionName method for getting information about a function.  In this case, clicking on the blue circle with an "i" in the middle will bring up the full Mathematica documentation for the function.  This documentation will include links to guides and tutorials.
+
+---
+# Installing the KerrModes suite of packages
+
+The **KerrModes** suite of packages consistes of 5 separate packages which are treated as *Mathematica paclets*.  The CreatePaclets.nb notebook can be used to complile the individual paclets, and the InstallPaclets.nb notebook can be used to install them into your personal Mathematica workspace.
+
+Installing the paclets provides easier access to the documentation, but it is not necessary to install the paclets to use their functionality.  The paclets can be loaded (using *Mathematica*'s Needs function) directly from your git repository.  CreatePaclets.nb also illustrates how you may use the *Mathematica* function PacletDirectoryLoad to let *Mathematica* know where the uncompiled paclets are located.
+
+---
+# Using the KerrModes suite of packages
+
+While there are 5 separate packages in the KerrModes suite, only the SWSpheroidal\`, KerrQNM\`, KerrTTML\`, and KerrTTMR\` packages should be loaded via Needs, and you should only load one in any given Mathematica session.
+
+The SWSpheroidal\` package can be loaded by itself and provides the basic routines to solve just the spin-weighted spheroidal function (angular Teukolsky) equation.
+
+The KerrQNM\`, KerrTTML\`, and KerrTTMR\` packages can each be loaded to solve respectively for quasi-normal modes and for either left or right total-transmission modes.  These packages automatically load both the KerrModes\` and SWSpheroidal\` packages.
+
+Two example notebooks, Example_QNM.nb and Example_TTML.nb, provide very simple examples of loading in these two packages and computing simple sequences of mode solutions.
