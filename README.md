@@ -43,6 +43,8 @@ The **KerrModes** suite of packages consistes of 5 separate packages which are t
 
 Installing the paclets provides easier access to the documentation, but it is not necessary to install the paclets to use their functionality.  The paclets can be loaded (using *Mathematica*'s Needs function) directly from your git repository.  CreatePaclets.nb also illustrates how you may use the *Mathematica* function PacletDirectoryLoad to let *Mathematica* know where the uncompiled paclets are located.
 
+**If you do not wish to compile the paclets yourself, each *Github Release* contains copies of each precompiled paclet which you may install into *Mathematica*.**
+
 ---
 # Using the KerrModes suite of packages
 
