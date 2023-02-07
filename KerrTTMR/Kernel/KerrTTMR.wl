@@ -280,7 +280,7 @@ Options[PlotSchTTMR]=Union[{SpinWeight->2},Options[KerrModes`Private`PlotSchMode
 PlotSchTTMR[l_Integer,opts:OptionsPattern[]]:=
 Module[{s=OptionValue[SpinWeight],ptable},
 	PlotSchTTMR::spinweight="Invalid TTMR Spin Weight : `1`";
-	ptable:=GetSchName[TTMR,s];
+	ptable:=KerrModes`Private`GetSchName[TTMR,s];
 	KerrModes`Private`PlotSchModes[l,PlotTable->ptable,
 									FilterRules[{opts},Options[KerrModes`Private`PlotSchModes]]]
 ]

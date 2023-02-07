@@ -227,7 +227,7 @@ Options[PlotSchQNM]=Union[{SpinWeight->-2},Options[KerrModes`Private`PlotSchMode
 PlotSchQNM[l_Integer,opts:OptionsPattern[]]:=
 Module[{s=OptionValue[SpinWeight],ptable},
 	PlotSchQNM::spinweight="Invalid QNM Spin Weight : `1`";
-	ptable:=GetSchName[QNM,s];
+	ptable:=KerrModes`Private`GetSchName[QNM,s];
 	KerrModes`Private`PlotSchModes[l,PlotTable->ptable,
 									FilterRules[{opts},Options[KerrModes`Private`PlotSchModes]]]
 ]
