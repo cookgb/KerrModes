@@ -218,27 +218,23 @@ Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,sc
 	SphericalLimit,
 		SphericalVal=(-1)^m*Sqrt[\[Pi]*(2*(La+lmin)+1)]*WignerD[{La+lmin,m,-s},0,\[Pi]/2,0];
 		scaledcoefs=(-1)^m Sqrt[\[Pi]] ParallelTable[Sqrt[2(j-1+lmin)+1]SWdat[[j]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+		WDzero=ParallelTable[N[WignerD[{j-1+lmin,m,-s},0,\[Pi]/2,0]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+		SWSFzero = WDzero . scaledcoefs;
 		If[Sign[SphericalVal]!=0,
-			WDzero=ParallelTable[N[WignerD[{j-1+lmin,m,-s},0,\[Pi]/2,0]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
-			SWSFzero = WDzero . scaledcoefs;
 			If[Sign[SphericalVal]==-1,
 				phase=Exp[I(\[Pi]-Arg[SWSFzero])],
 				If[Sign[SphericalVal]==1,
 					phase=Exp[I(-Arg[SWSFzero])];
 				];
 			],(*Case when spherical value is zero.*)
+			phase = Exp[I(\[Pi]/2-Arg[SWSFzero])];
 			WDzeroplus=ParallelTable[Sqrt[(j-1+lmin-s)*(j-1+lmin+s+1)]*If[s>=(j-1+lmin),0,N[WignerD[{j-1+lmin,m,-s-1},0,\[Pi]/2,0]]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
 			WDzerominus=ParallelTable[Sqrt[(j-1+lmin+s)*(j-1+lmin-s+1)]*If[-s>=(j-1+lmin),0,N[WignerD[{j-1+lmin,m,-s+1},0,\[Pi]/2,0]]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
 			WDzeroD=(-1/2)*(WDzeroplus-WDzerominus);
 			SphericalD=(-1)^m*Sqrt[\[Pi]*(2*(La+lmin)+1)]*WDzeroD[[La+1]];
-			SWSFzeroD=scaledcoefs . WDzeroD;
-			If[Sign[SphericalD]==-1,
-				phase=Exp[I(\[Pi]-Arg[SWSFzeroD])],
-				If[Sign[SphericalD]==1,
-					phase=Exp[I(-Arg[SWSFzeroD])],
-					Print["Value and derivative both zero."];Abort[]
-				];
-			];
+			SWSFzeroD=phase*(scaledcoefs . WDzeroD);
+			If[Sign[Re[SWSFzeroD]]!=Sign[SphericalD],phase=-phase];
+			If[Sign[SphericalD]==0,Print["Value and derivative both zero."];Abort[]];
 		],
 	_,Message[SWSFfixphase::badmethod,OptionValue[Method]];Abort[] 
 	];
