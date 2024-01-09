@@ -3,7 +3,7 @@
 PacletObject[
     <|
         "Name" -> "KerrTTML",
-        "Version" -> "1.0.0",
+        "Version" -> "1.0.1",
         "WolframVersion" -> "12.0+",
         "Extensions" ->
             {
