@@ -3,7 +3,7 @@
 PacletObject[
     <|
         "Name" -> "SWSpheroidal",
-        "Version" -> "1.0.1",
+        "Version" -> "1.0.2",
         "WolframVersion" -> "12.0+",
         "Extensions" ->
             {

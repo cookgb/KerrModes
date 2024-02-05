@@ -208,30 +208,28 @@ Options[SWSFfixphase]={PhaseChoice->SphericalLimit};
 
 
 SWSFfixphase[m_/;IntegerQ[2m],s_/;IntegerQ[2s],La_,SWdat_List,opts:OptionsPattern[]]:=
-Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,scaledcoefs,SWSFzero,SWSFzeroD,phase},
+Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,scaledcoefs,SWSFzero,SWSFzeroD,phase,hoint=1},
 	SWSFfixphase::badmethod="`1` is an invalid Method";
+	If[!IntegerQ[m],hoint=-I];
 	NC=Length[SWdat];
 	lmin=Max[Abs[m],Abs[s]];
 	Switch[OptionValue[PhaseChoice],
 	Simple,
 		phase=Exp[I(-Arg[SWdat[[La+1]]])],
 	SphericalLimit,
-		SphericalVal=(-1)^m*Sqrt[\[Pi]*(2*(La+lmin)+1)]*WignerD[{La+lmin,m,-s},0,\[Pi]/2,0];
-		scaledcoefs=(-1)^m Sqrt[\[Pi]] ParallelTable[Sqrt[2(j-1+lmin)+1]SWdat[[j]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+		SphericalVal=hoint (-1)^m*Sqrt[La+lmin+1/2]*WignerD[{La+lmin,m,-s},0,\[Pi]/2,0];
+		scaledcoefs=hoint (-1)^m ParallelTable[Sqrt[j-1+lmin+1/2]SWdat[[j]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
 		WDzero=ParallelTable[N[WignerD[{j-1+lmin,m,-s},0,\[Pi]/2,0]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
 		SWSFzero = WDzero . scaledcoefs;
 		If[Sign[SphericalVal]!=0,
-			If[Sign[SphericalVal]==-1,
-				phase=Exp[I(\[Pi]-Arg[SWSFzero])],
-				If[Sign[SphericalVal]==1,
-					phase=Exp[I(-Arg[SWSFzero])];
-				];
-			],(*Case when spherical value is zero.*)
-			phase = Exp[I(\[Pi]/2-Arg[SWSFzero])];
+			phase=Exp[I(\[Pi]-Arg[SWSFzero])];
+			If[Sign[Re[phase SWSFzero]]!=Sign[SphericalVal],phase=-phase]
+		,(*Case when spherical value is zero.*)
+			phase = Exp[I(\[Pi]-Arg[SWSFzero])];
 			WDzeroplus=ParallelTable[Sqrt[(j-1+lmin-s)*(j-1+lmin+s+1)]*If[s>=(j-1+lmin),0,N[WignerD[{j-1+lmin,m,-s-1},0,\[Pi]/2,0]]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
 			WDzerominus=ParallelTable[Sqrt[(j-1+lmin+s)*(j-1+lmin-s+1)]*If[-s>=(j-1+lmin),0,N[WignerD[{j-1+lmin,m,-s+1},0,\[Pi]/2,0]]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
 			WDzeroD=(-1/2)*(WDzeroplus-WDzerominus);
-			SphericalD=(-1)^m*Sqrt[\[Pi]*(2*(La+lmin)+1)]*WDzeroD[[La+1]];
+			SphericalD=hoint (-1)^m*Sqrt[La+lmin+1/2]*WDzeroD[[La+1]];
 			SWSFzeroD=phase*(scaledcoefs . WDzeroD);
 			If[Sign[Re[SWSFzeroD]]!=Sign[SphericalD],phase=-phase];
 			If[Sign[SphericalD]==0,Print["Value and derivative both zero."];Abort[]];
@@ -247,14 +245,15 @@ Options[SWSFvalues]={PlotPoints->100};
 
 
 SWSFvalues[m_/;IntegerQ[2m],s_/;IntegerQ[2s],SWdat_List,opts:OptionsPattern[]]:=
-Module[{NC,x,theta,Ntheta,lmin,Matdlx,SWSF,choplev,npoints=OptionValue[PlotPoints]},
+Module[{NC,x,theta,Ntheta,lmin,Matdlx,SWSF,choplev,hoint=1,npoints=OptionValue[PlotPoints]},
+	If[!IntegerQ[m],hoint=-I];
 	NC=Length[SWdat];
 	x=Table[x,{x,-1,1,1/(npoints-1)}];
 	theta=ArcCos[#]&/@x;
 	Ntheta=Length[theta];
 	lmin=Max[Abs[m],Abs[s]];
 	Matdlx = ParallelTable[N[WignerD[{j-1+lmin,m,-s},0,theta[[k]],0]],{k,1,Ntheta},{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
-	SWSF = (-1)^m Sqrt[\[Pi]] Matdlx . ParallelTable[Sqrt[2(j-1+lmin)+1]SWdat[[j]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+	SWSF = hoint (-1)^m Matdlx . ParallelTable[Sqrt[j-1+lmin+1/2]SWdat[[j]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
 	{x,SWSF}
 ]
 
@@ -263,14 +262,15 @@ Options[SWSFRealPath]=Union[{PathStart->Automatic,MaxSteps->5000,StepSize->1/50,
 
 
 SWSFRealPath[m_/;IntegerQ[2m],s_/;IntegerQ[2s],SWdat_List,opts:OptionsPattern[]]:=
-Module[{NC,lmin,Matdlx,SWSF,z,z0,zf,\[Delta]z,\[Phi],\[Phi]g,\[Phi]0,phase,zlist,SWSFlist,count=0,
+Module[{NC,lmin,Matdlx,SWSF,z,z0,zf,\[Delta]z,\[Phi],\[Phi]g,\[Phi]0,phase,zlist,SWSFlist,count=0,hoint=1,
 		max\[Delta]r=OptionValue[StepSize],maxcount=OptionValue[MaxSteps],
 		plot=OptionValue[PlotStart]},
 	SWSFRealPath::PathStart="Invalid PathStart : `1`";
+	If[!IntegerQ[m],hoint=-I];
 	NC=Length[SWdat];
 	lmin=Max[Abs[m],Abs[s]];
 	Matdlx = ParallelTable[WignerD[{j-1+lmin,m,-s},0,ArcCos[z],0],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
-	SWSF = (-1)^m Sqrt[\[Pi]] Matdlx . Table[Sqrt[2(j-1+lmin)+1]SWdat[[j]],{j,1,NC}];
+	SWSF = hoint (-1)^m Matdlx . Table[Sqrt[j-1+lmin+1/2]SWdat[[j]],{j,1,NC}];
 	phase=1;
 	Switch[OptionValue[PathStart],
 		Automatic,
