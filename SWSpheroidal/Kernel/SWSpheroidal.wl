@@ -225,7 +225,11 @@ Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,sc
 			phase=Exp[I(\[Pi]-Arg[SWSFzero])];
 			If[Sign[Re[phase SWSFzero]]!=Sign[SphericalVal],phase=-phase]
 		,(*Case when spherical value is zero.*)
-			phase = Exp[I(\[Pi]-Arg[SWSFzero])];
+			If[Chop[SWSFzero]==0&&s==0,(* special case where symmetry causes problems *)
+				phase=Exp[I(-Arg[SWdat[[La+1]]])];
+			, (* general case *)
+				phase = Exp[I(\[Pi]-Arg[SWSFzero])];
+			];
 			WDzeroplus=ParallelTable[Sqrt[(j-1+lmin-s)*(j-1+lmin+s+1)]*If[s>=(j-1+lmin),0,N[WignerD[{j-1+lmin,m,-s-1},0,\[Pi]/2,0]]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
 			WDzerominus=ParallelTable[Sqrt[(j-1+lmin+s)*(j-1+lmin-s+1)]*If[-s>=(j-1+lmin),0,N[WignerD[{j-1+lmin,m,-s+1},0,\[Pi]/2,0]]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
 			WDzeroD=(-1/2)*(WDzeroplus-WDzerominus);
