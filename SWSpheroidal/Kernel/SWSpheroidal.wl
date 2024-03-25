@@ -71,6 +71,12 @@ SWSFfixphase::usage=
 "azimuthal index \!\(\*StyleBox[\"m\", \"TI\"]\)."
 
 
+SLCorrectContinuity::usage=
+"SLCorrectContinuity[m,s,L,SWdat,SLPhase] "<>
+"returns a list of complex phase values which have been corrected to "<>
+"to remove phase discontinuities of \[Pi]."
+
+
 SWSFvalues::usage=
 "SWSFvalues[m,s,SWdat] "<>
 "evaluates the spin-weighted spheroidal function with spin-weight "<>
@@ -95,6 +101,9 @@ StyleBox[\"SWdat\", \"TI\"]\), is real."
 
 
 Protect[PhaseChoice,SphericalLimit,Simple];
+
+
+Protect[PlotFlips]
 
 
 Protect[PathStart,PlotStart,PrintPoleValues,StepSize,\[Phi]guess]
@@ -269,6 +278,35 @@ Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,sc
 	phase
 ]/;IntegerQ[m+s]
 SWSFfixphase[m_,s_,La_,SWdat_List,opts:OptionsPattern[]]:=Print["m and s must both be either integer or half-integer values."]
+
+
+Options[SLCorrectContinuity]={PlotFlips->False};
+
+
+SLCorrectContinuity[m_/;IntegerQ[2m],s_/;IntegerQ[2s],La_Integer,SWdat_List,SLPhase_List,opts:OptionsPattern[]]:=
+Module[{slphase,CZPhase,PhaseDiff,flips,avg,err,flipvals,flipon,flipindex,dropped=0},
+	CZPhase=Table[Exp[I(-Arg[SWdat[[ind,La+1]]])],{ind,1,Length[SWdat]}];
+	PhaseDiff=Arg[Exp[I(Arg[SLPhase ]-Arg[CZPhase ])]];
+	flips=Abs[Abs[Drop[PhaseDiff,1]-Drop[PhaseDiff,-1]]-\[Pi]]-\[Pi];
+	avg=(Total[flips]-Max[flips])/(Length[flips]-1);
+	err=Sqrt[Total[Abs[flips-avg]^2]]/Length[flips];
+	flips =Abs[flips+\[Pi]];
+	Print["Average diff : ",avg," : err : ",err];
+	If[OptionValue[PlotFlips],Print[ListPlot[flips,PlotRange->All]]];
+	flipvals=Select[flips,Abs[#]<5err&];
+	If[Length[flipvals]==0,Return[SLPhase]];
+	If[WignerD[{La+Max[Abs[m],Abs[s]],m,-s},0,\[Pi]/2,0]!=0,Print["Should only need to phase flip if spherical limit vanishes at x=0: Abort"];Abort[]];
+	slphase=SLPhase;
+	Do[
+		flipindex=Position[flips,flipon][[1,1]];
+		Print["Flip index : ",flipindex+dropped];
+		slphase=Join[Take[slphase,flipindex+dropped],-Drop[slphase,flipindex+dropped]];
+		flips=Drop[flips,flipindex];
+		dropped +=flipindex;
+	,{flipon,flipvals}];
+	slphase
+]/;IntegerQ[m+s]
+SLCorrectContinuity[m_,s_,La_,SWdat_,SLPhase_,opts:OptionsPattern[]]:=Print["m and s must both be either integer or half-integer values."]
 
 
 Options[SWSFvalues]={PlotPoints->100};
