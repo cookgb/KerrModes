@@ -208,35 +208,61 @@ Options[SWSFfixphase]={PhaseChoice->SphericalLimit};
 
 
 SWSFfixphase[m_/;IntegerQ[2m],s_/;IntegerQ[2s],La_,SWdat_List,opts:OptionsPattern[]]:=
-Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,scaledcoefs,SWSFzero,SWSFzeroD,phase,hoint=1},
+Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,scaledcoefs,SWSFzero,SWSFzeroD,phase,index,hoint=1},
 	SWSFfixphase::badmethod="`1` is an invalid Method";
-	If[!IntegerQ[m],hoint=I];
+	SWSFfixphase::notpossible="Spherical value and derivative both zero.";
+	If[!IntegerQ[m],hoint=-I];
 	NC=Length[SWdat];
 	lmin=Max[Abs[m],Abs[s]];
 	Switch[OptionValue[PhaseChoice],
 	Simple,
 		phase=Exp[I(-Arg[SWdat[[La+1]]])],
 	SphericalLimit,
-		SphericalVal=hoint (-1)^s*Sqrt[La+lmin+1/2]*WignerD[{La+lmin,-m,s},0,\[Pi]/2,0];
+		SphericalVal=hoint (-1)^s Sqrt[La+lmin+1/2]*WignerD[{La+lmin,-m,s},0,\[Pi]/2,0];
 		scaledcoefs=hoint (-1)^s ParallelTable[Sqrt[j-1+lmin+1/2]SWdat[[j]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
 		WDzero=ParallelTable[N[WignerD[{j-1+lmin,-m,s},0,\[Pi]/2,0]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
 		SWSFzero = WDzero . scaledcoefs;
-		If[Sign[SphericalVal]!=0,
+		(* In general, we choose the phase so the function is real at x=0 *)
+		If[Chop[SWSFzero]==0,(* special case where symmetry causes problems *)
+			phase=Exp[I(-Arg[SWdat[[La+1]]])]; (* When all else fails, use the simple choice *)
+		, (* general case *)
 			phase=Exp[I(\[Pi]-Arg[SWSFzero])];
-			If[Sign[Re[phase SWSFzero]]!=Sign[SphericalVal],phase=-phase]
+		];
+		If[Sign[SphericalVal]!=0,
+			If[Chop[SWSFzero]==0,
+			(* Case where function vanishes, but spherical limit does not. *)
+				WDzeroplus=ParallelTable[Sqrt[(j-1+lmin-s)*(j-1+lmin+s+1)]*If[s>=(j-1+lmin),0,N[WignerD[{j-1+lmin,-m,s+1},0,\[Pi]/2,0]]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+				WDzerominus=ParallelTable[Sqrt[(j-1+lmin+s)*(j-1+lmin-s+1)]*If[-s>=(j-1+lmin),0,N[WignerD[{j-1+lmin,-m,s-1},0,\[Pi]/2,0]]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+				WDzeroD=(-1/2)(WDzeroplus-WDzerominus);
+				SphericalD=hoint (-1)^s Sqrt[La+lmin+1/2]WDzeroD[[La+1]];
+				SWSFzeroD=scaledcoefs . WDzeroD;
+				(* Since the function is zero at x=0, we can demand the derivative be real there *)
+				(* and have a specified positive or negative slope *)
+				phase=Exp[I(\[Pi]-Arg[SWSFzeroD])];
+				index=La+Max[Abs[m],Abs[s]]+m;
+				If[OddQ[index],++index];
+				If[Sign[Re[phase SWSFzeroD]]!= Sign[(-1)^(index/2)],phase=-phase],
+			(* general case *)
+				If[Sign[Re[phase SWSFzero]]!=Sign[SphericalVal],phase=-phase]
+			]
 		,(*Case when spherical value is zero.*)
-			If[Chop[SWSFzero]==0&&s==0,(* special case where symmetry causes problems *)
-				phase=Exp[I(-Arg[SWdat[[La+1]]])];
-			, (* general case *)
-				phase = Exp[I(\[Pi]-Arg[SWSFzero])];
-			];
 			WDzeroplus=ParallelTable[Sqrt[(j-1+lmin-s)*(j-1+lmin+s+1)]*If[s>=(j-1+lmin),0,N[WignerD[{j-1+lmin,-m,s+1},0,\[Pi]/2,0]]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
 			WDzerominus=ParallelTable[Sqrt[(j-1+lmin+s)*(j-1+lmin-s+1)]*If[-s>=(j-1+lmin),0,N[WignerD[{j-1+lmin,-m,s-1},0,\[Pi]/2,0]]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
-			WDzeroD=(-1/2)*(WDzeroplus-WDzerominus);
-			SphericalD=hoint (-1)^s*Sqrt[La+lmin+1/2]*WDzeroD[[La+1]];
-			SWSFzeroD=phase*(scaledcoefs . WDzeroD);
-			If[Sign[Re[SWSFzeroD]]!=Sign[SphericalD],phase=-phase];
-			If[Sign[SphericalD]==0,Print["Value and derivative both zero."];Abort[]];
+			WDzeroD=(-1/2)(WDzeroplus-WDzerominus);
+			SphericalD=hoint (-1)^s Sqrt[La+lmin+1/2]WDzeroD[[La+1]];
+			SWSFzeroD=scaledcoefs . WDzeroD;
+			If[Chop[SWSFzeroD]==0,
+			(* Case when derivative vanishes, but spherical limit does not. *)
+			(* Since the derivative vanishes, the value must be non-zero and the phase *)
+			(* has been chosen to make it real at x=0, so we can specify its sign *)
+				index=La+Max[Abs[m],Abs[s]]+m;
+				If[OddQ[index],++index];
+				If[Sign[Re[phase SWSFzero]]!= Sign[(-1)^(index/2)],phase=-phase],
+			(* general case *)
+				If[s==0,phase=Exp[I(\[Pi]-Arg[SWSFzeroD])]]; (* Exception for s=0 which has even/odd symmetry *)
+				If[Sign[Re[phase SWSFzeroD]]!=Sign[SphericalD],phase=-phase]
+			];
+			If[Sign[SphericalD]==0,Message[SWSFfixphase::notpossible];Abort[]];
 		],
 	_,Message[SWSFfixphase::badmethod,OptionValue[Method]];Abort[] 
 	];
