@@ -265,7 +265,7 @@ Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,sc
 			(* Since the derivative vanishes, the value must be non-zero and the phase *)
 			(* has been chosen to make it real at x=0, so we can specify its sign *)
 				index=La+Max[Abs[m],Abs[s]]+m;
-				If[OddQ[index],++index];
+				If[OddQ[index],--index];
 				If[Sign[Re[phase SWSFzero]]!= Sign[(-1)^(index/2)],phase=-phase],
 			(* general case *)
 				If[s==0,phase=Exp[I(\[Pi]-Arg[SWSFzeroD])]]; (* Exception for s=0 which has even/odd symmetry *)
