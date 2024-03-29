@@ -77,6 +77,13 @@ SLCorrectExtremumDiscontinuity::usage=
 "to remove phase discontinuities of \[Pi] due to extrema crossing x=0."
 
 
+SLCorrectInitialDiscontinuity::usage=
+"SLCorrectInitialDiscontinuity[m,s,L,SWdat,SLPhase,\[Phi]dir] "<>
+"returns a 2-element list {update,phase}.  If update is True, then phase "<>
+"contains the complex phase correction which should replace the first "<>
+"element in SLPhase."
+
+
 SWSFvalues::usage=
 "SWSFvalues[m,s,SWdat] "<>
 "evaluates the spin-weighted spheroidal function with spin-weight "<>
@@ -288,6 +295,7 @@ Options[SLCorrectExtremumDiscontinuity]={PlotFlips->False};
 
 SLCorrectExtremumDiscontinuity[m_/;IntegerQ[2m],s_/;IntegerQ[2s],La_Integer,SWdat_List,SLPhase_List,opts:OptionsPattern[]]:=
 Module[{slphase,CZPhase,PhaseDiff,flips,avg,err,flipvals,flipon,flipindex,dropped=0},
+	SLCorrectExtremumDiscontinuity::SLerror="Should only need to phase flip if spherical limit vanishes at x=0.";
 	CZPhase=Table[Exp[I(-Arg[SWdat[[ind,La+1]]])],{ind,1,Length[SWdat]}];
 	PhaseDiff=Arg[Exp[I(Arg[SLPhase ]-Arg[CZPhase ])]];
 	flips=Abs[Abs[Drop[PhaseDiff,1]-Drop[PhaseDiff,-1]]-\[Pi]]-\[Pi];
@@ -298,7 +306,8 @@ Module[{slphase,CZPhase,PhaseDiff,flips,avg,err,flipvals,flipon,flipindex,droppe
 	If[OptionValue[PlotFlips],Print[ListPlot[flips,PlotRange->All]]];
 	flipvals=Select[flips,Abs[#]<5err&];
 	If[Length[flipvals]==0,Return[SLPhase]];
-	If[WignerD[{La+Max[Abs[m],Abs[s]],m,-s},0,\[Pi]/2,0]!=0,Print["Should only need to phase flip if spherical limit vanishes at x=0: Abort"];Abort[]];
+	If[s==0,Return[SLPhase]]; (* Symmetry prevents problems *)
+	If[WignerD[{La+Max[Abs[m],Abs[s]],m,-s},0,\[Pi]/2,0]!=0,Message[SLCorrectExtremumDiscontinuity::SLerror];Abort[]];
 	slphase=SLPhase;
 	Do[
 		flipindex=Position[flips,flipon][[1,1]];
@@ -310,6 +319,26 @@ Module[{slphase,CZPhase,PhaseDiff,flips,avg,err,flipvals,flipon,flipindex,droppe
 	slphase
 ]/;IntegerQ[m+s]
 SLCorrectExtremumDiscontinuity[m_,s_,La_,SWdat_,SLPhase_,opts:OptionsPattern[]]:=Print["m and s must both be either integer or half-integer values."]
+
+
+SLCorrectInitialDiscontinuity[m_/;IntegerQ[2m],s_/;IntegerQ[2s],La_Integer,SWdat_List,SLPhase_List,\[Phi]dir_]:=
+Module[{CZPhase,PhaseDiff,lmin,phase0,extrap,x},
+	SLCorrectInitialDiscontinuity::tooshort="SWdat and SLPhase must be at least 4 elemnts long.";
+	SLCorrectInitialDiscontinuity::discontinuous="The computed phase is not continuous.";
+	SLCorrectInitialDiscontinuity::phasecorrected="The expansion coefficents seem to already be phase corrected.";
+	If[Min[Length[SWdat],Length[SLPhase]]<5,Message[SLCorrectInitialDiscontinuity::tooshort];Abort[]];
+	If[SWdat[[1,La+1]]!=1,Message[SLCorrectInitialDiscontinuity::phasecorrected];Abort[]];
+	CZPhase=Table[Exp[I(-Arg[SWdat[[ind,La+1]]])],{ind,1,Min[4,Length[SWdat],Length[SLPhase]]}];
+	PhaseDiff=Arg[Exp[I(Arg[Take[SLPhase,Min[4,Length[SWdat],Length[SLPhase]]]]-Arg[CZPhase ])]];
+	lmin=Max[Abs[m],Abs[s]];
+	If[WignerD[{La+lmin,-m,s},0,\[Pi]/2,0]!=0,Return[{False,1}],If[s==0,Return[{False,1}]]];
+	phase0=Exp[-I \[Phi]dir];
+	If[Abs[Arg[phase0]-PhaseDiff[[2]]]>Abs[Arg[phase0]+PhaseDiff[[2]]],phase0=-phase0];
+	extrap=Fit[Transpose[{{1,2,3},Drop[PhaseDiff,1]}],{1,x,x^2},x]/.x->0;
+	If[Abs[extrap-Arg[phase0]]>5Abs[PhaseDiff[[2]]-PhaseDiff[[4]]],Message[SLCorrectInitialDiscontinuity::discontinuous];Abort[]];
+	{True,phase0}
+]/;IntegerQ[m+s]
+SLCorrectInitialDiscontinuity[m_,s_,La_,SWdat_,SLPhase_,\[Phi]dir_]:=Print["m and s must both be either integer or half-integer values."]
 
 
 Options[SWSFvalues]={PlotPoints->100};
