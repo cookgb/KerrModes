@@ -71,10 +71,10 @@ SWSFfixphase::usage=
 "azimuthal index \!\(\*StyleBox[\"m\", \"TI\"]\)."
 
 
-SLCorrectContinuity::usage=
-"SLCorrectContinuity[m,s,L,SWdat,SLPhase] "<>
+SLCorrectExtremumDiscontinuity::usage=
+"SLCorrectExtremumDiscontinuity[m,s,L,SWdat,SLPhase] "<>
 "returns a list of complex phase values which have been corrected to "<>
-"to remove phase discontinuities of \[Pi]."
+"to remove phase discontinuities of \[Pi] due to extrema crossing x=0."
 
 
 SWSFvalues::usage=
@@ -232,11 +232,7 @@ Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,sc
 		WDzero=ParallelTable[N[WignerD[{j-1+lmin,-m,s},0,\[Pi]/2,0]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
 		SWSFzero = WDzero . scaledcoefs;
 		(* In general, we choose the phase so the function is real at x=0 *)
-		If[Chop[SWSFzero]==0,(* special case where symmetry causes problems *)
-			phase=Exp[I(-Arg[SWdat[[La+1]]])]; (* When all else fails, use the simple choice *)
-		, (* general case *)
-			phase=Exp[I(\[Pi]-Arg[SWSFzero])];
-		];
+		phase=Exp[I(\[Pi]-Arg[SWSFzero])];
 		If[Sign[SphericalVal]!=0,
 			If[Chop[SWSFzero]==0,
 			(* Case where function vanishes, but spherical limit does not. *)
@@ -247,10 +243,17 @@ Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,sc
 				SWSFzeroD=scaledcoefs . WDzeroD;
 				(* Since the function is zero at x=0, we can demand the derivative be real there *)
 				(* and have a specified positive or negative slope *)
-				phase=Exp[I(\[Pi]-Arg[SWSFzeroD])];
-				index=La+Max[Abs[m],Abs[s]]+m;
-				If[OddQ[index],++index];
-				If[Sign[Re[phase SWSFzeroD]]!= Sign[(-1)^(index/2)],phase=-phase],
+				If[Chop[SWSFzeroD]==0,
+				(* This phase choice will only be used in the case where the function *)
+				(* and its derivative are effectively zero at x=0.  This cannot happen *)
+				(* exactly, but in the asymptotic regime where expnential damping of *)
+					phase=Exp[I(-Arg[SWdat[[La+1]]])],(* When all else fails, use the simple choice *)
+				(* normal case, fix the derivative to be real *)
+					phase=Exp[I(\[Pi]-Arg[SWSFzeroD])];
+					index=La+Max[Abs[m],Abs[s]]+m;
+					If[OddQ[index],++index];
+					If[Sign[Re[phase SWSFzeroD]]!= Sign[(-1)^(index/2)],phase=-phase]
+				],
 			(* general case *)
 				If[Sign[Re[phase SWSFzero]]!=Sign[SphericalVal],phase=-phase]
 			]
@@ -280,10 +283,10 @@ Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,sc
 SWSFfixphase[m_,s_,La_,SWdat_List,opts:OptionsPattern[]]:=Print["m and s must both be either integer or half-integer values."]
 
 
-Options[SLCorrectContinuity]={PlotFlips->False};
+Options[SLCorrectExtremumDiscontinuity]={PlotFlips->False};
 
 
-SLCorrectContinuity[m_/;IntegerQ[2m],s_/;IntegerQ[2s],La_Integer,SWdat_List,SLPhase_List,opts:OptionsPattern[]]:=
+SLCorrectExtremumDiscontinuity[m_/;IntegerQ[2m],s_/;IntegerQ[2s],La_Integer,SWdat_List,SLPhase_List,opts:OptionsPattern[]]:=
 Module[{slphase,CZPhase,PhaseDiff,flips,avg,err,flipvals,flipon,flipindex,dropped=0},
 	CZPhase=Table[Exp[I(-Arg[SWdat[[ind,La+1]]])],{ind,1,Length[SWdat]}];
 	PhaseDiff=Arg[Exp[I(Arg[SLPhase ]-Arg[CZPhase ])]];
@@ -306,7 +309,7 @@ Module[{slphase,CZPhase,PhaseDiff,flips,avg,err,flipvals,flipon,flipindex,droppe
 	,{flipon,flipvals}];
 	slphase
 ]/;IntegerQ[m+s]
-SLCorrectContinuity[m_,s_,La_,SWdat_,SLPhase_,opts:OptionsPattern[]]:=Print["m and s must both be either integer or half-integer values."]
+SLCorrectExtremumDiscontinuity[m_,s_,La_,SWdat_,SLPhase_,opts:OptionsPattern[]]:=Print["m and s must both be either integer or half-integer values."]
 
 
 Options[SWSFvalues]={PlotPoints->100};

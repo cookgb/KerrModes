@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     31971,        815]
-NotebookOptionsPosition[     27446,        720]
-NotebookOutlinePosition[     27969,        738]
-CellTagsIndexPosition[     27926,        735]
+NotebookDataLength[     32341,        823]
+NotebookOptionsPosition[     27812,        728]
+NotebookOutlinePosition[     28339,        746]
+CellTagsIndexPosition[     28296,        743]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -459,23 +459,29 @@ coefficients to yield a desired phase convention for the spin-weighted \
 spheroidal functions\
 \>", "TableText",ExpressionUUID->"e889d8ee-a64f-4827-acf0-b8dd0a3dad67"]},
    {
-    ButtonBox["SLCorrectContinuity",
+    ButtonBox["SLCorrectExtremumDiscontinuity",
      BaseStyle->"Link",
-     ButtonData->"paclet:SWSpheroidal/ref/SLCorrectContinuity"], Cell[
-    TextData[{
+     ButtonData->"paclet:SWSpheroidal/ref/SLCorrectExtremumDiscontinuity"], 
+    Cell[TextData[{
      "Corrects a list of complex phase factors created by ",
      Cell[BoxData[
       ButtonBox["SWSFfixphase",
        BaseStyle->"Link",
        ButtonData->"paclet:SWSpheroidal/ref/SWSFfixphase"]], "InlineFormula",
       ExpressionUUID->"203e086f-d1b9-44b1-91e7-ae2670380168"],
-     " ensuring that there are no phase-angle discontinuities of \[Pi] ."
+     " ensuring that there are no phase-angle discontinuities of \[Pi]  due \
+to extrema crossing ",
+     Cell[BoxData[
+      FormBox[
+       RowBox[{"x", "=", "0"}], TraditionalForm]], "InlineMath",
+      ExpressionUUID->"85d4b5a4-71ab-4097-86d1-b6fa820264d3"],
+     "."
     }], "TableText",ExpressionUUID->"8f269cda-0a86-4ca2-ba01-0cbed2dc571a"]},
    {
     ButtonBox["SWSFvalues",
      BaseStyle->"Link",
      ButtonData->"paclet:SWSpheroidal/ref/SWSFvalues"], Cell[TextData[{
-     "Evalueates the spin-wieighted spheroidal function over a set of values \
+     "0Evalueates the spin-wieighted spheroidal function over a set of values \
 of ",
      Cell[BoxData[
       FormBox["x", TraditionalForm]], "InlineMath",ExpressionUUID->
@@ -499,7 +505,9 @@ spheroidal function remains real.\
   3.8825218756797028`*^9}, {3.882521912062187*^9, 3.882521914649527*^9}, {
   3.8825219786501293`*^9, 3.882521978650161*^9}, {3.882522011314357*^9, 
   3.882522011807753*^9}, {3.92036484268758*^9, 3.920364998834283*^9}, {
-  3.9203650768952713`*^9, 3.920365076895328*^9}},
+  3.9203650768952713`*^9, 3.920365076895328*^9}, {3.920709953680147*^9, 
+  3.920709977788128*^9}, {3.920710011871048*^9, 3.9207100983636103`*^9}, {
+  3.92071015979749*^9, 3.920710178484996*^9}},
  CellID->648815703,ExpressionUUID->"ecab0158-3742-4dbd-90d4-954d4d4ff093"],
 
 Cell["XXXX", "Caption",
@@ -719,7 +727,7 @@ Cell["XXXX", "Keywords",
 }, Open  ]]
 },
 WindowSize->{700.5, 770.25},
-WindowMargins->{{Automatic, 322.5}, {Automatic, 165}},
+WindowMargins->{{Automatic, 444.75}, {108.75, Automatic}},
 TaggingRules-><|"Paclet" -> "SWSpheroidal"|>,
 FrontEndVersion->"13.3 for Linux x86 (64-bit) (June 3, 2023)",
 StyleDefinitions->FrontEnd`FileName[{"Wolfram"}, "TechNotePageStylesExt.nb", 
@@ -763,57 +771,57 @@ Cell[10758, 290, 1986, 54, 36, "DisplayMath",ExpressionUUID->"c89adca1-0d02-435e
  CellID->1679662951],
 Cell[12747, 346, 2361, 66, 71, "Text",ExpressionUUID->"83c289c1-ee73-492f-8687-20dad7eda385",
  CellID->1389282908],
-Cell[15111, 414, 4095, 88, 486, "DefinitionBox",ExpressionUUID->"ecab0158-3742-4dbd-90d4-954d4d4ff093",
+Cell[15111, 414, 4461, 96, 486, "DefinitionBox",ExpressionUUID->"ecab0158-3742-4dbd-90d4-954d4d4ff093",
  CellID->648815703],
-Cell[19209, 504, 213, 3, 31, "Caption",ExpressionUUID->"fe40afa4-f700-4b39-a22f-5de7bfed7756",
+Cell[19575, 512, 213, 3, 31, "Caption",ExpressionUUID->"fe40afa4-f700-4b39-a22f-5de7bfed7756",
  CellID->1871044502],
-Cell[19425, 509, 3122, 80, 107, "Text",ExpressionUUID->"3514a1f7-8c27-4ccf-83b0-50b706290549",
+Cell[19791, 517, 3122, 80, 107, "Text",ExpressionUUID->"3514a1f7-8c27-4ccf-83b0-50b706290549",
  CellID->1875745317],
-Cell[22550, 591, 680, 12, 101, "Text",ExpressionUUID->"c07199ce-8b74-42df-9cc5-afa8da474fcc",
+Cell[22916, 599, 680, 12, 101, "Text",ExpressionUUID->"c07199ce-8b74-42df-9cc5-afa8da474fcc",
  CellID->1224629921],
-Cell[23233, 605, 862, 18, 63, "Text",ExpressionUUID->"f5391c03-bed3-4117-946f-ececcd95d8ba",
+Cell[23599, 613, 862, 18, 63, "Text",ExpressionUUID->"f5391c03-bed3-4117-946f-ececcd95d8ba",
  CellID->871809399]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[24132, 628, 192, 2, 75, "TutorialMoreAboutSection",ExpressionUUID->"3ec83fd8-88d5-4390-ad30-100137377ee5",
+Cell[24498, 636, 192, 2, 75, "TutorialMoreAboutSection",ExpressionUUID->"3ec83fd8-88d5-4390-ad30-100137377ee5",
  CellID->1453727187],
-Cell[24327, 632, 325, 5, 24, "TutorialMoreAbout",ExpressionUUID->"8a19f929-f51c-4df1-9d7e-2b178325c9fe",
+Cell[24693, 640, 325, 5, 24, "TutorialMoreAbout",ExpressionUUID->"8a19f929-f51c-4df1-9d7e-2b178325c9fe",
  CellID->871379990],
-Cell[24655, 639, 328, 5, 24, "TutorialMoreAbout",ExpressionUUID->"bfec72b7-da3b-461b-9360-7a30df79309d",
+Cell[25021, 647, 328, 5, 24, "TutorialMoreAbout",ExpressionUUID->"bfec72b7-da3b-461b-9360-7a30df79309d",
  CellID->1122474120],
-Cell[24986, 646, 231, 4, 24, "TutorialMoreAbout",ExpressionUUID->"5b1a3671-3a1c-460d-a709-08c742d6028b",
+Cell[25352, 654, 231, 4, 24, "TutorialMoreAbout",ExpressionUUID->"5b1a3671-3a1c-460d-a709-08c742d6028b",
  CellID->1536208338],
-Cell[25220, 652, 255, 5, 24, "TutorialMoreAbout",ExpressionUUID->"11d9bc9f-934a-4fb6-8f2e-d476bb8caa2b",
+Cell[25586, 660, 255, 5, 24, "TutorialMoreAbout",ExpressionUUID->"11d9bc9f-934a-4fb6-8f2e-d476bb8caa2b",
  CellID->2122894946],
-Cell[25478, 659, 256, 5, 24, "TutorialMoreAbout",ExpressionUUID->"f081a625-681b-4a78-819f-e0d08de45bb7",
+Cell[25844, 667, 256, 5, 24, "TutorialMoreAbout",ExpressionUUID->"f081a625-681b-4a78-819f-e0d08de45bb7",
  CellID->345170236]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[25771, 669, 129, 1, 75, "RelatedTutorialsSection",ExpressionUUID->"2b8132c0-8476-4481-9301-a46a88e39b31",
+Cell[26137, 677, 129, 1, 75, "RelatedTutorialsSection",ExpressionUUID->"2b8132c0-8476-4481-9301-a46a88e39b31",
  CellID->1592503037],
-Cell[25903, 672, 358, 6, 24, "RelatedTutorials",ExpressionUUID->"630f1f95-48e1-4611-b3d5-1818a3e3b8a3",
+Cell[26269, 680, 358, 6, 24, "RelatedTutorials",ExpressionUUID->"630f1f95-48e1-4611-b3d5-1818a3e3b8a3",
  CellID->1109850298]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[26310, 684, 110, 1, 72, "MetadataSection",ExpressionUUID->"9c839029-f03d-438a-afa7-b6151ba794b8",
+Cell[26676, 692, 110, 1, 72, "MetadataSection",ExpressionUUID->"9c839029-f03d-438a-afa7-b6151ba794b8",
  CellID->211000644],
 Cell[CellGroupData[{
-Cell[26445, 689, 122, 1, 21, "CategorizationSection",ExpressionUUID->"6309b36c-fe47-44e2-a255-5c735f2b2f1e",
+Cell[26811, 697, 122, 1, 21, "CategorizationSection",ExpressionUUID->"6309b36c-fe47-44e2-a255-5c735f2b2f1e",
  CellID->792322511],
-Cell[26570, 692, 136, 2, 34, "Categorization",ExpressionUUID->"e7e7431f-bf70-4df7-b373-468db2c306c0",
+Cell[26936, 700, 136, 2, 34, "Categorization",ExpressionUUID->"e7e7431f-bf70-4df7-b373-468db2c306c0",
  CellID->18347330],
-Cell[26709, 696, 141, 2, 34, "Categorization",ExpressionUUID->"3ba20894-0b0b-4f5b-bf30-2c625c5ea12b",
+Cell[27075, 704, 141, 2, 34, "Categorization",ExpressionUUID->"3ba20894-0b0b-4f5b-bf30-2c625c5ea12b",
  CellID->1273413789],
-Cell[26853, 700, 137, 2, 34, "Categorization",ExpressionUUID->"546e59f3-dc2e-444d-a841-1ec9c7e9bed9",
+Cell[27219, 708, 137, 2, 34, "Categorization",ExpressionUUID->"546e59f3-dc2e-444d-a841-1ec9c7e9bed9",
  CellID->443525721],
-Cell[26993, 704, 176, 3, 34, "Categorization",ExpressionUUID->"29bc993f-5dd9-469c-8dc8-e305d40e9c7e",
+Cell[27359, 712, 176, 3, 34, "Categorization",ExpressionUUID->"29bc993f-5dd9-469c-8dc8-e305d40e9c7e",
  CellID->421054110]
 }, Closed]],
 Cell[CellGroupData[{
-Cell[27206, 712, 110, 1, 21, "KeywordsSection",ExpressionUUID->"26cd6089-892e-48e7-ad5a-75dbfdd893f3",
+Cell[27572, 720, 110, 1, 21, "KeywordsSection",ExpressionUUID->"26cd6089-892e-48e7-ad5a-75dbfdd893f3",
  CellID->697809905],
-Cell[27319, 715, 99, 1, 70, "Keywords",ExpressionUUID->"691f180a-a742-4ae3-9607-2330d684f373",
+Cell[27685, 723, 99, 1, 70, "Keywords",ExpressionUUID->"691f180a-a742-4ae3-9607-2330d684f373",
  CellID->682877068]
 }, Closed]]
 }, Open  ]]
