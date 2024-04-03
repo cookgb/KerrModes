@@ -220,11 +220,11 @@ If[!QNMDebug,Protect[Mat,SpinWeightedSpheroidal,AngularSpectralRoot,AngularSpect
 (*Normalization and Visualization*)
 
 
-Options[SWSFfixphase]={PhaseChoice->SphericalLimit};
+Options[SWSFfixphase]={PhaseChoice->SphericalLimit,Tolerance->10^(-10)};
 
 
 SWSFfixphase[m_/;IntegerQ[2m],s_/;IntegerQ[2s],La_,SWdat_List,opts:OptionsPattern[]]:=
-Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,scaledcoefs,SWSFzero,SWSFzeroD,phase,index,hoint=1},
+Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,scaledcoefs,SWSFzero,SWSFzeroD,phase,index,hoint=1,\[Delta]=OptionValue[Tolerance]},
 	SWSFfixphase::badmethod="`1` is an invalid Method";
 	SWSFfixphase::notpossible="Spherical value and derivative both zero.";
 	If[!IntegerQ[m],hoint=-I];
@@ -241,7 +241,7 @@ Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,sc
 		(* In general, we choose the phase so the function is real at x=0 *)
 		phase=Exp[I(\[Pi]-Arg[SWSFzero])];
 		If[Sign[SphericalVal]!=0,
-			If[Chop[SWSFzero]==0,
+			If[Chop[SWSFzero,\[Delta]]==0,
 			(* Case where function vanishes, but spherical limit does not. *)
 				WDzeroplus=ParallelTable[Sqrt[(j-1+lmin-s)*(j-1+lmin+s+1)]*If[s>=(j-1+lmin),0,N[WignerD[{j-1+lmin,-m,s+1},0,\[Pi]/2,0]]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
 				WDzerominus=ParallelTable[Sqrt[(j-1+lmin+s)*(j-1+lmin-s+1)]*If[-s>=(j-1+lmin),0,N[WignerD[{j-1+lmin,-m,s-1},0,\[Pi]/2,0]]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
@@ -249,17 +249,16 @@ Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,sc
 				SphericalD=hoint (-1)^s Sqrt[La+lmin+1/2]WDzeroD[[La+1]];
 				SWSFzeroD=scaledcoefs . WDzeroD;
 				(* Since the function is zero at x=0, we can demand the derivative be real there *)
-				(* and have a specified positive or negative slope *)
-				If[Chop[SWSFzeroD]==0,
+				(* and have a specified slope *)
+				If[Chop[SWSFzeroD,\[Delta]]==0,
 				(* This phase choice will only be used in the case where the function *)
 				(* and its derivative are effectively zero at x=0.  This cannot happen *)
-				(* exactly, but in the asymptotic regime where expnential damping of *)
+				(* exactly, but can occur in the asymptotic regime where expnential    *)
+				(* damping can occur at x=0. *)
 					phase=Exp[I(-Arg[SWdat[[La+1]]])],(* When all else fails, use the simple choice *)
 				(* normal case, fix the derivative to be real *)
 					phase=Exp[I(\[Pi]-Arg[SWSFzeroD])];
-					index=La+Max[Abs[m],Abs[s]]+m;
-					If[OddQ[index],++index];
-					If[Sign[Re[phase SWSFzeroD]]!= Sign[(-1)^(index/2)],phase=-phase]
+					If[Sign[Re[phase SWSFzeroD]]!= Sign[SphericalD],phase=-phase]
 				],
 			(* general case *)
 				If[Sign[Re[phase SWSFzero]]!=Sign[SphericalVal],phase=-phase]
@@ -270,7 +269,7 @@ Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,sc
 			WDzeroD=(-1/2)(WDzeroplus-WDzerominus);
 			SphericalD=hoint (-1)^s Sqrt[La+lmin+1/2]WDzeroD[[La+1]];
 			SWSFzeroD=scaledcoefs . WDzeroD;
-			If[Chop[SWSFzeroD]==0,
+			If[Chop[SWSFzeroD,\[Delta]]==0,
 			(* Case when derivative vanishes, but spherical limit does not. *)
 			(* Since the derivative vanishes, the value must be non-zero and the phase *)
 			(* has been chosen to make it real at x=0, so we can specify its sign *)
