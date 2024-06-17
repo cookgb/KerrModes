@@ -33,7 +33,7 @@ SpinWeightedSpheroidal::usage=
 "SpinWeightedSpheroidal[m,s,c,N] "<>
 "gives a list {\!\(\*StyleBox[\"values\",\nFontSlant->\"Italic\"]\),\!\(\*StyleBox[\"vectors\",\nFontSlant->\"Italic\"]\)} from solving the "<>
 "\!\(\*StyleBox[\"N\", \"TI\"]\)-dimensional approximate discrete eigensystem for "<>
-"the spin-weighted spheroidal functions with spin-weight "
+"the spin-weighted spheroidal functions with spin-weight "<>
 "\!\(\*StyleBox[\"s\", \"TI\"]\), azimuthal index \!\(\*StyleBox[\"m\", \"TI\"]\), and oblateness parameter \!\(\*StyleBox[\"c\", \"TI\"]\)."
 
 
@@ -45,8 +45,7 @@ AngularSpectralRoot::usage=
 "\!\(\*StyleBox[\"s\", \"TI\"]\), azimuthal index \!\(\*StyleBox[\"m\", \"TI\"]\), and oblateness parameter \!\(\*StyleBox[\"c\", \"TI\"]\). The "<>
 "solution returns the eigenvalue closest to \!\(\*StyleBox[SubscriptBox[StyleBox[\"\[Lambda]\", \"TI\"], \"0\"], \"TI\"]\), and the "<>
 "corresponding spectral coefficients.  "<>
-"\!\(\*
-StyleBox[\"index\", \"TI\"]\) denotes the position of the eigensolution in full list."
+"\!\(\*StyleBox[\"index\", \"TI\"]\) denotes the position of the eigensolution in the full list."
 
 
 AngularSpectralRootIndex::usage=
@@ -191,7 +190,7 @@ Module[{lmin,l},
 SpinWeightedSpheroidal[m_/;IntegerQ[2m],s_/;IntegerQ[2s],c_?NumberQ,N_Integer] := 
 Module[{unsorted,sortorder,i,j},
 	unsorted=Eigensystem[Table[Mat[i,j,m,s,c],{i,1,N},{j,1,N}]];
-	sortorder= Ordering[Re[unsorted[[1]]]];
+	sortorder= Ordering[Abs[unsorted[[1]]]];
 	{unsorted[[1]][[sortorder]],unsorted[[2]][[sortorder]]}
 ]/;IntegerQ[m+s]
 SpinWeightedSpheroidal[m_,s_,c_?NumberQ,N_Integer]:=Print["m and s must both be either integer or half-integer values."]
@@ -236,15 +235,15 @@ Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,sc
 	SphericalLimit,
 		SphericalVal=hoint (-1)^s Sqrt[La+lmin+1/2]*WignerD[{La+lmin,-m,s},0,\[Pi]/2,0];
 		scaledcoefs=hoint (-1)^s ParallelTable[Sqrt[j-1+lmin+1/2]SWdat[[j]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
-		WDzero=ParallelTable[N[WignerD[{j-1+lmin,-m,s},0,\[Pi]/2,0]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+		WDzero=ParallelTable[WignerD[{j-1+lmin,-m,s},0,\[Pi]/2,0],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
 		SWSFzero = WDzero . scaledcoefs;
 		(* In general, we choose the phase so the function is real at x=0 *)
 		phase=Exp[I(\[Pi]-Arg[SWSFzero])];
 		If[Sign[SphericalVal]!=0,
 			If[Chop[SWSFzero,\[Delta]]==0,
 			(* Case where function vanishes, but spherical limit does not. *)
-				WDzeroplus=ParallelTable[Sqrt[(j-1+lmin-s)*(j-1+lmin+s+1)]*If[s>=(j-1+lmin),0,N[WignerD[{j-1+lmin,-m,s+1},0,\[Pi]/2,0]]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
-				WDzerominus=ParallelTable[Sqrt[(j-1+lmin+s)*(j-1+lmin-s+1)]*If[-s>=(j-1+lmin),0,N[WignerD[{j-1+lmin,-m,s-1},0,\[Pi]/2,0]]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+				WDzeroplus=ParallelTable[Sqrt[(j-1+lmin-s)*(j-1+lmin+s+1)]*If[s>=(j-1+lmin),0,WignerD[{j-1+lmin,-m,s+1},0,\[Pi]/2,0]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+				WDzerominus=ParallelTable[Sqrt[(j-1+lmin+s)*(j-1+lmin-s+1)]*If[-s>=(j-1+lmin),0,WignerD[{j-1+lmin,-m,s-1},0,\[Pi]/2,0]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
 				WDzeroD=(-1/2)(WDzeroplus-WDzerominus);
 				SphericalD=hoint (-1)^s Sqrt[La+lmin+1/2]WDzeroD[[La+1]];
 				SWSFzeroD=scaledcoefs . WDzeroD;
@@ -264,8 +263,8 @@ Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,sc
 				If[Sign[Re[phase SWSFzero]]!=Sign[SphericalVal],phase=-phase]
 			]
 		,(*Case when spherical value is zero.*)
-			WDzeroplus=ParallelTable[Sqrt[(j-1+lmin-s)*(j-1+lmin+s+1)]*If[s>=(j-1+lmin),0,N[WignerD[{j-1+lmin,-m,s+1},0,\[Pi]/2,0]]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
-			WDzerominus=ParallelTable[Sqrt[(j-1+lmin+s)*(j-1+lmin-s+1)]*If[-s>=(j-1+lmin),0,N[WignerD[{j-1+lmin,-m,s-1},0,\[Pi]/2,0]]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+			WDzeroplus=ParallelTable[Sqrt[(j-1+lmin-s)*(j-1+lmin+s+1)]*If[s>=(j-1+lmin),0,WignerD[{j-1+lmin,-m,s+1},0,\[Pi]/2,0]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
+			WDzerominus=ParallelTable[Sqrt[(j-1+lmin+s)*(j-1+lmin-s+1)]*If[-s>=(j-1+lmin),0,WignerD[{j-1+lmin,-m,s-1},0,\[Pi]/2,0]],{j,1,NC},DistributedContexts->{"SWSpheroidal`Private`"}];
 			WDzeroD=(-1/2)(WDzeroplus-WDzerominus);
 			SphericalD=hoint (-1)^s Sqrt[La+lmin+1/2]WDzeroD[[La+1]];
 			SWSFzeroD=scaledcoefs . WDzeroD;
