@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    122694,       2245]
-NotebookOptionsPosition[    119962,       2191]
-NotebookOutlinePosition[    120360,       2207]
-CellTagsIndexPosition[    120317,       2204]
+NotebookDataLength[    122836,       2248]
+NotebookOptionsPosition[    120106,       2194]
+NotebookOutlinePosition[    120502,       2210]
+CellTagsIndexPosition[    120459,       2207]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -73,7 +73,7 @@ If these paclets have already been installed, you may want to uninstall them .\
 Cell[BoxData[
  RowBox[{"PacletUninstall", "[", "\"\<SWSpheroidal\>\"", "]"}]], "Input",
  CellChangeTimes->{{3.882108599862895*^9, 3.882108669272119*^9}},
- CellLabel->"In[5]:=",ExpressionUUID->"5f3c7f9e-7532-477d-8cff-9ad7913acff5"],
+ CellLabel->"In[3]:=",ExpressionUUID->"5f3c7f9e-7532-477d-8cff-9ad7913acff5"],
 
 Cell[BoxData[
  RowBox[{"PacletUninstall", "[", "\"\<KerrModes\>\"", "]"}]], "Input",
@@ -121,15 +121,16 @@ Cell[BoxData[
   RowBox[{
    RowBox[{
    "PacletDir", "<>", 
-    "\"\</SWSpheroidal/build/SWSpheroidal-1.0.4.paclet\>\""}], ",", 
+    "\"\</SWSpheroidal/build/SWSpheroidal-1.0.5.paclet\>\""}], ",", 
    RowBox[{"ForceVersionInstall", " ", "->", " ", "True"}]}], "]"}]], "Input",\
 
  CellChangeTimes->{{3.8795175208057003`*^9, 3.879517584185832*^9}, {
    3.882108584373878*^9, 3.882108586704188*^9}, {3.8821086844505587`*^9, 
-   3.882108715856344*^9}, {3.882263410085062*^9, 3.8822634179591823`*^9}, 
+   3.882108715856344*^9}, {3.882263410085062*^9, 3.882263417959182*^9}, 
    3.9138001781490107`*^9, 3.91597907531423*^9, {3.916235927417575*^9, 
-   3.9162359303987284`*^9}, 3.920358946948413*^9, 3.927622779043523*^9},
- CellLabel->"In[7]:=",ExpressionUUID->"ffbe4a7a-963a-4152-adab-a29bfc7cdccf"],
+   3.9162359303987265`*^9}, 3.920358946948413*^9, 3.927622779043523*^9, 
+   3.9343664933578568`*^9, 3.9639335682222843`*^9},
+ CellLabel->"In[5]:=",ExpressionUUID->"ffbe4a7a-963a-4152-adab-a29bfc7cdccf"],
 
 Cell[BoxData[
  InterpretationBox[
@@ -305,7 +306,7 @@ Cell[BoxData[
                RowBox[{
                  TagBox["\"Version: \"", "SummaryItemAnnotation"], 
                  "\[InvisibleSpace]", 
-                 TagBox["\"1.0.4\"", "SummaryItem"]}]}}, 
+                 TagBox["\"1.0.5\"", "SummaryItem"]}]}}, 
              GridBoxAlignment -> {
               "Columns" -> {{Left}}, "Rows" -> {{Automatic}}}, AutoDelete -> 
              False, GridBoxItemSize -> {
@@ -483,13 +484,13 @@ Cell[BoxData[
                RowBox[{
                  TagBox["\"Version: \"", "SummaryItemAnnotation"], 
                  "\[InvisibleSpace]", 
-                 TagBox["\"1.0.4\"", "SummaryItem"]}]}, {
+                 TagBox["\"1.0.5\"", "SummaryItem"]}]}, {
                RowBox[{
                  TagBox["\"Location: \"", "SummaryItemAnnotation"], 
                  "\[InvisibleSpace]", 
                  TagBox[
                  "\"/home/cookgb/.Mathematica/Paclets/Repository/SWSpheroidal-\
-1.0.4\"", "SummaryItem"]}]}, {
+1.0.5\"", "SummaryItem"]}]}, {
                RowBox[{
                  TagBox["\"Description: \"", "SummaryItemAnnotation"], 
                  "\[InvisibleSpace]", 
@@ -514,11 +515,11 @@ Cell[BoxData[
      "SummaryPanel"],
     DynamicModuleValues:>{}], "]"}],
   PacletObject[<|
-   "Name" -> "SWSpheroidal", "Version" -> "1.0.4", "WolframVersion" -> 
+   "Name" -> "SWSpheroidal", "Version" -> "1.0.5", "WolframVersion" -> 
     "12.0+", "Extensions" -> {{
       "Kernel", "Root" -> "Kernel", "Context" -> "SWSpheroidal`"}, {
       "Documentation", "Language" -> "English"}}, "Location" -> 
-    "/home/cookgb/.Mathematica/Paclets/Repository/SWSpheroidal-1.0.4"|>],
+    "/home/cookgb/.Mathematica/Paclets/Repository/SWSpheroidal-1.0.5"|>],
   Editable->False,
   SelectWithContents->True,
   Selectable->False]], "Output",
@@ -527,10 +528,12 @@ Cell[BoxData[
    3.8821087284286747`*^9, {3.88210890250699*^9, 3.882108913749975*^9}, 
    3.882128341974134*^9, 3.8822146498486977`*^9, 3.882263424391351*^9, 
    3.882291730094426*^9, 3.882349908134012*^9, 3.8823499547223043`*^9, 
-   3.884707795839408*^9, 3.915979077340911*^9, {3.9162359127522492`*^9, 
+   3.884707795839408*^9, 3.915979077340911*^9, {3.916235912752248*^9, 
    3.916235931622986*^9}, 3.920358951287471*^9, 3.9203787795224676`*^9, 
-   3.920378997232067*^9, 3.920386028472586*^9, 3.927622782697062*^9},
- CellLabel->"Out[7]=",ExpressionUUID->"c50ad199-ab6a-418f-884b-dbeb2f3f70fc"]
+   3.920378997232067*^9, 3.920386028472586*^9, 3.927622782697062*^9, 
+   3.934366499498851*^9, 3.934376610728684*^9, 3.934376803030355*^9, 
+   3.9639337824597197`*^9},
+ CellLabel->"Out[5]=",ExpressionUUID->"3fd4538e-96c6-4934-bac4-55e05138bd60"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -939,7 +942,7 @@ Cell[BoxData[
   Selectable->False]], "Output",
  CellChangeTimes->{
   3.882128362734799*^9, {3.882130240900311*^9, 3.882130262131082*^9}, 
-   3.882130758376019*^9, 3.8821312815916777`*^9, 3.882214652223174*^9, 
+   3.882130758376019*^9, 3.882131281591679*^9, 3.882214652223174*^9, 
    3.882263437403056*^9, 3.882267492460209*^9, 3.882291730610051*^9, 
    3.882349908278281*^9, 3.882349955197235*^9, 3.884707796316284*^9},
  CellLabel->"Out[8]=",ExpressionUUID->"9fb0996a-2143-49f3-8ed5-d9ab07c26eea"]
@@ -2190,7 +2193,7 @@ need to be installed from the build directory where they were created.\
 }, Open  ]]
 },
 WindowSize->{729, 684},
-WindowMargins->{{Automatic, 249.75}, {45, Automatic}},
+WindowMargins->{{21.75, Automatic}, {0, Automatic}},
 FrontEndVersion->"14.0 for Linux x86 (64-bit) (December 12, 2023)",
 StyleDefinitions->"Default.nb",
 ExpressionUUID->"a804b2a5-c056-40b7-b3e4-fcefc803d005"
@@ -2225,26 +2228,26 @@ Cell[3481, 97, 403, 6, 29, "Input",ExpressionUUID->"1517f50e-886a-4ee1-b7cd-efe0
 Cell[CellGroupData[{
 Cell[3933, 109, 221, 5, 105, "Section",ExpressionUUID->"7763e5d4-ddb6-4a1f-b77b-33f20f2ae139"],
 Cell[CellGroupData[{
-Cell[4179, 118, 682, 13, 54, "Input",ExpressionUUID->"ffbe4a7a-963a-4152-adab-a29bfc7cdccf"],
-Cell[4864, 133, 22768, 399, 65, "Output",ExpressionUUID->"c50ad199-ab6a-418f-884b-dbeb2f3f70fc"]
+Cell[4179, 118, 732, 14, 54, "Input",ExpressionUUID->"ffbe4a7a-963a-4152-adab-a29bfc7cdccf"],
+Cell[4914, 134, 22864, 401, 90, "Output",ExpressionUUID->"3fd4538e-96c6-4934-bac4-55e05138bd60"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[27669, 537, 491, 9, 29, "Input",ExpressionUUID->"d6b2cc22-6893-465a-bd48-bf92d85790ec"],
-Cell[28163, 548, 22529, 396, 65, "Output",ExpressionUUID->"9fb0996a-2143-49f3-8ed5-d9ab07c26eea"]
+Cell[27815, 540, 491, 9, 29, "Input",ExpressionUUID->"d6b2cc22-6893-465a-bd48-bf92d85790ec"],
+Cell[28309, 551, 22527, 396, 68, "Output",ExpressionUUID->"9fb0996a-2143-49f3-8ed5-d9ab07c26eea"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[50729, 949, 544, 10, 29, "Input",ExpressionUUID->"973cf94e-c4dd-43d0-9759-22dfed458b0e"],
-Cell[51276, 961, 22372, 394, 65, "Output",ExpressionUUID->"4382212d-c0a2-4ebd-93df-1b2459c6bba0"]
+Cell[50873, 952, 544, 10, 29, "Input",ExpressionUUID->"973cf94e-c4dd-43d0-9759-22dfed458b0e"],
+Cell[51420, 964, 22372, 394, 68, "Output",ExpressionUUID->"4382212d-c0a2-4ebd-93df-1b2459c6bba0"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[73685, 1360, 597, 11, 29, "Input",ExpressionUUID->"74926914-fc28-4bd4-9d71-d598465384a7"],
-Cell[74285, 1373, 22332, 393, 65, "Output",ExpressionUUID->"a1d7a21e-a1f0-4d87-98cb-753434e44a71"]
+Cell[73829, 1363, 597, 11, 29, "Input",ExpressionUUID->"74926914-fc28-4bd4-9d71-d598465384a7"],
+Cell[74429, 1376, 22332, 393, 68, "Output",ExpressionUUID->"a1d7a21e-a1f0-4d87-98cb-753434e44a71"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[96654, 1771, 651, 12, 29, "Input",ExpressionUUID->"d27f86f4-d1bc-4d7e-9976-f12d284d303a"],
-Cell[97308, 1785, 22312, 393, 65, "Output",ExpressionUUID->"30d6c7e6-5b18-4124-9bbf-9a84932dada9"]
+Cell[96798, 1774, 651, 12, 29, "Input",ExpressionUUID->"d27f86f4-d1bc-4d7e-9976-f12d284d303a"],
+Cell[97452, 1788, 22312, 393, 68, "Output",ExpressionUUID->"30d6c7e6-5b18-4124-9bbf-9a84932dada9"]
 }, Open  ]],
-Cell[119635, 2181, 299, 6, 58, "Text",ExpressionUUID->"ab60300f-db4b-4744-87fc-17ae422298de"]
+Cell[119779, 2184, 299, 6, 58, "Text",ExpressionUUID->"ab60300f-db4b-4744-87fc-17ae422298de"]
 }, Open  ]]
 }, Open  ]]
 }

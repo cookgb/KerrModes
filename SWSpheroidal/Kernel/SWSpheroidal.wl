@@ -190,7 +190,7 @@ Module[{lmin,l},
 SpinWeightedSpheroidal[m_/;IntegerQ[2m],s_/;IntegerQ[2s],c_?NumberQ,N_Integer] := 
 Module[{unsorted,sortorder,i,j},
 	unsorted=Eigensystem[Table[Mat[i,j,m,s,c],{i,1,N},{j,1,N}]];
-	sortorder= Ordering[Abs[unsorted[[1]]]];
+	sortorder= Ordering[Abs[unsorted[[1]]+s]]; (* to ensure symmetrical ordering with s->-s *)
 	{unsorted[[1]][[sortorder]],unsorted[[2]][[sortorder]]}
 ]/;IntegerQ[m+s]
 SpinWeightedSpheroidal[m_,s_,c_?NumberQ,N_Integer]:=Print["m and s must both be either integer or half-integer values."]
@@ -226,7 +226,7 @@ SWSFfixphase[m_/;IntegerQ[2m],s_/;IntegerQ[2s],La_,SWdat_List,opts:OptionsPatter
 Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,scaledcoefs,SWSFzero,SWSFzeroD,phase,index,hoint=1,\[Delta]=OptionValue[Tolerance]},
 	SWSFfixphase::badmethod="`1` is an invalid Method";
 	SWSFfixphase::notpossible="Spherical value and derivative both zero.";
-	If[!IntegerQ[m],hoint=-I];
+	If[!IntegerQ[m],hoint=-I]; (* Choice to make half-odd integer Spherical harmonics real *)
 	NC=Length[SWdat];
 	lmin=Max[Abs[m],Abs[s]];
 	Switch[OptionValue[PhaseChoice],
@@ -276,7 +276,7 @@ Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,sc
 				If[OddQ[index],--index];
 				If[Sign[Re[phase SWSFzero]]!= Sign[(-1)^(index/2)],phase=-phase],
 			(* general case *)
-				If[s==0,phase=Exp[I(\[Pi]-Arg[SWSFzeroD])]]; (* Exception for s=0 which has even/odd symmetry *)
+				phase=Exp[I(\[Pi]-Arg[SWSFzeroD])];
 				If[Sign[Re[phase SWSFzeroD]]!=Sign[SphericalD],phase=-phase]
 			];
 			If[Sign[SphericalD]==0,Message[SWSFfixphase::notpossible];Abort[]];
@@ -293,7 +293,8 @@ Options[SLCorrectExtremumDiscontinuity]={PlotFlips->False};
 
 SLCorrectExtremumDiscontinuity[m_/;IntegerQ[2m],s_/;IntegerQ[2s],La_Integer,SWdat_List,SLPhase_List,opts:OptionsPattern[]]:=
 Module[{slphase,CZPhase,PhaseDiff,flips,avg,err,flipvals,flipon,flipindex,dropped=0},
-	SLCorrectExtremumDiscontinuity::SLerror="Should only need to phase flip if spherical limit vanishes at x=0.";
+	SLCorrectExtremumDiscontinuity::SLerror="Should only need to phase flip if spherical limit vanishes at x=0.  "
+		<>"Possible vansishing of fiducial CZ expansion coefficient!";
 	CZPhase=Table[Exp[I(-Arg[SWdat[[ind,La+1]]])],{ind,1,Length[SWdat]}];
 	PhaseDiff=Arg[Exp[I(Arg[SLPhase ]-Arg[CZPhase ])]];
 	flips=Abs[Abs[Drop[PhaseDiff,1]-Drop[PhaseDiff,-1]]-\[Pi]]-\[Pi];
@@ -305,7 +306,7 @@ Module[{slphase,CZPhase,PhaseDiff,flips,avg,err,flipvals,flipon,flipindex,droppe
 	flipvals=Select[flips,Abs[#]<5err&];
 	If[Length[flipvals]==0,Return[SLPhase]];
 	If[s==0,Return[SLPhase]]; (* Symmetry prevents problems *)
-	If[WignerD[{La+Max[Abs[m],Abs[s]],m,-s},0,\[Pi]/2,0]!=0,Message[SLCorrectExtremumDiscontinuity::SLerror];Abort[]];
+	If[WignerD[{La+Max[Abs[m],Abs[s]],m,-s},0,\[Pi]/2,0]!=0,Message[SLCorrectExtremumDiscontinuity::SLerror]];
 	slphase=SLPhase;
 	Do[
 		flipindex=Position[flips,flipon][[1,1]];
@@ -320,7 +321,7 @@ SLCorrectExtremumDiscontinuity[m_,s_,La_,SWdat_,SLPhase_,opts:OptionsPattern[]]:
 
 
 SLCorrectInitialDiscontinuity[m_/;IntegerQ[2m],s_/;IntegerQ[2s],La_Integer,SWdat_List,SLPhase_List,\[Phi]dir_]:=
-Module[{CZPhase,PhaseDiff,lmin,phase0,extrap,x},
+Module[{CZPhase,PhaseDiff,lmin,phase0,extrap,x,error},
 	SLCorrectInitialDiscontinuity::tooshort="SWdat and SLPhase must be at least 4 elemnts long.";
 	SLCorrectInitialDiscontinuity::discontinuous="The computed phase is not continuous.";
 	SLCorrectInitialDiscontinuity::phasecorrected="The expansion coefficents seem to already be phase corrected.";
@@ -333,7 +334,8 @@ Module[{CZPhase,PhaseDiff,lmin,phase0,extrap,x},
 	phase0=Exp[-I \[Phi]dir];
 	If[Abs[Arg[phase0]-PhaseDiff[[2]]]>Abs[Arg[phase0]+PhaseDiff[[2]]],phase0=-phase0];
 	extrap=Fit[Transpose[{{1,2,3},Drop[PhaseDiff,1]}],{1,x,x^2},x]/.x->0;
-	If[Abs[extrap-Arg[phase0]]>5Abs[PhaseDiff[[2]]-PhaseDiff[[4]]],Message[SLCorrectInitialDiscontinuity::discontinuous];Abort[]];
+	error=Abs[extrap-Arg[phase0]];
+	If[error>10^(-12) && error>5Abs[PhaseDiff[[2]]-PhaseDiff[[4]]],Message[SLCorrectInitialDiscontinuity::discontinuous];Abort[]];
 	{True,phase0}
 ]/;IntegerQ[m+s]
 SLCorrectInitialDiscontinuity[m_,s_,La_,SWdat_,SLPhase_,\[Phi]dir_]:=Print["m and s must both be either integer or half-integer values."]
