@@ -249,11 +249,11 @@ Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,sc
 				SWSFzeroD=scaledcoefs . WDzeroD;
 				(* Since the function is zero at x=0, we can demand the derivative be real there *)
 				(* and have a specified slope *)
-				If[Chop[SWSFzeroD,\[Delta]]==0,
-				(* This phase choice will only be used in the case where the function *)
-				(* and its derivative are effectively zero at x=0.  This cannot happen *)
-				(* exactly, but can occur in the asymptotic regime where expnential    *)
-				(* damping can occur at x=0. *)
+				If[Chop[SWSFzeroD,\[Delta]]==0||Chop[SphericalD,\[Delta]]==0,
+				(* This phase choice will only be used in the case where the function     *)
+				(* and its derivative (or the spherical limit derivative) are effectively *)
+				(* zero at x=0.  This cannot happen exactly, but can occur in the         *)
+				(* asymptotic regime where expnential damping can occur at x=0.           *)
 					phase=Exp[I(-Arg[SWdat[[La+1]]])],(* When all else fails, use the simple choice *)
 				(* normal case, fix the derivative to be real *)
 					phase=Exp[I(\[Pi]-Arg[SWSFzeroD])];
@@ -270,11 +270,18 @@ Module[{NC,lmin,SphericalVal,SphericalD,WDzero,WDzeroplus,WDzerominus,WDzeroD,sc
 			SWSFzeroD=scaledcoefs . WDzeroD;
 			If[Chop[SWSFzeroD,\[Delta]]==0,
 			(* Case when derivative vanishes, but spherical limit does not. *)
-			(* Since the derivative vanishes, the value must be non-zero and the phase *)
-			(* has been chosen to make it real at x=0, so we can specify its sign *)
-				index=La+Max[Abs[m],Abs[s]]+m;
-				If[OddQ[index],--index];
-				If[Sign[Re[phase SWSFzero]]!= Sign[(-1)^(index/2)],phase=-phase],
+				If[Chop[SWSFzero,\[Delta]]==0,
+				(* This phase choice will only be used in the case where the function  *)
+				(* and its derivative are effectively zero at x=0.  This cannot happen *)
+				(* exactly, but can occur in the asymptotic regime where expnential    *)
+				(* damping can occur at x=0.                                           *)
+					phase=Exp[I(-Arg[SWdat[[La+1]]])],(* When all else fails, use the simple choice *)
+				(* Since the derivative vanishes, the value should be non-zero and the phase *)
+				(* has been chosen to make it real at x=0, so we can specify its sign        *)
+					index=La+Max[Abs[m],Abs[s]]+m;
+					If[OddQ[index],--index];
+					If[Sign[Re[phase SWSFzero]]!= Sign[(-1)^(index/2)],phase=-phase];
+				],
 			(* general case *)
 				phase=Exp[I(\[Pi]-Arg[SWSFzeroD])];
 				If[Sign[Re[phase SWSFzeroD]]!=Sign[SphericalD],phase=-phase]
