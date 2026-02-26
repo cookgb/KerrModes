@@ -103,6 +103,53 @@ StyleBox[\"SWdat\", \"TI\"]\), is real."
 
 
 (* ::Subsection::Closed:: *)
+(*Confluent Heun Solvers*)
+
+
+SWSpheroidalWronskianRoot::usage=
+SpinWeightedSpheroidal::usage=
+"SWSpheroidalWronskianRoot[s,m,c,Alm] "<>
+"returns an eigenvalue near \!\(\*StyleBox[\"Alm\", \"TI\"]\) associated with a spin-weighted spheroidal "<>
+"function with spin-weight \!\(\*StyleBox[\"s\", \"TI\"]\), "<>
+"azimuthal index \!\(\*StyleBox[\"m\", \"TI\"]\), and oblateness parameter \!\(\*StyleBox[\"c\", \"TI\"]\)."
+
+
+SWSFHeunPhases::usage=
+"SWSFHeunPhases[s,m,l,c,Alm] "<>
+"returns a pair of phase factors which will implement the Cook-Wang SL phase choice "<>
+"for the spin-weighted spheroidal function with spin-weight \!\(\*StyleBox[\"s\", \"TI\"]\), "<>
+"azimuthal index \!\(\*StyleBox[\"m\", \"TI\"]\), oblateness parameter \!\(\*StyleBox[\"c\", \"TI\"]\), "<>
+"and eigenvalue \!\(\*StyleBox[\"Alm\", \"TI\"]\)."
+
+
+SWSFHeunNorms::usage=
+"SWSFHeunNorms[s,m,c,Alm] "<>
+"returns a pair of normalizatin factors which will properly normalize the "<>
+"spin-weighted spheroidal function with spin-weight \!\(\*StyleBox[\"s\", \"TI\"]\), "<>
+"azimuthal index \!\(\*StyleBox[\"m\", \"TI\"]\), oblateness parameter \!\(\*StyleBox[\"c\", \"TI\"]\), "<>
+"and eigenvalue \!\(\*StyleBox[\"Alm\", \"TI\"]\)."
+
+
+SWSFHeun::usage-
+"SWSFHeun[norm,s,m,c,Alm,x] "<>
+"evaluates the spin-weighted spheroidal function with spin-weight \!\(\*StyleBox[\"s\", \"TI\"]\), "<>
+"azimuthal index \!\(\*StyleBox[\"m\", \"TI\"]\), oblateness parameter \!\(\*StyleBox[\"c\", \"TI\"]\), "<>
+"and eigenvalue \!\(\*StyleBox[\"Alm\", \"TI\"]\) at location \!\(\*StyleBox[\"x\", \"TI\"]\) "
+"in the range \!\(\*StyleBox[\"-1\[LessEqual]x\[LessEqual]1\", \"TI\"]\)-1\[LessEqual]x\[LessEqual]1. "<>
+"\!\(\*StyleBox[\"norm\", \"TI\"]\) is a 2-element list which "<>
+"provides the desired normalizatin and phase choice for the function."
+
+
+SWSFHeunExpansionCoefs::usage=
+"SWSFHeunExpansionCoefs[s,m,l,c,Alm] "<>
+"returns a list of complex expansion coefficients necessary to represent the "<>
+"spin-weighted spheroidal function with spin-weight \!\(\*StyleBox[\"s\", \"TI\"]\), "<>
+"azimuthal index \!\(\*StyleBox[\"m\", \"TI\"]\), oblateness parameter \!\(\*StyleBox[\"c\", \"TI\"]\), "<>
+"and eigenvalue \!\(\*StyleBox[\"Alm\", \"TI\"]\) as a linear combination of sphin-weighted "<>
+"spherical functions."
+
+
+(* ::Subsection::Closed:: *)
 (*Reserved Globals*)
 
 
@@ -113,6 +160,9 @@ Protect[PlotFlips]
 
 
 Protect[PathStart,PlotStart,PrintPoleValues,StepSize,\[Phi]guess]
+
+
+Protect[ChopDelta,CoefDelta]
 
 
 Begin["`Private`"]
@@ -410,6 +460,197 @@ Module[{NC,lmin,Matdlx,SWSF,z,z0,zf,\[Delta]z,\[Phi],\[Phi]g,\[Phi]0,phase,zlist
 	If[zf==-1,zlist=Reverse[zlist];SWSFlist=Reverse[SWSFlist]];
 	{zlist,SWSFlist}
 ]
+
+
+(* ::Section::Closed:: *)
+(*Spin-Weighted Spheroidal Functions : Confluent Heun Method*)
+
+
+(* ::Text:: *)
+(*Evaluate the Spin-weighted Spheroidal Functions using confluent Heun functions.  Roots of the Wronskian determine values of the Eigenvalues, \!\( *)
+(*\(\*SubscriptBox[\(\[InvisiblePrefixScriptBase]\), \(s\)]\)*)
+(*\(\*SubscriptBox[\(A\), \(\[ScriptL], m\)]\)\)[c], of the angular Teukolsky which allow local Frobenius solutions to be regular simultaneously at both regular singular points.*)
+
+
+(* ::Subsection::Closed:: *)
+(*Spin-weighted spheroidal functions which are regular at either x=\[PlusMinus]1:*)
+
+
+(* ::Text:: *)
+(*Each version of the spin-weighted spheroidal function is well behaved for certain values of m+s or m-s.*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Regular solutions at x=+1, valid for -1<x<=1:*)
+
+
+SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^((m+s)/2) (1+x)^((m-s)/2) HeunC[Alm+c^2+2 c (m+1)-m (m+1)+s(s+1),4 c (m-s+1),m+s+1,m-s+1,4 c,(1-x)/2]/;(m+s>0)&&(m-s>=0)
+
+
+SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1+x)^-s HeunC[Alm+c^2-2 c (-1+s)+2 s,c (4-8 s),1,1-2 s,4 c,(1-x)/2]/;(m+s==0)&&(m-s>=0)
+
+
+SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^((m+s)/2) (1+x)^((s-m)/2) HeunC[Alm+c^2+2c (m+1),4 c,m+s+1,s-m+1,4 c,(1-x)/2]/;(m+s>0)&&(m-s<=0)
+
+
+SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1+x)^s HeunC[Alm+c (2+c+2 m),4 c,1,1+2 s,4 c,(1-x)/2]/;(m+s==0)&&(m-s<=0)
+
+
+SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^(-((m+s)/2)) (1+x)^((s-m)/2) HeunC[Alm+c^2-2 c (m+2 s-1)-m (m-1)+s(s+1),-4 c (m+s-1),-m-s+1,s-m+1,4 c,(1-x)/2]/;(m+s<0)&&(m-s<=0)
+
+
+SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^(-((m+s)/2)) (1+x)^((m-s)/2) HeunC[Alm+c^2-2c ( m+2 s-1)+2 s,-4 c (2 s-1),-m-s+1,m-s+1,4 c,(1-x)/2]/;(m+s<0)&&(m-s>=0)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Regular solutions at x=-1, valid for -1<=x<1:*)
+
+
+SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^((m+s)/2) (1+x)^((m-s)/2) HeunC[Alm+c^2-2 c (m-2 s+1)-m (m+1)+s(s+1),-4 c (m-s+1),m-s+1,m+s+1,-4 c,(1+x)/2]/;(m+s>=0)&&(m-s>0)
+
+
+SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^s HeunC[Alm+c (-2+c+2 s),-4 c,1,1+m+s,-4 c,(1+x)/2]/;(m+s>=0)&&(m-s==0)
+
+
+SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^(-((m+s)/2)) (1+x)^((m-s)/2) HeunC[Alm+c^2-2c (m-2 s+1)+2 s,4 c (2 s-1),m-s+1,-m-s+1,-4 c,(1+x)/2]/;(m+s<=0)&&(m-s>0)
+
+
+SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^-s HeunC[Alm+c^2+2 c (-1+s)+2 s,4 c (-1+2 s),1,1-2 s,-4 c,(1+x)/2]/;(m+s<=0)&&(m-s==0)
+
+
+
+
+
+
+
+
+(* ::Subsection::Closed:: *)
+(*Roots of the spin-weighted spheroidal function Wronskian:*)
+
+
+(* ::Text:: *)
+(*Each version of the Wronskian is well behaved for certain values of m+s and m-s.*)
+
+
+SWSpheroidalWronskian[s_,m_,c_,Alm_]:=1/2 (HeunC[Alm+c^2-m (1+m)-2 c (1+m-2 s)+s+s^2,-4 c (1+m-s),1+m-s,1+m+s,-4 c,1/2] HeunCPrime[Alm+c^2+2 c (1+m)-m (1+m)+s+s^2,4 c (1+m-s),1+m+s,1+m-s,4 c,1/2]+HeunC[Alm+c^2+2 c (1+m)-m (1+m)+s+s^2,4 c (1+m-s),1+m+s,1+m-s,4 c,1/2] HeunCPrime[Alm+c^2-m (1+m)-2 c (1+m-2 s)+s+s^2,-4 c (1+m-s),1+m-s,1+m+s,-4 c,1/2])/;(m+s>=0)&&(m-s>=0)
+
+
+SWSpheroidalWronskian[s_,m_,c_,Alm_]:=1/2 (HeunC[Alm+c (2+c+2 m),4 c,1+m+s,1-m+s,4 c,1/2] HeunCPrime[Alm+c (-2+c+2 m),-4 c,1-m+s,1+m+s,-4 c,1/2]+HeunC[Alm+c (-2+c+2 m),-4 c,1-m+s,1+m+s,-4 c,1/2] HeunCPrime[Alm+c (2+c+2 m),4 c,1+m+s,1-m+s,4 c,1/2])/;(m+s>=0)&&(m-s<=0)
+
+
+SWSpheroidalWronskian[s_,m_,c_,Alm_]:=1/2 (HeunC[Alm+2 s+c (-2+c-2 m+4 s),4 c (-1+2 s),1+m-s,1-m-s,-4 c,1/2] HeunCPrime[Alm+c (2+c-2 m-4 s)+2 s,c (4-8 s),1-m-s,1+m-s,4 c,1/2]+HeunC[Alm+c (2+c-2 m-4 s)+2 s,c (4-8 s),1-m-s,1+m-s,4 c,1/2] HeunCPrime[Alm+2 s+c (-2+c-2 m+4 s),4 c (-1+2 s),1+m-s,1-m-s,-4 c,1/2])/;(m+s<=0)&&(m-s>=0)
+
+
+SWSpheroidalWronskian[s_,m_,c_,Alm_]:=1/2 (HeunC[Alm+c^2+m-m^2+s+s^2-2 c (-1+m+2 s),-4 c (-1+m+s),1-m-s,1-m+s,4 c,1/2] HeunCPrime[Alm+(-2+c) c+m+2 c m-m^2+s+s^2,4 c (-1+m+s),1-m+s,1-m-s,-4 c,1/2]+HeunC[Alm+(-2+c) c+m+2 c m-m^2+s+s^2,4 c (-1+m+s),1-m+s,1-m-s,-4 c,1/2] HeunCPrime[Alm+c^2+m-m^2+s+s^2-2 c (-1+m+2 s),-4 c (-1+m+s),1-m-s,1-m+s,4 c,1/2])/;(m+s<=0)&&(m-s<=0)
+
+
+Options[SWSpheroidalWronskianRoot]=Union[{Quiet->FindRoot::precw},Options[FindRoot]];
+SWSpheroidalWronskianRoot[s_/;IntegerQ[2s],m_/;IntegerQ[2m],c_?NumberQ,Almguess_?NumberQ,opts:OptionsPattern[]]:=Module[{Alm,quiet=OptionValue[Quiet]},
+Alm/.Quiet[FindRoot[SWSpheroidalWronskian[s,m,c,Alm],{Alm,Almguess},Evaluate[FilterRules[{opts},Options[FindRoot]]]],Evaluate[quiet]]
+]/;IntegerQ[m+s]
+
+
+(* ::Subsection::Closed:: *)
+(*Evaluate the spin-weighted spheroidal functions:*)
+
+
+Options[SWSFHeunPhases]={ChopDelta->10^-10};
+
+
+SWSFHeunPhases[s_/;IntegerQ[2s],m_/;IntegerQ[2m],l_/;IntegerQ[2l],c_?NumberQ,Alm_?NumberQ,OptionsPattern[]]:=
+Module[{x,sphericalval,Dsphericalval,valp,valm,Dvalp,Dvalm,phases,signs,index,hoint=1,\[Epsilon]=OptionValue[ChopDelta]},
+	If[!IntegerQ[m],hoint=-I]; (* Choice to make half-odd integer Spherical harmonics real *)
+	sphericalval=hoint (-1)^s Sqrt[l+1/2]WignerD[{l,-m,s},0,\[Pi]/2,0];
+	valp=SWSFHeun[1][s,m,c,Alm,0];
+	valm=SWSFHeun[-1][s,m,c,Alm,0];
+	(* general case phase *)
+	phases=Exp[I(\[Pi]-{Arg[valm],Arg[valp]})];
+	If[Sign[sphericalval]!=0,
+		If[Chop[valp,\[Epsilon]]==0,
+		(* Case where function vanishes, but spherical limit does not. *)
+			Dsphericalval=hoint ((-1)^s)/2(-Sqrt[(l-s)(l+s+1)(l+1/2)]WignerD[{l,-m,s+1},0,\[Pi]/2,0]+Sqrt[(l+s)(l-s+1)(l+1/2)]WignerD[{l,-m,s-1},0,\[Pi]/2,0]);
+			Dvalp=D[SWSFHeun[1][s,m,c,Alm,x],x]/.x->0;
+			If[Chop[Dvalp,\[Epsilon]]==0||Chop[Dsphericalval,\[Epsilon]]==0,
+			(* This shouldn't happen, but could in the asymptotic regime where where exponential damping can occur *)
+				Return[{Indeterminate,Indeterminate}];
+			,(* normal case, fix the derivative to be real *)
+				Dvalm=D[SWSFHeun[-1][s,m,c,Alm,x],x]/.x->0;
+				phases=Exp[I(\[Pi]-{Arg[Dvalm],Arg[Dvalp]})];
+				signs=Sign[phases {Dvalm,Dvalp}];
+				phases*=signs Sign[Dsphericalval];
+			]
+			,(* general case: Check the signs for value *)
+				signs=Sign[phases {valm,valp}];
+				phases*=signs Sign[sphericalval];
+		]
+	,(*Case when spherical value is zero.*)
+		Dsphericalval=hoint (-1)^s/2(-Sqrt[(l-s)(l+s+1)(l+1/2)]WignerD[{l,-m,s+1},0,\[Pi]/2,0]+Sqrt[(l+s)(l-s+1)(l+1/2)]WignerD[{l,-m,s-1},0,\[Pi]/2,0]);
+		Dvalp=D[SWSFHeun[1][s,m,c,Alm,x],x]/.x->0;
+		If[Chop[Dvalp,\[Epsilon]]==0,
+			If[Chop[valp,\[Epsilon]]==0,
+			(* This shouldn't happen, but could in the asymptotic regime where where exponential damping can occur *)
+				Return[{Indeterminate,Indeterminate}];
+			,(* Since the derivative vanishes, the value should be non-zero and the phase has been chosen to make it real at x=0, so we can specify its sign *)
+				index=l+m;If[OddQ[index],--index];
+				signs=Sign[phases {valm,valp}];
+				phases*=signs Sign[(-1)^(index/2)];
+			]
+		,(* general case: Check the signs for derivative *)
+			Dvalm=D[SWSFHeun[-1][s,m,c,Alm,x],x]/.x->0;
+			phases=Exp[I(\[Pi]-{Arg[Dvalm],Arg[Dvalp]})];
+			signs=Sign[phases {Dvalm,Dvalp}];
+			phases*=signs Sign[Dsphericalval];
+		]
+	];
+	phases
+]/;IntegerQ[m+s]&&IntegerQ[l+s]
+
+
+Options[SWSFHeunNorms]=Union[{Quiet->NIntegrate::precw},Options[NIntegrate]];
+
+
+SWSFHeunNorms[s_/;IntegerQ[2s],m_/;IntegerQ[2m],c_?NumberQ,Alm_?NumberQ,opts:OptionsPattern[]]:= 
+Module[{x,pintm,nintm,pinte,ninte,ratio,quiet=OptionValue[Quiet]},
+	pintm=Quiet[NIntegrate[Abs[SWSFHeun[1][s,m,c,Alm,x]]^2,{x,-3/4,3/4},Evaluate[FilterRules[{opts},Options[NIntegrate]]]],Evaluate[quiet]];
+	pinte=Quiet[NIntegrate[Abs[SWSFHeun[1][s,m,c,Alm,x]]^2,{x,3/4,1},Evaluate[FilterRules[{opts},Options[NIntegrate]]]],Evaluate[quiet]];
+	nintm=Quiet[NIntegrate[Abs[SWSFHeun[-1][s,m,c,Alm,x]]^2,{x,-3/4,3/4},Evaluate[FilterRules[{opts},Options[NIntegrate]]]],Evaluate[quiet]];
+	ninte=Quiet[NIntegrate[Abs[SWSFHeun[-1][s,m,c,Alm,x]]^2,{x,-1,-3/4},Evaluate[FilterRules[{opts},Options[NIntegrate]]]],Evaluate[quiet]];
+	ratio=pintm/nintm;
+	1/Sqrt[{ninte+nintm+pinte/ratio,ninte ratio+pintm+pinte}]
+]/;IntegerQ[m+s]
+
+
+SWSFHeun[norm_List,s_/;IntegerQ[2s],m_/;IntegerQ[2m],c_?NumberQ,Alm_?NumberQ,x_?NumberQ]:=
+If[x<0,norm[[1]]SWSFHeun[-1][s,m,c,Alm,x],norm[[2]]SWSFHeun[1][s,m,c,Alm,x]]/;IntegerQ[m+s]
+
+
+Options[SWSFHeunExpansionCoefs]=Union[{CoefDelta->10^-15,ChopDelta->10^-10,Quiet->NIntegrate::precw},Options[NIntegrate]];
+
+
+SWSFHeunExpansionCoefs[s_/;IntegerQ[2s],m_/;IntegerQ[2m],l_/;IntegerQ[2l],c_?NumberQ,Alm_?NumberQ,opts:OptionsPattern[]]:=
+Module[{norm,phase,ip,coefs={},stop=False,normsum=0,L,lmin,Npara=10,ind,keep,lastsmall=False,\[Epsilon]=OptionValue[CoefDelta],quiet=OptionValue[Quiet]},
+	norm=SWSFHeunNorms[s,m,c,Alm,Evaluate[FilterRules[{opts},Options[SWSFHeunNorms]]]]; 
+	phase=SWSFHeunPhases[s,m,l,c,Alm,Evaluate[FilterRules[{opts},Options[SWSFHeunPhases]]]];
+	If[NumericQ[phase[[1]]],norm*=phase];(* SL phase computed *)
+	L=0;lmin=Max[Abs[s],Abs[m]];
+	While[Abs[normsum-1]>\[Epsilon] || !stop,
+		ip=Parallelize[Table[Quiet[NIntegrate[Conjugate[SWSphericalS[s,m,lmin+Lt,x]]SWSFHeun[norm,s,m,c,Alm,x],{x,-1,1},Evaluate[FilterRules[{opts},Options[NIntegrate]]]],Evaluate[quiet]],{Lt,L,L+Max[l-lmin+3-L,Npara-1]}]];
+		ind=FirstPosition[Reverse[ip],_?(Abs[#]>\[Epsilon]&)][[1]];
+		keep=Min[Length[ip],If[IntegerQ[ind],Length[ip]-ind+3,ind=Npara+2;2]];
+		If[lastsmall&&keep<=2,keep=1;stop=True];
+		ip=Take[ip,keep];
+		If[ind>=2,lastsmall=True];
+		normsum+=Total[Abs[ip]^2];
+		coefs = Join[coefs,ip];
+		If[Npara>1&&ind>2,stop=True];
+		L+=keep
+	];
+	If[!NumberQ[phase[[1]]],(* Indeterminant phase, impose Cook-Zalutskiy phase choice *)
+		phase = Exp[-I Arg[coefs[[l-lmin+1]]]];
+		coefs*=phase;
+	];
+	Return[coefs]
+]/;IntegerQ[m+s]&&IntegerQ[l+s]
 
 
 (* ::Section::Closed:: *)
