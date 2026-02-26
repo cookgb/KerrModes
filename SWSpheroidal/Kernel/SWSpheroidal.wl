@@ -107,7 +107,6 @@ StyleBox[\"SWdat\", \"TI\"]\), is real."
 
 
 SWSpheroidalWronskianRoot::usage=
-SpinWeightedSpheroidal::usage=
 "SWSpheroidalWronskianRoot[s,m,c,Alm] "<>
 "returns an eigenvalue near \!\(\*StyleBox[\"Alm\", \"TI\"]\) associated with a spin-weighted spheroidal "<>
 "function with spin-weight \!\(\*StyleBox[\"s\", \"TI\"]\), "<>
@@ -518,10 +517,10 @@ SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^(-((m+s)/2)) (1+x)^((m-s)/2) Heun
 SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^-s HeunC[Alm+c^2+2 c (-1+s)+2 s,4 c (-1+2 s),1,1-2 s,-4 c,(1+x)/2]/;(m+s<=0)&&(m-s==0)
 
 
+SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^(-((m+s)/2)) (1+x)^((s-m)/2) HeunC[Alm+c^2+2 c (m-1)-m (m-1)+s(s+1),4 c (m+s-1),s-m+1,-m-s+1,-4 c,(1+x)/2]/;(m+s<=0)&&(m-s<0)
 
 
-
-
+SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^((m+s)/2) (1+x)^((s-m)/2) HeunC[Alm+c^2+2c (m-1),-4 c,s-m+1,m+s+1,-4 c,(1+x)/2]/;(m+s>=0)&&(m-s<0)
 
 
 (* ::Subsection::Closed:: *)
