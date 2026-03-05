@@ -123,20 +123,20 @@ SWSFHeunPhases::usage=
 
 SWSFHeunNorms::usage=
 "SWSFHeunNorms[s,m,c,Alm] "<>
-"returns a pair of normalizatin factors which will properly normalize the "<>
+"returns a pair of normalization factors which will properly normalize the "<>
 "spin-weighted spheroidal function with spin-weight \!\(\*StyleBox[\"s\", \"TI\"]\), "<>
 "azimuthal index \!\(\*StyleBox[\"m\", \"TI\"]\), oblateness parameter \!\(\*StyleBox[\"c\", \"TI\"]\), "<>
 "and eigenvalue \!\(\*StyleBox[\"Alm\", \"TI\"]\)."
 
 
-SWSFHeun::usage-
+SWSFHeun::usage=
 "SWSFHeun[norm,s,m,c,Alm,x] "<>
 "evaluates the spin-weighted spheroidal function with spin-weight \!\(\*StyleBox[\"s\", \"TI\"]\), "<>
 "azimuthal index \!\(\*StyleBox[\"m\", \"TI\"]\), oblateness parameter \!\(\*StyleBox[\"c\", \"TI\"]\), "<>
-"and eigenvalue \!\(\*StyleBox[\"Alm\", \"TI\"]\) at location \!\(\*StyleBox[\"x\", \"TI\"]\) "
+"and eigenvalue \!\(\*StyleBox[\"Alm\", \"TI\"]\) at location \!\(\*StyleBox[\"x\", \"TI\"]\) "<>
 "in the range \!\(\*StyleBox[\"-1\[LessEqual]x\[LessEqual]1\", \"TI\"]\)-1\[LessEqual]x\[LessEqual]1. "<>
 "\!\(\*StyleBox[\"norm\", \"TI\"]\) is a 2-element list which "<>
-"provides the desired normalizatin and phase choice for the function."
+"provides the desired normalizatin and phase choices for the function."
 
 
 SWSFHeunExpansionCoefs::usage=
@@ -144,7 +144,7 @@ SWSFHeunExpansionCoefs::usage=
 "returns a list of complex expansion coefficients necessary to represent the "<>
 "spin-weighted spheroidal function with spin-weight \!\(\*StyleBox[\"s\", \"TI\"]\), "<>
 "azimuthal index \!\(\*StyleBox[\"m\", \"TI\"]\), oblateness parameter \!\(\*StyleBox[\"c\", \"TI\"]\), "<>
-"and eigenvalue \!\(\*StyleBox[\"Alm\", \"TI\"]\) as a linear combination of sphin-weighted "<>
+"and eigenvalue \!\(\*StyleBox[\"Alm\", \"TI\"]\) as a linear combination of spin-weighted "<>
 "spherical functions."
 
 
@@ -161,7 +161,7 @@ Protect[PlotFlips]
 Protect[PathStart,PlotStart,PrintPoleValues,StepSize,\[Phi]guess]
 
 
-Protect[ChopDelta,CoefDelta]
+Protect[ParallelIP,ChopDelta,CoefDelta]
 
 
 Begin["`Private`"]
@@ -468,7 +468,7 @@ Module[{NC,lmin,Matdlx,SWSF,z,z0,zf,\[Delta]z,\[Phi],\[Phi]g,\[Phi]0,phase,zlist
 (* ::Text:: *)
 (*Evaluate the Spin-weighted Spheroidal Functions using confluent Heun functions.  Roots of the Wronskian determine values of the Eigenvalues, \!\( *)
 (*\(\*SubscriptBox[\(\[InvisiblePrefixScriptBase]\), \(s\)]\)*)
-(*\(\*SubscriptBox[\(A\), \(\[ScriptL], m\)]\)\)[c], of the angular Teukolsky which allow local Frobenius solutions to be regular simultaneously at both regular singular points.*)
+(*\(\*SubscriptBox[\(A\), \(\[ScriptL], m\)]\)\)(c), of the angular Teukolsky which allow local Frobenius solutions to be regular simultaneously at both regular singular points.*)
 
 
 (* ::Subsection::Closed:: *)
@@ -476,51 +476,119 @@ Module[{NC,lmin,Matdlx,SWSF,z,z0,zf,\[Delta]z,\[Phi],\[Phi]g,\[Phi]0,phase,zlist
 
 
 (* ::Text:: *)
-(*Each version of the spin-weighted spheroidal function is well behaved for certain values of m+s or m-s.*)
+(*Each version of the spin-weighted spheroidal function is well behaved for certain values of m+s or m-s, and Re[c].*)
 
 
 (* ::Subsubsection::Closed:: *)
 (*Regular solutions at x=+1, valid for -1<x<=1:*)
 
 
-SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^((m+s)/2) (1+x)^((m-s)/2) HeunC[Alm+c^2+2 c (m+1)-m (m+1)+s(s+1),4 c (m-s+1),m+s+1,m-s+1,4 c,(1-x)/2]/;(m+s>0)&&(m-s>=0)
+(* ::Text:: *)
+(*S[1][1][p]:  m+s>=0 & m-s>=0 (special case for  m+s=0)*)
 
 
-SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1+x)^-s HeunC[Alm+c^2-2 c (-1+s)+2 s,c (4-8 s),1,1-2 s,4 c,(1-x)/2]/;(m+s==0)&&(m-s>=0)
+SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(c x) (1-x)^((m+s)/2) (1+x)^((m-s)/2) HeunC[Alm+c^2-2c(m+2s+1)-m(m+1)+s(s+1),-4c(m+s+1),m+s+1,m-s+1,-4c,(1-x)/2]/;(m+s>0)&&(m-s>=0)&&Re[c]>=0
 
 
-SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^((m+s)/2) (1+x)^((s-m)/2) HeunC[Alm+c^2+2c (m+1),4 c,m+s+1,s-m+1,4 c,(1-x)/2]/;(m+s>0)&&(m-s<=0)
+SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(c x) (1+x)^-s HeunC[Alm+c^2-2c(s+1)+2s,-4c,1,-2s+1,-4c,(1-x)/2]/;(m==-s)&&(s<=0)&&Re[c]>=0
 
 
-SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1+x)^s HeunC[Alm+c (2+c+2 m),4 c,1,1+2 s,4 c,(1-x)/2]/;(m+s==0)&&(m-s<=0)
+SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^((m+s)/2) (1+x)^((m-s)/2) HeunC[Alm+c^2+2c(m+1)-m(m+1)+s(s+1),4c(m-s+1),m+s+1,m-s+1,4c,(1-x)/2]/;(m+s>0)&&(m-s>=0)&&Re[c]<0
 
 
-SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^(-((m+s)/2)) (1+x)^((s-m)/2) HeunC[Alm+c^2-2 c (m+2 s-1)-m (m-1)+s(s+1),-4 c (m+s-1),-m-s+1,s-m+1,4 c,(1-x)/2]/;(m+s<0)&&(m-s<=0)
+SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1+x)^-s HeunC[Alm+c^2-2c(s-1)+2s,-4c (2s-1),1,-2s+1,4c,(1-x)/2]/;(m==-s)&&(s<=0)&&Re[c]<0
 
 
-SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^(-((m+s)/2)) (1+x)^((m-s)/2) HeunC[Alm+c^2-2c ( m+2 s-1)+2 s,-4 c (2 s-1),-m-s+1,m-s+1,4 c,(1-x)/2]/;(m+s<0)&&(m-s>=0)
+(* ::Text:: *)
+(*S[1][2][p]:  m+s>=0 & m-s<=0 (special case for  m+s=0)*)
+
+
+SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(c x) (1-x)^((m+s)/2) (1+x)^(-((m-s)/2)) HeunC[Alm+c^2-2c(m+2s+1),-4c(2s+1),m+s+1,s-m+1,-4c,(1-x)/2]/;(m+s>0)&&(m-s<=0)&&Re[c]>=0
+
+
+SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(c x) (1+x)^s HeunC[Alm+c^2+2c(m-1),-4c(2s+1),1,2s+1,-4c,(1-x)/2]/;(m==-s)&&(s>=0)&&Re[c]>=0
+
+
+SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^((m+s)/2) (1+x)^(-((m-s)/2)) HeunC[Alm+c^2+2c(m+1),4c,m+s+1,s-m+1,4c,(1-x)/2]/;(m+s>0)&&(m-s<=0)&&Re[c]<0
+
+
+SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1+x)^s HeunC[Alm+c^2+2c(m+1),4c,1,2s+1,4c,(1-x)/2]/;(m==-s)&&(s>=0)&&Re[c]<0
+
+
+(* ::Text:: *)
+(*S[1][1][n]:  m+s<0 & m-s<=0*)
+
+
+SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(c x) (1-x)^(-((m+s)/2)) (1+x)^(-((m-s)/2)) HeunC[Alm+c^2+2c(m-1)-m(m-1)+s(s+1),4c(m-s-1),-m-s+1,s-m+1,-4c,(1-x)/2]/;(m+s<0)&&(m-s<=0)&&Re[c]>=0
+
+
+SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^(-((m+s)/2)) (1+x)^(-((m-s)/2)) HeunC[Alm+c^2-2c(m+2s-1)-m(m-1)+s(s+1),-4c(m+s-1),-m-s+1,s-m+1,4c,(1-x)/2]/;(m+s<0)&&(m-s<=0)&&Re[c]<0
+
+
+(* ::Text:: *)
+(*S[1][2][n]:  m+s<0 & m-s>=0*)
+
+
+SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(c x) (1-x)^(-((m+s)/2)) (1+x)^((m-s)/2) HeunC[Alm+c^2+2c(m-1)+2s,-4c,-m-s+1,m-s+1,-4c,(1-x)/2]/;(m+s<0)&&(m-s>=0)&&Re[c]>=0
+
+
+SWSFHeun[1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^(-((m+s)/2)) (1+x)^((m-s)/2) HeunC[Alm+c^2-2c( m+2s-1)+2s,-4c(2s-1),-m-s+1,m-s+1,4c,(1-x)/2]/;(m+s<0)&&(m-s>=0)&&Re[c]<0
 
 
 (* ::Subsubsection::Closed:: *)
 (*Regular solutions at x=-1, valid for -1<=x<1:*)
 
 
-SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^((m+s)/2) (1+x)^((m-s)/2) HeunC[Alm+c^2-2 c (m-2 s+1)-m (m+1)+s(s+1),-4 c (m-s+1),m-s+1,m+s+1,-4 c,(1+x)/2]/;(m+s>=0)&&(m-s>0)
+(* ::Text:: *)
+(*S[-1][1][p]:  m+s>=0 & m-s>=0 (special case for  m-s=0)*)
 
 
-SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^s HeunC[Alm+c (-2+c+2 s),-4 c,1,1+m+s,-4 c,(1+x)/2]/;(m+s>=0)&&(m-s==0)
+SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^((m+s)/2) (1+x)^((m-s)/2) HeunC[Alm+c^2-2c(m-2s+1)-m(m+1)+s(s+1),-4c(m-s+1),m-s+1,m+s+1,-4c,(1+x)/2]/;(m+s>=0)&&(m-s>0)&&Re[c]>=0
 
 
-SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^(-((m+s)/2)) (1+x)^((m-s)/2) HeunC[Alm+c^2-2c (m-2 s+1)+2 s,4 c (2 s-1),m-s+1,-m-s+1,-4 c,(1+x)/2]/;(m+s<=0)&&(m-s>0)
+SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^s HeunC[Alm+c^2+2c(s-1),-4c,1,2s+1,-4c,(1+x)/2]/;(m==s)&&(s>=0)&&Re[c]>=0
 
 
-SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^-s HeunC[Alm+c^2+2 c (-1+s)+2 s,4 c (-1+2 s),1,1-2 s,-4 c,(1+x)/2]/;(m+s<=0)&&(m-s==0)
+SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(c x) (1-x)^((m+s)/2) (1+x)^((m-s)/2) HeunC[Alm+c^2+2c(m+1)-m(m+1)+s(s+1),4c(m+s+1),m-s+1,m+s+1,4c,(1+x)/2]/;(m+s>=0)&&(m-s>0)&&Re[c]<0
 
 
-SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^(-((m+s)/2)) (1+x)^((s-m)/2) HeunC[Alm+c^2+2 c (m-1)-m (m-1)+s(s+1),4 c (m+s-1),s-m+1,-m-s+1,-4 c,(1+x)/2]/;(m+s<=0)&&(m-s<0)
+SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(c x) (1-x)^s HeunC[Alm+c^2+2c(s+1),4c(2s+1),1,2s+1,4c,(1+x)/2]/;(m==s)&&(s>=0)&&Re[c]<0
 
 
-SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^((m+s)/2) (1+x)^((s-m)/2) HeunC[Alm+c^2+2c (m-1),-4 c,s-m+1,m+s+1,-4 c,(1+x)/2]/;(m+s>=0)&&(m-s<0)
+(* ::Text:: *)
+(*S[-1][2][p]:  m+s<=0 & m-s>=0 (special case for  m-s=0)*)
+
+
+SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^(-((m+s)/2)) (1+x)^((m-s)/2) HeunC[Alm+c^2-2c(m-2s+1)+2 s,4c(2s-1),m-s+1,-m-s+1,-4 c,(1+x)/2]/;(m+s<=0)&&(m-s>0)&&Re[c]>=0
+
+
+SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^-s HeunC[Alm+c^2+2c(s-1)+2s,4c(2s-1),1,-2s+1,-4c,(1+x)/2]/;(m==s)&&(s<=0)&&Re[c]>=0
+
+
+SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(c x) (1-x)^(-((m+s)/2)) (1+x)^((m-s)/2) HeunC[Alm+c^2+2c(m+1)+2s,4c,m-s+1,-m-s+1,4c,(1+x)/2]/;(m+s<=0)&&(m-s>0)&&Re[c]<0
+
+
+SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(c x) (1-x)^-s HeunC[Alm+c^2+2c(s+1)+2s,4c,1,-2s+1,4c,(1+x)/2]/;(m==s)&&(s<=0)&&Re[c]<0
+
+
+(* ::Text:: *)
+(*S[-1][1][n]:  m+s<=0 & m-s<0*)
+
+
+SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^(-((m+s)/2)) (1+x)^(-((m-s)/2)) HeunC[Alm+c^2+2c(m-1)-m(m-1)+s(s+1),4c(m+s-1),s-m+1,-m-s+1,-4c,(1+x)/2]/;(m+s<=0)&&(m-s<0)&&Re[c]>=0
+
+
+SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(c x) (1-x)^(-((m+s)/2)) (1+x)^(-((m-s)/2)) HeunC[Alm+c^2-2c(m-2s-1)-m(m-1)+s(s+1),-4c(m-s-1),s-m+1,-m-s+1,4c,(1+x)/2]/;(m+s<=0)&&(m-s<0)&&Re[c]<0
+
+
+(* ::Text:: *)
+(*S[-1][2][n]:  m+s>=0 & m-s<0*)
+
+
+SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^((m+s)/2) (1+x)^(-((m-s)/2)) HeunC[Alm+c^2+2c(m-1),-4c,s-m+1,m+s+1,-4c,(1+x)/2]/;(m+s>=0)&&(m-s<0)&&Re[c]>=0
+
+
+SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(c x) (1-x)^((m+s)/2) (1+x)^(-((m-s)/2)) HeunC[Alm+c^2-2c(m-2s-1),4c(2s+1),s-m+1,m+s+1,4c,(1+x)/2]/;(m+s>=0)&&(m-s<0)&&Re[c]<0
 
 
 (* ::Subsection::Closed:: *)
@@ -528,23 +596,51 @@ SWSFHeun[-1][s_,m_,c_,Alm_,x_]:=E^(-c x) (1-x)^((m+s)/2) (1+x)^((s-m)/2) HeunC[A
 
 
 (* ::Text:: *)
-(*Each version of the Wronskian is well behaved for certain values of m+s and m-s.*)
+(*Each version of the Wronskian is well behaved for certain values of   m+s,  m-s, and  Re[c].*)
 
 
-SWSpheroidalWronskian[s_,m_,c_,Alm_]:=1/2 (HeunC[Alm+c^2-m (1+m)-2 c (1+m-2 s)+s+s^2,-4 c (1+m-s),1+m-s,1+m+s,-4 c,1/2] HeunCPrime[Alm+c^2+2 c (1+m)-m (1+m)+s+s^2,4 c (1+m-s),1+m+s,1+m-s,4 c,1/2]+HeunC[Alm+c^2+2 c (1+m)-m (1+m)+s+s^2,4 c (1+m-s),1+m+s,1+m-s,4 c,1/2] HeunCPrime[Alm+c^2-m (1+m)-2 c (1+m-2 s)+s+s^2,-4 c (1+m-s),1+m-s,1+m+s,-4 c,1/2])/;(m+s>=0)&&(m-s>=0)
+(* ::Text:: *)
+(*S[1][1][p]^S[-1][1][p]*)
 
 
-SWSpheroidalWronskian[s_,m_,c_,Alm_]:=1/2 (HeunC[Alm+c (2+c+2 m),4 c,1+m+s,1-m+s,4 c,1/2] HeunCPrime[Alm+c (-2+c+2 m),-4 c,1-m+s,1+m+s,-4 c,1/2]+HeunC[Alm+c (-2+c+2 m),-4 c,1-m+s,1+m+s,-4 c,1/2] HeunCPrime[Alm+c (2+c+2 m),4 c,1+m+s,1-m+s,4 c,1/2])/;(m+s>=0)&&(m-s<=0)
+SWSpheroidalWronskian[s_,m_,c_,Alm_]:=HeunC[Alm+c^2-m (1+m)+s+s^2-2 c (1+m+2 s),-4 c (1+m+s),1+m+s,1+m-s,-4 c,1/2] HeunCPrime[Alm+c^2-m (1+m)-2 c (1+m-2 s)+s+s^2,-4 c (1+m-s),1+m-s,1+m+s,-4 c,1/2]+HeunC[Alm+c^2-m (1+m)-2 c (1+m-2 s)+s+s^2,-4 c (1+m-s),1+m-s,1+m+s,-4 c,1/2] (-4 c HeunC[Alm+c^2-m (1+m)+s+s^2-2 c (1+m+2 s),-4 c (1+m+s),1+m+s,1+m-s,-4 c,1/2]+HeunCPrime[Alm+c^2-m (1+m)+s+s^2-2 c (1+m+2 s),-4 c (1+m+s),1+m+s,1+m-s,-4 c,1/2])/;(m+s>=0)&&(m-s>=0)&&Re[c]>=0
 
 
-SWSpheroidalWronskian[s_,m_,c_,Alm_]:=1/2 (HeunC[Alm+2 s+c (-2+c-2 m+4 s),4 c (-1+2 s),1+m-s,1-m-s,-4 c,1/2] HeunCPrime[Alm+c (2+c-2 m-4 s)+2 s,c (4-8 s),1-m-s,1+m-s,4 c,1/2]+HeunC[Alm+c (2+c-2 m-4 s)+2 s,c (4-8 s),1-m-s,1+m-s,4 c,1/2] HeunCPrime[Alm+2 s+c (-2+c-2 m+4 s),4 c (-1+2 s),1+m-s,1-m-s,-4 c,1/2])/;(m+s<=0)&&(m-s>=0)
+SWSpheroidalWronskian[s_,m_,c_,Alm_]:=HeunC[Alm+c^2+2 c (1+m)-m (1+m)+s+s^2,4 c (1+m+s),1+m-s,1+m+s,4 c,1/2] HeunCPrime[Alm+c^2+2 c (1+m)-m (1+m)+s+s^2,4 c (1+m-s),1+m+s,1+m-s,4 c,1/2]+HeunC[Alm+c^2+2 c (1+m)-m (1+m)+s+s^2,4 c (1+m-s),1+m+s,1+m-s,4 c,1/2] (4 c HeunC[Alm+c^2+2 c (1+m)-m (1+m)+s+s^2,4 c (1+m+s),1+m-s,1+m+s,4 c,1/2]+HeunCPrime[Alm+c^2+2 c (1+m)-m (1+m)+s+s^2,4 c (1+m+s),1+m-s,1+m+s,4 c,1/2])/;(m+s>=0)&&(m-s>=0)&&Re[c]<0
 
 
-SWSpheroidalWronskian[s_,m_,c_,Alm_]:=1/2 (HeunC[Alm+c^2+m-m^2+s+s^2-2 c (-1+m+2 s),-4 c (-1+m+s),1-m-s,1-m+s,4 c,1/2] HeunCPrime[Alm+(-2+c) c+m+2 c m-m^2+s+s^2,4 c (-1+m+s),1-m+s,1-m-s,-4 c,1/2]+HeunC[Alm+(-2+c) c+m+2 c m-m^2+s+s^2,4 c (-1+m+s),1-m+s,1-m-s,-4 c,1/2] HeunCPrime[Alm+c^2+m-m^2+s+s^2-2 c (-1+m+2 s),-4 c (-1+m+s),1-m-s,1-m+s,4 c,1/2])/;(m+s<=0)&&(m-s<=0)
+(* ::Text:: *)
+(* S[1][2][p]^S[-1][2][n]*)
+
+
+SWSpheroidalWronskian[s_,m_,c_,Alm_]:=HeunC[Alm+c (c-2 (1+m+2 s)),-4 c (1+2 s),1+m+s,1-m+s,-4 c,1/2] (-4 c HeunC[Alm+c (-2+c+2 m),-4 c,1-m+s,1+m+s,-4 c,1/2]+HeunCPrime[Alm+c (-2+c+2 m),-4 c,1-m+s,1+m+s,-4 c,1/2])+HeunC[Alm+c (-2+c+2 m),-4 c,1-m+s,1+m+s,-4 c,1/2] HeunCPrime[Alm+c (c-2 (1+m+2 s)),-4 c (1+2 s),1+m+s,1-m+s,-4 c,1/2]/;(m+s>=0)&&(m-s<=0)&&Re[c]>=0
+
+
+SWSpheroidalWronskian[s_,m_,c_,Alm_]:=HeunC[Alm+c (2+c-2 m+4 s),4 c (1+2 s),1-m+s,1+m+s,4 c,1/2] (4 c HeunC[Alm+c (2+c+2 m),4 c,1+m+s,1-m+s,4 c,1/2]+HeunCPrime[Alm+c (2+c+2 m),4 c,1+m+s,1-m+s,4 c,1/2])+HeunC[Alm+c (2+c+2 m),4 c,1+m+s,1-m+s,4 c,1/2] HeunCPrime[Alm+c (2+c-2 m+4 s),4 c (1+2 s),1-m+s,1+m+s,4 c,1/2]/;(m+s>=0)&&(m-s<=0)&&Re[c]<0
+
+
+(* ::Text:: *)
+(* S[1][2][n]^S[-1][2][p]*)
+
+
+SWSpheroidalWronskian[s_,m_,c_,Alm_]:=HeunC[Alm+2 s+c (-2+c-2 m+4 s),4 c (-1+2 s),1+m-s,1-m-s,-4 c,1/2] (-4 c HeunC[Alm+c (-2+c+2 m)+2 s,-4 c,1-m-s,1+m-s,-4 c,1/2]+HeunCPrime[Alm+c (-2+c+2 m)+2 s,-4 c,1-m-s,1+m-s,-4 c,1/2])+HeunC[Alm+c (-2+c+2 m)+2 s,-4 c,1-m-s,1+m-s,-4 c,1/2] HeunCPrime[Alm+2 s+c (-2+c-2 m+4 s),4 c (-1+2 s),1+m-s,1-m-s,-4 c,1/2]/;(m+s<=0)&&(m-s>=0)&&Re[c]>=0
+
+
+SWSpheroidalWronskian[s_,m_,c_,Alm_]:=HeunC[Alm+c (2+c-2 m-4 s)+2 s,c (4-8 s),1-m-s,1+m-s,4 c,1/2] (4 c HeunC[Alm+c (2+c+2 m)+2 s,4 c,1+m-s,1-m-s,4 c,1/2]+HeunCPrime[Alm+c (2+c+2 m)+2 s,4 c,1+m-s,1-m-s,4 c,1/2])+HeunC[Alm+c (2+c+2 m)+2 s,4 c,1+m-s,1-m-s,4 c,1/2] HeunCPrime[Alm+c (2+c-2 m-4 s)+2 s,c (4-8 s),1-m-s,1+m-s,4 c,1/2]/;(m+s<=0)&&(m-s>=0)&&Re[c]<0
+
+
+(* ::Text:: *)
+(*S[1][1][n]^S[-1][1][n]*)
+
+
+SWSpheroidalWronskian[s_,m_,c_,Alm_]:=HeunC[Alm+(-2+c) c+m+2 c m-m^2+s+s^2,4 c (-1+m+s),1-m+s,1-m-s,-4 c,1/2] HeunCPrime[Alm+(-2+c) c+m+2 c m-m^2+s+s^2,4 c (-1+m-s),1-m-s,1-m+s,-4 c,1/2]+HeunC[Alm+(-2+c) c+m+2 c m-m^2+s+s^2,4 c (-1+m-s),1-m-s,1-m+s,-4 c,1/2] (-4 c HeunC[Alm+(-2+c) c+m+2 c m-m^2+s+s^2,4 c (-1+m+s),1-m+s,1-m-s,-4 c,1/2]+HeunCPrime[Alm+(-2+c) c+m+2 c m-m^2+s+s^2,4 c (-1+m+s),1-m+s,1-m-s,-4 c,1/2])/;(m+s<=0)&&(m-s<=0)&&Re[c]>=0
+
+
+SWSpheroidalWronskian[s_,m_,c_,Alm_]:=HeunC[Alm+c^2+m-m^2+s+s^2+c (2-2 m+4 s),4 c (1-m+s),1-m+s,1-m-s,4 c,1/2] HeunCPrime[Alm+c^2+m-m^2+s+s^2-2 c (-1+m+2 s),-4 c (-1+m+s),1-m-s,1-m+s,4 c,1/2]+HeunC[Alm+c^2+m-m^2+s+s^2-2 c (-1+m+2 s),-4 c (-1+m+s),1-m-s,1-m+s,4 c,1/2] (4 c HeunC[Alm+c^2+m-m^2+s+s^2+c (2-2 m+4 s),4 c (1-m+s),1-m+s,1-m-s,4 c,1/2]+HeunCPrime[Alm+c^2+m-m^2+s+s^2+c (2-2 m+4 s),4 c (1-m+s),1-m+s,1-m-s,4 c,1/2])/;(m+s<=0)&&(m-s<=0)&&Re[c]<0
 
 
 Options[SWSpheroidalWronskianRoot]=Union[{Quiet->FindRoot::precw},Options[FindRoot]];
-SWSpheroidalWronskianRoot[s_/;IntegerQ[2s],m_/;IntegerQ[2m],c_?NumberQ,Almguess_?NumberQ,opts:OptionsPattern[]]:=Module[{Alm,quiet=OptionValue[Quiet]},
+SWSpheroidalWronskianRoot[s_/;IntegerQ[2s],m_/;IntegerQ[2m],c_?NumericQ,Almguess_?NumericQ,opts:OptionsPattern[]]:=Module[{Alm,quiet=OptionValue[Quiet]},
 Alm/.Quiet[FindRoot[SWSpheroidalWronskian[s,m,c,Alm],{Alm,Almguess},Evaluate[FilterRules[{opts},Options[FindRoot]]]],Evaluate[quiet]]
 ]/;IntegerQ[m+s]
 
@@ -556,7 +652,7 @@ Alm/.Quiet[FindRoot[SWSpheroidalWronskian[s,m,c,Alm],{Alm,Almguess},Evaluate[Fil
 Options[SWSFHeunPhases]={ChopDelta->10^-10};
 
 
-SWSFHeunPhases[s_/;IntegerQ[2s],m_/;IntegerQ[2m],l_/;IntegerQ[2l],c_?NumberQ,Alm_?NumberQ,OptionsPattern[]]:=
+SWSFHeunPhases[s_/;IntegerQ[2s],m_/;IntegerQ[2m],l_/;IntegerQ[2l],c_?NumericQ,Alm_?NumericQ,OptionsPattern[]]:=
 Module[{x,sphericalval,Dsphericalval,valp,valm,Dvalp,Dvalm,phases,signs,index,hoint=1,\[Epsilon]=OptionValue[ChopDelta]},
 	If[!IntegerQ[m],hoint=-I]; (* Choice to make half-odd integer Spherical harmonics real *)
 	sphericalval=hoint (-1)^s Sqrt[l+1/2]WignerD[{l,-m,s},0,\[Pi]/2,0];
@@ -608,7 +704,7 @@ Module[{x,sphericalval,Dsphericalval,valp,valm,Dvalp,Dvalm,phases,signs,index,ho
 Options[SWSFHeunNorms]=Union[{Quiet->NIntegrate::precw},Options[NIntegrate]];
 
 
-SWSFHeunNorms[s_/;IntegerQ[2s],m_/;IntegerQ[2m],c_?NumberQ,Alm_?NumberQ,opts:OptionsPattern[]]:= 
+SWSFHeunNorms[s_/;IntegerQ[2s],m_/;IntegerQ[2m],c_?NumericQ,Alm_?NumericQ,opts:OptionsPattern[]]:= 
 Module[{x,pintm,nintm,pinte,ninte,ratio,quiet=OptionValue[Quiet]},
 	pintm=Quiet[NIntegrate[Abs[SWSFHeun[1][s,m,c,Alm,x]]^2,{x,-3/4,3/4},Evaluate[FilterRules[{opts},Options[NIntegrate]]]],Evaluate[quiet]];
 	pinte=Quiet[NIntegrate[Abs[SWSFHeun[1][s,m,c,Alm,x]]^2,{x,3/4,1},Evaluate[FilterRules[{opts},Options[NIntegrate]]]],Evaluate[quiet]];
@@ -619,21 +715,39 @@ Module[{x,pintm,nintm,pinte,ninte,ratio,quiet=OptionValue[Quiet]},
 ]/;IntegerQ[m+s]
 
 
-SWSFHeun[norm_List,s_/;IntegerQ[2s],m_/;IntegerQ[2m],c_?NumberQ,Alm_?NumberQ,x_?NumberQ]:=
+SWSFHeun[norm_List,s_/;IntegerQ[2s],m_/;IntegerQ[2m],c_?NumericQ,Alm_?NumericQ,x_?NumericQ]:=
 If[x<0,norm[[1]]SWSFHeun[-1][s,m,c,Alm,x],norm[[2]]SWSFHeun[1][s,m,c,Alm,x]]/;IntegerQ[m+s]
 
 
-Options[SWSFHeunExpansionCoefs]=Union[{CoefDelta->10^-15,ChopDelta->10^-10,Quiet->NIntegrate::precw},Options[NIntegrate]];
+Options[SWSFHeunExpansionCoefs]=Union[{ParallelIP->2,CoefDelta->10^-8,ChopDelta->10^-10,Quiet->NIntegrate::precw},Options[NIntegrate]];
 
 
-SWSFHeunExpansionCoefs[s_/;IntegerQ[2s],m_/;IntegerQ[2m],l_/;IntegerQ[2l],c_?NumberQ,Alm_?NumberQ,opts:OptionsPattern[]]:=
-Module[{norm,phase,ip,coefs={},stop=False,normsum=0,L,lmin,Npara=10,ind,keep,lastsmall=False,\[Epsilon]=OptionValue[CoefDelta],quiet=OptionValue[Quiet]},
+SWSFHeunExpansionCoefs[s_/;IntegerQ[2s],m_/;IntegerQ[2m],l_/;IntegerQ[2l],c_?NumericQ,Alm_?NumericQ,opts:OptionsPattern[]]:=
+Module[{norm,phase,ip,coefs={},stop=False,SWStable,normsum=0,L,lmin,hoint=1,runpara,Npara,ind,keep,lastsmall=False,\[Epsilon]=OptionValue[CoefDelta],quiet=OptionValue[Quiet]},
+	SWSFHeunExpansionCoefs::normfail="Square norm = `1` exceeds 1";
+	SWSFHeunExpansionCoefs::parallel="ParallelIP\[RightArrow]`1` is not valid.";
+	If[MatchQ[OptionValue[ParallelIP],False],
+		runpara=False;Npara=1,
+		Npara=OptionValue[ParallelIP];
+		If[IntegerQ[Npara]&&Npara>1,
+			runpara=True,
+			Message[SWSFHeunExpansionCoefs::parallel,Npara];Abort[]
+		]
+	];
+	If[!IntegerQ[m],hoint=-I]; (* Choice to make half-odd integer Spherical harmonics real *)
 	norm=SWSFHeunNorms[s,m,c,Alm,Evaluate[FilterRules[{opts},Options[SWSFHeunNorms]]]]; 
 	phase=SWSFHeunPhases[s,m,l,c,Alm,Evaluate[FilterRules[{opts},Options[SWSFHeunPhases]]]];
 	If[NumericQ[phase[[1]]],norm*=phase];(* SL phase computed *)
 	L=0;lmin=Max[Abs[s],Abs[m]];
 	While[Abs[normsum-1]>\[Epsilon] || !stop,
-		ip=Parallelize[Table[Quiet[NIntegrate[Conjugate[SWSphericalS[s,m,lmin+Lt,x]]SWSFHeun[norm,s,m,c,Alm,x],{x,-1,1},Evaluate[FilterRules[{opts},Options[NIntegrate]]]],Evaluate[quiet]],{Lt,L,L+Max[l-lmin+3-L,Npara-1]}]];
+		If[runpara,
+		(* Parallel evaluation *)
+			SWStable=ParallelTable[FullSimplify[Evaluate[TrigToExp[hoint (-1)^s Sqrt[lmin+Lt+1/2]WignerD[{lmin+Lt,-m,s},0,ArcCos[x],0]]],Assumptions->{-1<=x<=1}],{Lt,L,L+Max[l-lmin+3-L,Npara-1]},DistributedContexts->{"Global`","SWSpheroidal`"}];
+			ip=ParallelTable[Quiet[NIntegrate[Conjugate[SWStable[[Lt-L+1]]]SWSFHeun[norm,s,m,c,Alm,x],{x,-1,1},Evaluate[FilterRules[{opts},Options[NIntegrate]]]],Evaluate[quiet]],{Lt,L,L+Max[l-lmin+3-L,Npara-1]},DistributedContexts->{"Global`","SWSpheroidal`"}],
+		(* Serial evaluation *)	
+			SWStable=Table[FullSimplify[Evaluate[TrigToExp[hoint (-1)^s Sqrt[lmin+Lt+1/2]WignerD[{lmin+Lt,-m,s},0,ArcCos[x],0]]],Assumptions->{-1<=x<=1}],{Lt,L,L+Max[l-lmin+3-L,0]}];
+			ip=Table[Quiet[NIntegrate[Conjugate[SWStable[[Lt-L+1]]]SWSFHeun[norm,s,m,c,Alm,x],{x,-1,1},Evaluate[FilterRules[{opts},Options[NIntegrate]]]],Evaluate[quiet]],{Lt,L,L+Max[l-lmin+3-L,0]}]
+		];
 		ind=FirstPosition[Reverse[ip],_?(Abs[#]>\[Epsilon]&)][[1]];
 		keep=Min[Length[ip],If[IntegerQ[ind],Length[ip]-ind+3,ind=Npara+2;2]];
 		If[lastsmall&&keep<=2,keep=1;stop=True];
@@ -642,7 +756,8 @@ Module[{norm,phase,ip,coefs={},stop=False,normsum=0,L,lmin,Npara=10,ind,keep,las
 		normsum+=Total[Abs[ip]^2];
 		coefs = Join[coefs,ip];
 		If[Npara>1&&ind>2,stop=True];
-		L+=keep
+		L+=keep;
+		If[normsum-1>\[Epsilon],Message[SWSFHeunExpansionCoefs::normfail,normsum];Abort[]];
 	];
 	If[!NumberQ[phase[[1]]],(* Indeterminant phase, impose Cook-Zalutskiy phase choice *)
 		phase = Exp[-I Arg[coefs[[l-lmin+1]]]];
